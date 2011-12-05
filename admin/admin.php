@@ -90,7 +90,15 @@ class nggpanoAdminPanel{
                     $nggpano->options['kmakemultiresFolder']        = trailingslashit($nggpano->options['kmakemultiresFolder']);
                     $nggpano->options['kmakemultiresConfigFolder']  = trailingslashit($nggpano->options['kmakemultiresConfigFolder']);
                     $nggpano->options['krpanoFolder']               = trailingslashit($nggpano->options['krpanoFolder']);
-                    $nggpano->options['skinFolder']                 = trailingslashit($nggpano->options['skinFolder']);  
+                    $nggpano->options['skinFolder']                 = trailingslashit($nggpano->options['skinFolder']);
+                    
+                    //Preview Size
+                    if ( empty ( $nggpano->options['widthPreview'] ) ||!is_numeric($nggpano->options['widthPreview']) ) {
+                        $nggpano->options['widthPreview'] = '2000';
+                    }
+                    if ( empty ( $nggpano->options['heightPreview'] ) || !is_numeric($nggpano->options['heightPreview']) ) {
+                        $nggpano->options['heightPreview'] = '1000';
+                    }
 
                 }
     		// Save options
@@ -110,9 +118,7 @@ class nggpanoAdminPanel{
 <div class="wrap">
     <h2><?php _e('Welcome to NextGEN Gallery Panoramics', 'nggpano'); ?></h2>
     <p><?php _e('This plugin adds the ability to create panoramics viewer using krpano (www.krpano.com) from NextGen Images', 'nggpano'); ?>
-    <p><?php $nggpano_options = get_option('nggpano_options'); echo json_encode($nggpano_options);?></p>
-    <p><?php echo file_exists('wp-content/plugins/nextgen-gallery-panoramics/krpano_skins/krpano_skins/default_template.xml') ? "FILE EXIST" : "FILE NOT FOUND";
-            echo "<br>";
+<?php
 //    
 //            $nggpano_options['toolConfigFile']	= 'default_kmakemultires.config';  	// set default config file for krapnotool
 	/*
@@ -133,13 +139,29 @@ class nggpanoAdminPanel{
     <div id="poststuff">
         <form id="" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
             <?php wp_nonce_field('nggpano_settings') ?>
-            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder" />	
+            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview" />	
 <!--            <input type="hidden" name="force" value="1" />  this will just force _POST['nggpano'] even if all checkboxes are unchecked -->
-            <div class="postbox">   
-                <h3><?php _e('KrpanoTools Options', 'nggpano'); ?></h3>
+            <div class="postbox">
+                <h3><?php _e('Preview Options', 'nggpano'); ?></h3>
+                <p class="inside"><?php _e('Here you can set the default size for the preview of a panoramic', 'nggpano'); ?></p>
                 <table class="form-table">
                     <tr valign="top">
-                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Here you can set the default options for <strong>krpanoTools</strong>', 'nggpano'); ?></th>
+                        <th colspan="4" align="left"><p class="inside" style="text-align:left"><?php _e('Once the pnaoramic is built, you can reduce the origianl image to have nice preview', 'nggpano'); ?></th>
+                    </tr>
+                    <tr valign="top">
+                        <th colspan="1"><?php _e('Preview Size','nggpano'); ?></th>
+                        <td colspan="3">
+                            <input type="text" size="5" name="widthPreview" value="<?php echo $nggpano->options['widthPreview']; ?>" />
+                            x <input type="text" size="5" name="heightPreview" value="<?php echo $nggpano->options['heightPreview']; ?>" />
+                            <span class="setting-description"><?php _e('Max Width and Height in Pixel for the preview','nggpano') ?></span>
+                        </td>
+                    </tr>
+                </table>               
+                <h3><?php _e('KrpanoTools Options', 'nggpano'); ?></h3>
+                <p class="inside"><?php _e('Here you can set the default options for <strong>krpanoTools</strong>', 'nggpano'); ?></p>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('<strong>krpanoTools</strong> default options', 'nggpano'); ?></th>
                         <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Folders for <strong>krpanoTools</strong>', 'nggpano'); ?></th>
                     </tr>
                     <tr valign="top">

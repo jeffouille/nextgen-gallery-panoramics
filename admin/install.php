@@ -135,7 +135,10 @@ function nggpano_default_options() {
         // Directory and prefix for pano creation
 	$nggpano_options['panoPrefix']          =	'pano_';	// FolderPrefix to the panos
 	$nggpano_options['panoFolder']          =	'/panos/';	// Foldername to the panos // subdirectory to store panofile
-
+        
+        // Size for preview
+	$nggpano_options['widthPreview']          =	'2000';	// max width size for image preview
+	$nggpano_options['heightPreview']         =	'1000';	// max height size for image preview
 	
 	// special overrides for WPMU	
 //	if (is_multisite()) {

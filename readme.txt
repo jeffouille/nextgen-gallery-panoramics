@@ -38,6 +38,8 @@ check memory limit (gd vs imagemagik)
 
 create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
 
+add possibility to add manually a pano (memory limit)
+
 publish a pano (with featured image)
 
 DONE remove all pano file when remove an image
