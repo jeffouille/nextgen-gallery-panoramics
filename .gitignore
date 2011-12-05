@@ -1,0 +1,25 @@
+krpanotools/*
+krpano_plugins/*
+krpano/*
+
+
+# IDE Eclipe
+.buildpath
+.project
+.settings
+.externalToolBuilders
+
+# Netbeans
+nbproject
+
+# vim
+*.swp
+
+
+# Cache Files ?
+._*
+
+# Mac OS
+.DS_Store
+._.DS_Store
+
