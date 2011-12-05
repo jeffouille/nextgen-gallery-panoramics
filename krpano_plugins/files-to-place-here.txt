@@ -1,0 +1,21 @@
+Put Here from krpano.com all plugin files:
+combobox.js
+combobox.swf
+editor.swf
+fireworks.swf
+fps.swf
+googlemaps.swf
+gyro.js
+krpano_default_flares.jpg
+krpano_logo.png
+moretweentypes.js
+moretweentypes.swf
+options.swf
+radar.js
+radar.swf
+snow.swf
+soundinterface.js
+soundinterface.swf
+textfield.swf
+videoplayer.js
+videoplayer.swf

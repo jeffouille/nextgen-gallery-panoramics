@@ -1,6 +1,38 @@
-krpanotools/*
-krpano_plugins/*
-krpano/*
+# krpano Files
+krpanotools/.DS_Store
+krpanotools/._.DS_Store
+krpanotools/kmakemultires
+krpanotools/krpanotools.license
+krpanotools/krpanoiphone.license.js
+
+krpano_plugins/.DS_Store
+krpano_plugins/._.DS_Store
+krpano_plugins/combobox.js
+krpano_plugins/combobox.swf
+krpano_plugins/editor.swf
+krpano_plugins/fireworks.swf
+krpano_plugins/fps.swf
+krpano_plugins/googlemaps.swf
+krpano_plugins/gyro.js
+krpano_plugins/krpano_default_flares.jpg
+krpano_plugins/krpano_logo.png
+krpano_plugins/moretweentypes.js
+krpano_plugins/moretweentypes.swf
+krpano_plugins/options.swf
+krpano_plugins/radar.js
+krpano_plugins/radar.swf
+krpano_plugins/snow.swf
+krpano_plugins/soundinterface.js
+krpano_plugins/soundinterface.swf
+krpano_plugins/textfield.swf
+krpano_plugins/videoplayer.js
+krpano_plugins/videoplayer.swf
+
+krpano/.DS_Store
+krpano/._.DS_Store
+krpano/krpano.swf
+krpano/krpano.license
+krpano/swfkrpano.js
 
 
 # IDE Eclipe

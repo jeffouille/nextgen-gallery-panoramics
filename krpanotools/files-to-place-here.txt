@@ -1,0 +1,4 @@
+Put Here from krpano.com :
+kmakemultires
+krpanotools.license
+krpanoiphone.license.js

@@ -1,0 +1,4 @@
+Put Here from krpano.com :
+krpano.swf
+krpano.license
+swfkrpano.js
