@@ -26,7 +26,7 @@ DONE extract gps for one image ajax
 gps data picker for one image
 region for gallery
 
-remove database record when remove a gallery
+DONE remove database record when remove a gallery
 
 NOT USEABLE TO REMOVE add option to automaticly create pano when image is added
 
@@ -38,11 +38,13 @@ check memory limit (gd vs imagemagik)
 
 create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
 
+publish a pano (with featured image)
+
 DONE remove all pano file when remove an image
 
 config file (skin.xml and krpanotool.config) edit panel (like css style edit)
 
-directory and option to place custom krpano tool and viewer
+DONE directory and option to place custom krpano tool and viewer
 
 xml generator for plugin
 
@@ -52,7 +54,6 @@ verifiy security with use of check_admin_referer( 'myplugin-update' );
 internationalize error messages ogf nggpanoPano.class.php
 
 DONE Admin options add folder settings
-
 
 DONE with live method.... make links added with ajax be correctly clickable
 
