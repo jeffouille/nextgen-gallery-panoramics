@@ -142,9 +142,15 @@ class nggpanoAdmin{
                 $picture = nggdb::find_image( $pid );
                 $pano_exist = $pano->exists();
                 
+                //URL to build the pano
+                $url_build = NGGPANOGALLERY_URLPATH . 'admin/build-pano.php?id=' . $pid . '&h=340';
+                
                 //URL to show Pano
                 $url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
                 //$url_show = NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
+                
+                //URL to replace original image with a redim preview
+                $url_makepreview = NGGPANOGALLERY_URLPATH . 'admin/resize-preview-pano.php?id=' . $pid. '&h=200&w=800';
                 
                 ?>
                 <div class="admin-pano-thumb">
@@ -158,12 +164,13 @@ class nggpanoAdmin{
                     <img class="nggpano-pano-loader" src="<?php echo NGGPANOGALLERY_URLPATH ; ?>admin/images/loading.gif" style="display:none;" />
                     <?php
                     $actions = array();
-                    $actions['build'] = '<a class="nggpano-dialog" href="' . NGGPANOGALLERY_URLPATH . 'admin/build-pano.php?id=' . $pid . '&h=340" title="' . __('Build the panoramic from this image','nggpano') . '">' . __('Build', 'nggpano') . '</a>';
+                    $actions['build'] = '<a class="nggpano-dialog" href="' . $url_build . '" title="' . __('Build the panoramic from this image','nggpano') . '">' . __('Build', 'nggpano') . '</a>';
                     if($pano_exist) {
-                        $actions['delete']  = '<a class="submitdelete delete-pano" href="' . NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-pano&gid=' . $gid . '&id=' . $pid. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
-                        $actions['show']    = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
-                        $actions['publish']    = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
-                    
+                        $actions['delete']      = '<a class="submitdelete delete-pano" href="' . NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-pano&gid=' . $gid . '&id=' . $pid. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
+                        $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
+                        $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
+                        $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Make a flat Preview for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';
+
                         
                     }
                     $action_count = count($actions);
@@ -184,731 +191,144 @@ class nggpanoAdmin{
                 <?php
         }
         
-   	/**
-   	 * Build panoramic using krpanotools
-         * 
-   	 * @return void
-   	 */
-   	function build_pano() {
+	/**
+	 * Build panoramic using krpanotools
+	 * 
+	 * @param int $pid, Id of the image
+	 * @param int (optional) $gid, id of the gallery
+	 * @param decimal (optional)  $hfov, Horizontal Field Of View
+         * @param decimal (optional)  $vfov, Vertical Field Of View
+         * @param decimal (optional)  $voffset, Vertical Offset
+	 * @return void
+	 */
+   	function build_pano($pid, $gid = '', $hfov = '', $vfov = '', $voffset = '') {
    	    global $wpdb;
-            
-   	    
-            
-            if($_POST['pid']) {
-                $pid = $_POST['pid'];
-                
-                $gid = $_POST['gid'];
-            
+
+            if($pid) {
 		if(! class_exists('nggpanoPano'))
-			require_once(NGGPANOGALLERY_ABSPATH . '/lib/nggpanoPano.class.php' );
-		
-                //Get paramaters
-                $hfov       = isset ($_POST['hfov']) ? $_POST['hfov'] : '';
-                $vfov       = isset ($_POST['vfov']) ? $_POST['vfov'] : '';
-                $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
-                
+                    require_once(NGGPANOGALLERY_ABSPATH . '/lib/nggpanoPano.class.php' );              
                 //Create pano
                 $pano = new nggpanoPano($pid, $gid, $hfov, $vfov, $voffset);
                 $pano->createTiles();
                 
                 echo nggpanoAdmin::krpano_image_form($pano);
-                
             }
-    }
-
-	function create_thumbnail($image) {
+        }
+        
+        
+	/**
+	 * nggpanoAdmin::resize_preview_pano() - create a new image preview for panoramic, based on the height /width
+	 * 
+	 * @class nggpanoAdmin
+	 * 
+	 * @param int $pid, Id of the image
+	 * @param int (optional) $gid, id of the gallery
+	 * @param int (optional)  $width, Width of the new image
+         * @param int (optional)  $height, Height of the new image
+         * @param boolean (optional)  $backup, Make a backup of the initial image
+	 * @return void
+	 */
+	function resize_preview_pano($pid, $gid = '', $width = 0, $height = 0, $backup = false) {
 		
-		global $ngg;
+		global $ngg, $nggpano;
 		
 		if(! class_exists('ngg_Thumbnail'))
-			require_once( nggGallery::graphic_library() );
-		
-		if ( is_numeric($image) )
-			$image = nggdb::find_image( $image );
+                    require_once( nggGallery::graphic_library() );
 
+		if ( is_numeric($pid) )
+                    $image = nggdb::find_image( $pid );
+		
 		if ( !is_object($image) ) 
-			return __('Object didn\'t contain correct data','nggallery');
+                    return __('Object didn\'t contain correct data','nggallery');	
+		
+                //TODO : Verify the pano exist or not, if exists, do not make the new thumbnail
+                if(! class_exists('nggpanoPano'))
+                    require_once(NGGPANOGALLERY_ABSPATH . '/lib/nggpanoPano.class.php' );              
+                //get pano
+                $pano = new nggpanoPano($pid, $gid);
+                $pano_exist = $pano->exists();
                 
-		// before we start we import the meta data to database (required for uploads before V1.4.0)
-		nggpanoAdmin::maybe_import_meta( $image->pid );
-        		
-		// check for existing thumbnail
-		if (file_exists($image->thumbPath))
-			if (!is_writable($image->thumbPath))
-				return $image->filename . __(' is not writeable ','nggallery');
-
-		$thumb = new ngg_Thumbnail($image->imagePath, TRUE);
-
-		// skip if file is not there
-		if (!$thumb->error) {
-			if ($ngg->options['thumbfix'])  {
-
-				// calculate correct ratio
-				$wratio = $ngg->options['thumbwidth'] / $thumb->currentDimensions['width'];
-				$hratio = $ngg->options['thumbheight'] / $thumb->currentDimensions['height'];
-				
-				if ($wratio > $hratio) {
-					// first resize to the wanted width
-					$thumb->resize($ngg->options['thumbwidth'], 0);
-					// get optimal y startpos
-					$ypos = ($thumb->currentDimensions['height'] - $ngg->options['thumbheight']) / 2;
-					$thumb->crop(0, $ypos, $ngg->options['thumbwidth'],$ngg->options['thumbheight']);	
-				} else {
-					// first resize to the wanted height
-					$thumb->resize(0, $ngg->options['thumbheight']);	
-					// get optimal x startpos
-					$xpos = ($thumb->currentDimensions['width'] - $ngg->options['thumbwidth']) / 2;
-					$thumb->crop($xpos, 0, $ngg->options['thumbwidth'],$ngg->options['thumbheight']);	
-				}
-			//this create a thumbnail but keep ratio settings	
-			} else {
-				$thumb->resize($ngg->options['thumbwidth'],$ngg->options['thumbheight']);	
-			}
-			
-			// save the new thumbnail
-			$thumb->save($image->thumbPath, $ngg->options['thumbquality']);
-			nggpanoAdmin::chmod ($image->thumbPath); 
-			
-			//read the new sizes
-			$new_size = @getimagesize ( $image->thumbPath );
-			$size['width'] = $new_size[0];
-			$size['height'] = $new_size[1]; 
-			
-			// add them to the database
-			nggdb::update_image_meta($image->pid, array( 'thumbnail' => $size) );
-		} 
-				
-		$thumb->destruct();
-		
-		if ( !empty($thumb->errmsg) )
-			return ' <strong>' . $image->filename . ' (Error : '.$thumb->errmsg .')</strong>';
-		
-		// success
-		return '1'; 
-	}
-	
-	/**
-	 * nggpanoAdmin::resize_image() - create a new image, based on the height /width
-	 * 
-	 * @class nggpanoAdmin
-	 * @param object | int $image contain all information about the image or the id
-	 * @param integer $width optional 
-	 * @param integer $height optional
-	 * @return string result code
-	 */
-	function resize_image($image, $width = 0, $height = 0) {
-		
-		global $ngg;
-		
-		if(! class_exists('ngg_Thumbnail'))
-			require_once( nggGallery::graphic_library() );
-
-		if ( is_numeric($image) )
-			$image = nggdb::find_image( $image );
-		
-		if ( !is_object($image) ) 
-			return __('Object didn\'t contain correct data','nggallery');	
-		
-		// before we start we import the meta data to database (required for uploads before V1.4.0)
-		nggpanoAdmin::maybe_import_meta( $image->pid );
-		
-		// if no parameter is set, take global settings
-		$width  = ($width  == 0) ? $ngg->options['imgWidth']  : $width;
-		$height = ($height == 0) ? $ngg->options['imgHeight'] : $height;
-		
-		if (!is_writable($image->imagePath))
-			return ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
-		
-		$file = new ngg_Thumbnail($image->imagePath, TRUE);
-
-		// skip if file is not there
-		if (!$file->error) {
-			
-			// If required save a backup copy of the file
-			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
-				@copy ($image->imagePath, $image->imagePath . '_backup');
-			
-			$file->resize($width, $height);
-			$file->save($image->imagePath, $ngg->options['imgQuality']);
-			// read the new sizes
-			$size = @getimagesize ( $image->imagePath );
-			// add them to the database
-			nggdb::update_image_meta($image->pid, array( 'width' => $size[0], 'height' => $size[1] ) );
-			$file->destruct();
-		} else {
-            $file->destruct();
-			return ' <strong>' . $image->filename . ' (Error : ' . $file->errmsg . ')</strong>';
-		}
-
-		return '1';
-	}
-	
-	/**
-	 * Rotated/Flip an image based on the orientation flag or a definded angle
-	 * 
-	 * @param int|object $image
-	 * @param string (optional) $dir, CW (clockwise)or CCW (counter clockwise), if set to false, the exif flag will be used
-	 * @param string (optional)  $flip, could be either false | V (flip vertical) | H (flip horizontal)
-	 * @return string result code
-	 */
-	function rotate_image($image, $dir = false, $flip = false) {
-
-		global $ngg;
-
-		if(! class_exists('ngg_Thumbnail'))
-			require_once( nggGallery::graphic_library() );
-		
-		if ( is_numeric($image) )
-			$image = nggdb::find_image( $image );
-		
-		if ( !is_object($image) ) 
-			return __('Object didn\'t contain correct data','nggallery');		
-	
-		if (!is_writable($image->imagePath))
-			return ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
-		
-		// if you didn't define a rotation, we look for the orientation flag in EXIF
-		if ( $dir === false ) {
-			$meta = new nggMeta( $image->pid );
-			$exif = $meta->get_EXIF();
-	
-			if (isset($exif['Orientation'])) {
-				
-				switch ($exif['Orientation']) {
-					case 5 : // vertical flip + 90 rotate right
-						$flip = 'V';
-					case 6 : // 90 rotate right
-						$dir = 'CW';
-						break;
-					case 7 : // horizontal flip + 90 rotate right
-						$flip = 'H';
-					case 8 : // 90 rotate left
-						$dir = 'CCW';
-						break;
-					case 4 : // vertical flip
-						$flip = 'V';
-						break;
-					case 3 : // 180 rotate left
-						$dir = 180;
-						break;
-					case 2 : // horizontal flip
-						$flip = 'H';
-						break;						
-					case 1 : // no action in the case it doesn't need a rotation
-					default:
-						return '0';
-						break; 
-				}
-			} else
-                return '0';
-		}
-		$file = new ngg_Thumbnail( $image->imagePath, TRUE );
-		
-		// skip if file is not there
-		if (!$file->error) {
-
-			// If required save a backup copy of the file
-			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
-				@copy ($image->imagePath, $image->imagePath . '_backup');
-
-			// before we start we import the meta data to database (required for uploads before V1.4.X)
-			nggpanoAdmin::maybe_import_meta( $image->pid );
-
-			if ( $dir !== 0 )
-				$file->rotateImage( $dir );
-			if ( $dir === 180)
-				$file->rotateImage( 'CCW' ); // very special case, we rotate the image two times
-			if ( $flip == 'H')
-				$file->flipImage(true, false);
-			if ( $flip == 'V')
-				$file->flipImage(false, true);
-					
-			$file->save($image->imagePath, $ngg->options['imgQuality']);
-			
-			// read the new sizes
-			$size = @getimagesize ( $image->imagePath );
-			// add them to the database
-			nggdb::update_image_meta($image->pid, array( 'width' => $size[0], 'height' => $size[1] ) );
-			
-		}
-		
-		$file->destruct();
-
-		if ( !empty($file->errmsg) )
-			return ' <strong>' . $image->filename . ' (Error : '.$file->errmsg .')</strong>';		
-
-		return '1';
-		
-	}
-
-	/**
-	 * nggpanoAdmin::set_watermark() - set the watermark for the image
-	 * 
-	 * @class nggpanoAdmin
-	 * @param object | int $image contain all information about the image or the id
-	 * @return string result code
-	 */
-	function set_watermark($image) {
-		
-		global $ngg;
-
-		if(! class_exists('ngg_Thumbnail'))
-			require_once( nggGallery::graphic_library() );
-		
-		if ( is_numeric($image) )
-			$image = nggdb::find_image( $image );
-		
-		if ( !is_object($image) ) 
-			return __('Object didn\'t contain correct data','nggallery');		
-
-		// before we start we import the meta data to database (required for uploads before V1.4.0)
-		nggpanoAdmin::maybe_import_meta( $image->pid );	
-
-		if (!is_writable($image->imagePath))
-			return ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
-		
-		$file = new ngg_Thumbnail( $image->imagePath, TRUE );
-
-		// skip if file is not there
-		if (!$file->error) {
-			
-			// If required save a backup copy of the file
-			if ( ($ngg->options['imgBackup'] == 1) && (!file_exists($image->imagePath . '_backup')) )
-				@copy ($image->imagePath, $image->imagePath . '_backup');
-			
-			if ($ngg->options['wmType'] == 'image') {
-				$file->watermarkImgPath = $ngg->options['wmPath'];
-				$file->watermarkImage($ngg->options['wmPos'], $ngg->options['wmXpos'], $ngg->options['wmYpos']); 
-			}
-			if ($ngg->options['wmType'] == 'text') {
-				$file->watermarkText = $ngg->options['wmText'];
-				$file->watermarkCreateText($ngg->options['wmColor'], $ngg->options['wmFont'], $ngg->options['wmSize'], $ngg->options['wmOpaque']);
-				$file->watermarkImage($ngg->options['wmPos'], $ngg->options['wmXpos'], $ngg->options['wmYpos']);  
-			}
-			$file->save($image->imagePath, $ngg->options['imgQuality']);
-		}
-		
-		$file->destruct();
-
-		if ( !empty($file->errmsg) )
-			return ' <strong>' . $image->filename . ' (Error : '.$file->errmsg .')</strong>';		
-
-		return '1';
-	}
-
-	/**
-	 * Recover image from backup copy and reprocess it
-	 * 
-	 * @class nggpanoAdmin
-	 * @since 1.5.0
-	 * @param object | int $image contain all information about the image or the id
-	 * @return string result code
-	 */
-	
-	function recover_image($image) {
-
-		global $ngg;
-		
-		if ( is_numeric($image) )
-			$image = nggdb::find_image( $image );
-		
-		if ( !is_object( $image ) ) 
-			return __('Object didn\'t contain correct data','nggallery');		
-			
-		if (!is_writable( $image->imagePath ))
-			return ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
-		
-		if (!file_exists( $image->imagePath . '_backup' )) {
-			return ' <strong>'.__('File do not exists','nggallery').'</strong>';
-		}
-
-		if (!@copy( $image->imagePath . '_backup' , $image->imagePath) )
-			return ' <strong>'.__('Couldn\'t restore original image','nggallery').'</strong>';
-		
-		require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
-		
-		$meta_obj = new nggMeta( $image->pid );
-					
-        $common = $meta_obj->get_common_meta();
-        $common['saved']  = true; 
-		$result = nggdb::update_image_meta($image->pid, $common);			
-		
-		return '1';
-		
-	}
-		
-	/**
-	 * Add images to database
-	 * 
-	 * @class nggpanoAdmin
-	 * @param int $galleryID
-	 * @param array $imageslist
-	 * @return array $image_ids Id's which are sucessful added
-	 */
-	function add_Images($galleryID, $imageslist) {
-		
-		global $wpdb, $ngg;
-		
-		$image_ids = array();
-		
-		if ( is_array($imageslist) ) {
-			foreach($imageslist as $picture) {
-				
-                // filter function to rename/change/modify image before
-                $picture = apply_filters('ngg_pre_add_new_image', $picture, $galleryID);
+                $message = '';
                 
-				// strip off the extension of the filename
-				$path_parts = pathinfo( $picture );
-				$alttext = ( !isset($path_parts['filename']) ) ? substr($path_parts['basename'], 0,strpos($path_parts['basename'], '.')) : $path_parts['filename'];
-				// save it to the database
-                $pic_id = nggdb::add_image( $galleryID, $picture, '', $alttext ); 
+                if ($pano_exist) {
 
-				if ( !empty($pic_id) ) 
-					$image_ids[] = $pic_id;
+                    // before we start we import the meta data to database (required for uploads before V1.4.0)
+                    nggpanoAdmin::maybe_import_meta( $image->pid );
 
-				// add the metadata
-				nggpanoAdmin::import_MetaData( $pic_id );
-				
-				// auto rotate
-				nggpanoAdmin::rotate_image( $pic_id );		
+                    // if no parameter is set, take global settings
+                    $width  = ($width  == 0) ? $nggpano->options['widthPreview']  : $width;
+                    $height = ($height == 0) ? $nggpano->options['heightPreview'] : $height;
 
-				// Autoresize image if required
-                if ($ngg->options['imgAutoResize']) {
-                	$imagetmp = nggdb::find_image( $pic_id );
-                	$sizetmp = @getimagesize ( $imagetmp->imagePath );
-                	$widthtmp  = $ngg->options['imgWidth'];
-                	$heighttmp = $ngg->options['imgHeight'];
-                	if (($sizetmp[0] > $widthtmp && $widthtmp) || ($sizetmp[1] > $heighttmp && $heighttmp)) {
-                			nggpanoAdmin::resize_image( $pic_id );
-                	}
+                    if (!is_writable($image->imagePath))
+                            $message = ' <strong>' . $image->filename . __(' is not writeable','nggallery') . '</strong>';
+
+                    $file = new ngg_Thumbnail($image->imagePath, TRUE);
+
+                    // skip if file is not there
+                    if (!$file->error) {
+
+                            // If required save a backup copy of the file
+                            if ( ($backup == 1) && (!file_exists($image->imagePath . '_backup')) )
+                                @copy ($image->imagePath, $image->imagePath . '_backup');
+
+                            $file->resize($width, $height);
+                            //With Watermark
+                            /*
+                            if ($ngg->options['wmType'] == 'image') {
+                                $file->watermarkImgPath = $ngg->options['wmPath'];
+                                $file->watermarkImage($ngg->options['wmPos'], $ngg->options['wmXpos'], $ngg->options['wmYpos']); 
+                            }
+                            if ($ngg->options['wmType'] == 'text') {
+                                $file->watermarkText = $ngg->options['wmText'];
+                                $file->watermarkCreateText($ngg->options['wmColor'], $ngg->options['wmFont'], $ngg->options['wmSize'], $ngg->options['wmOpaque']);
+                                $file->watermarkImage($ngg->options['wmPos'], $ngg->options['wmXpos'], $ngg->options['wmYpos']);  
+                            }
+                            
+                             */
+                            $file->save($image->imagePath, $ngg->options['imgQuality']);
+                            // read the new sizes
+                            $size = @getimagesize ( $image->imagePath );
+                            // add them to the database
+                            nggdb::update_image_meta($image->pid, array( 'width' => $size[0], 'height' => $size[1] ) );
+                            $file->destruct();
+                            $message = __('Preview make successfully','nggpano');
+                    } else {
+                        $file->destruct();
+                        $message = ' <strong>' . $image->filename . ' (Error : ' . $file->errmsg . ')</strong>';
+                    }
+                    echo nggpanoAdmin::krpano_image_form($pano, $message);
+                } else {
+                    echo nggpanoAdmin::krpano_image_form($pano, __('You need build the pano before','nggpano'));
                 }
-				
-				// action hook for post process after the image is added to the database
-				$image = array( 'id' => $pic_id, 'filename' => $picture, 'galleryID' => $galleryID);
-				do_action('ngg_added_new_image', $image);
-									
-			} 
-		} // is_array
+	}
         
-        // delete dirsize after adding new images
-        delete_transient( 'dirsize_cache' );
+	/**
+	 * Maybe import some meta data to the database. The functions checks the flag 'saved'
+	 * and if based on compat reason (pre V1.4.0) we save then some meta datas to the database
+	 * 
+	 * @since V1.4.0
+	 * @param int $id
+	 * @return result
+	 */
+	function maybe_import_meta( $id ) {
+				
+		require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
+				
+		$meta_obj = new nggMeta( $id );
         
-		do_action('ngg_after_new_images_added', $galleryID, $image_ids );
+		if ( $meta_obj->image->meta_data['saved'] != true ) {
+            $common = $meta_obj->get_common_meta();
+            //this flag will inform us that the import is already one time performed
+            $common['saved']  = true; 
+			$result = nggdb::update_image_meta($id, $common);
+		} else
+			return false;
 		
-		return $image_ids;
-		
+		return $result;		
+
 	}
-
-	/**
-	 * Set correct file permissions (taken from wp core)
-	 * 
-	 * @class nggpanoAdmin
-	 * @param string $filename
-	 * @return bool $result
-	 */
-	function chmod($filename = '') {
-
-		$stat = @ stat( dirname($filename) );
-		$perms = $stat['mode'] & 0000666; // Remove execute bits for files
-		if ( @chmod($filename, $perms) )
-			return true;
-			
-		return false;
-	}
-	
-	/**
-	 * Check UID in folder and Script
-	 * Read http://www.php.net/manual/en/features.safe-mode.php to understand safe_mode
-	 * 
-	 * @class nggpanoAdmin
-	 * @param string $foldername
-	 * @return bool $result
-	 */
-	function check_safemode($foldername) {
-
-		if ( SAFE_MODE ) {
-			
-			$script_uid = ( ini_get('safe_mode_gid') ) ? getmygid() : getmyuid();
-			$folder_uid = fileowner($foldername);
-
-			if ($script_uid != $folder_uid) {
-				$message  = sprintf(__('SAFE MODE Restriction in effect! You need to create the folder <strong>%s</strong> manually','nggallery'), $foldername);
-				$message .= '<br />' . sprintf(__('When safe_mode is on, PHP checks to see if the owner (%s) of the current script matches the owner (%s) of the file to be operated on by a file function or its directory','nggallery'), $script_uid, $folder_uid );
-				nggGallery::show_error($message);
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Capability check. Check is the ID fit's to the user_ID
-	 * 
-	 * @class nggpanoAdmin
-	 * @param int $check_ID is the user_id
-	 * @return bool $result
-	 */
-	function can_manage_this_gallery($check_ID) {
-		
-		global $user_ID, $wp_roles;
-		
-		if ( !current_user_can('NextGEN Manage others gallery') ) {
-			// get the current user ID
-			get_currentuserinfo();
-			
-			if ( $user_ID != $check_ID)
-				return false;
-		}
-		
-		return true;
-	
-	}
-	
-	/**
-	 * Move images from one folder to another
-	 * 
-	 * @class nggpanoAdmin
-	 * @param array|int $pic_ids ID's of the images
-	 * @param int $dest_gid destination gallery
-	 * @return void
-	 */
-	function move_images($pic_ids, $dest_gid) {
-
-		$errors = '';
-		$count = 0;
-
-		if ( !is_array($pic_ids) )
-			$pic_ids = array($pic_ids);
-		
-		// Get destination gallery
-		$destination  = nggdb::find_gallery( $dest_gid );
-		$dest_abspath = WINABSPATH . $destination->path;
-		
-		if ( $destination == null ) {
-			nggGallery::show_error(__('The destination gallery does not exist','nggallery'));
-			return;
-		}
-		
-		// Check for folder permission
-		if ( !is_writeable( $dest_abspath ) ) {
-			$message = sprintf(__('Unable to write to directory %s. Is this directory writable by the server?', 'nggallery'), $dest_abspath );
-			nggGallery::show_error($message);
-			return;				
-		}
-				
-		// Get pictures
-		$images = nggdb::find_images_in_list($pic_ids);
-
-		foreach ($images as $image) {		
-			
-			$i = 0;
-			$tmp_prefix = '';
-			
-			$destination_file_name = $image->filename;
-			// check if the filename already exist, then we add a copy_ prefix
-			while (file_exists( $dest_abspath . '/' . $destination_file_name)) {
-				$tmp_prefix = 'copy_' . ($i++) . '_';
-				$destination_file_name = $tmp_prefix . $image->filename;
-			}
-			
-			$destination_path = $dest_abspath . '/' . $destination_file_name;
-			$destination_thumbnail = $dest_abspath . '/thumbs/thumbs_' . $destination_file_name;
-
-			// Move files
-			if ( !@rename($image->imagePath, $destination_path) ) {
-				$errors .= sprintf(__('Failed to move image %1$s to %2$s','nggallery'), 
-					'<strong>' . $image->filename . '</strong>', $destination_path) . '<br />';
-				continue;				
-			}
-			
-            // Move backup file, if possible
-            @rename($image->imagePath . '_backup', $destination_path . '_backup');
-			// Move the thumbnail, if possible
-			@rename($image->thumbPath, $destination_thumbnail);
-			
-			// Change the gallery id in the database , maybe the filename
-			if ( nggdb::update_image($image->pid, $dest_gid, $destination_file_name) )
-				$count++;
-
-		}
-
-		if ( $errors != '' )
-			nggGallery::show_error($errors);
-
-		$link = '<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $destination->gid . '" >' . $destination->title . '</a>';
-		$messages  = sprintf(__('Moved %1$s picture(s) to gallery : %2$s .','nggallery'), $count, $link);
-		nggGallery::show_message($messages);
-
-		return;
-	}
-	
-	/**
-	 * Copy images to another gallery
-	 * 
-	 * @class nggpanoAdmin
-	 * @param array|int $pic_ids ID's of the images
-	 * @param int $dest_gid destination gallery
-	 * @return void
-	 */
-	function copy_images($pic_ids, $dest_gid) {
-	   
-        require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
-		
-		$errors = $messages = '';
-		
-		if (!is_array($pic_ids))
-			$pic_ids = array($pic_ids);
-		
-		// Get destination gallery
-		$destination = nggdb::find_gallery( $dest_gid );
-		if ( $destination == null ) {
-			nggGallery::show_error(__('The destination gallery does not exist','nggallery'));
-			return;
-		}
-		
-		// Check for folder permission
-		if (!is_writeable(WINABSPATH.$destination->path)) {
-			$message = sprintf(__('Unable to write to directory %s. Is this directory writable by the server?', 'nggallery'), WINABSPATH.$destination->path);
-			nggGallery::show_error($message);
-			return;				
-		}
-				
-		// Get pictures
-		$images = nggdb::find_images_in_list($pic_ids);
-		$destination_path = WINABSPATH . $destination->path;
-		
-		foreach ($images as $image) {		
-			// WPMU action
-			if ( nggWPMU::check_quota() )
-				return;
-			
-			$i = 0;
-			$tmp_prefix = ''; 
-			$destination_file_name = $image->filename;
-			while (file_exists($destination_path . '/' . $destination_file_name)) {
-				$tmp_prefix = 'copy_' . ($i++) . '_';
-				$destination_file_name = $tmp_prefix . $image->filename;
-			}
-			
-			$destination_file_path = $destination_path . '/' . $destination_file_name;
-			$destination_thumb_file_path = $destination_path . '/' . $image->thumbFolder . $image->thumbPrefix . $destination_file_name;
-
-			// Copy files
-			if ( !@copy($image->imagePath, $destination_file_path) ) {
-				$errors .= sprintf(__('Failed to copy image %1$s to %2$s','nggallery'), 
-					$image->filename, $destination_file_path) . '<br />';
-				continue;				
-			}
-			
-            // Copy backup file, if possible
-            @copy($image->imagePath . '_backup', $destination_file_path . '_backup');
-            // Copy the thumbnail if possible
-			@copy($image->thumbPath, $destination_thumb_file_path);
-			
-			// Create new database entry for the image
-			$new_pid = nggdb::insert_image( $destination->gid, $destination_file_name, $image->alttext, $image->description, $image->exclude);
-
-			if (!isset($new_pid)) {				
-				$errors .= sprintf(__('Failed to copy database row for picture %s','nggallery'), $image->pid) . '<br />';
-				continue;				
-			}
-				
-			// Copy tags
-			nggTags::copy_tags($image->pid, $new_pid);
-            
-            // Copy meta information
-            $meta = new nggMeta($image->pid);
-            nggdb::update_image_meta( $new_pid, $meta->image->meta_data);
-			
-			if ( $tmp_prefix != '' ) {
-				$messages .= sprintf(__('Image %1$s (%2$s) copied as image %3$s (%4$s) &raquo; The file already existed in the destination gallery.','nggallery'),
-					 $image->pid, $image->filename, $new_pid, $destination_file_name) . '<br />';
-			} else {
-				$messages .= sprintf(__('Image %1$s (%2$s) copied as image %3$s (%4$s)','nggallery'),
-					 $image->pid, $image->filename, $new_pid, $destination_file_name) . '<br />';
-			}
-
-		}
-		
-		// Finish by showing errors or success
-		if ( $errors == '' ) {
-			$link = '<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $destination->gid . '" >' . $destination->title . '</a>';
-			$messages .= '<hr />' . sprintf(__('Copied %1$s picture(s) to gallery: %2$s .','nggallery'), count($images), $link);
-		} 
-
-		if ( $messages != '' )
-			nggGallery::show_message($messages);
-
-		if ( $errors != '' )
-			nggGallery::show_error($errors);
-
-		return;
-	}
-	
-	/**
-	 * Initate the Ajax operation
-	 * 
-	 * @class nggpanoAdmin	 
-	 * @param string $operation name of the function which should be executed
-	 * @param array $image_array
-	 * @param string $title name of the operation
-	 * @return string the javascript output
-	 */
-	function do_ajax_operation( $operation, $image_array, $title = '' ) {
-		
-		if ( !is_array($image_array) || empty($image_array) )
-			return;
-
-		$js_array  = implode('","', $image_array);
-                
-//                         foreach ($image_array as $value) {
-//                    nggpanoAdmin::extract_gps($value);
-//                }
-		
-		
-		// send out some JavaScript, which initate the ajax operation
-		?>
-<!--		<script type="text/javascript">
-                        console.log("do_ajax_operation");
-			Images = new Array("<?php echo $js_array; ?>");
-
-			nggAjaxOptions = {
-				operation: "<?php echo $operation; ?>",
-				ids: Images,		
-			  	header: "<?php echo $title; ?>",
-			  	maxStep: Images.length
-			};
-			
-			jQuery(document).ready( function(){ 
-				nggProgressBar.init( nggAjaxOptions );
-				nggAjax.init( nggAjaxOptions );
-			} );
-		</script>-->
-		
-		<?php	
-	}
-
-	/**
-	 * Return a JSON coded array of Image ids for a requested gallery
-	 * 
-	 * @class nggpanoAdmin
-	 * @param int $galleryID
-	 * @return arry (JSON)
-	 */
-	function get_image_ids( $galleryID ) {
-		
-		if ( !function_exists('json_encode') )
-			return(-2);
-		
-		$gallery = nggdb::get_ids_from_gallery($galleryID, 'pid', 'ASC', false);
-
-		header('Content-Type: text/plain; charset=' . get_option('blog_charset'), true);
-		$output = json_encode($gallery);
-		
-		return $output;
-	}
-
+        
+ 
 } // END class nggpanoAdmin
 
 /**

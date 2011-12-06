@@ -41,14 +41,36 @@ if (isset ( $_GET['mode']) ) {
             break;
         case 'build-pano':
             check_admin_referer('build-pano');
-            //do_action('ngg_update_gallery', $_POST['gid'], $_POST);
-            nggpanoAdmin::build_pano($_POST);
-            //nggPanoramic::show_message( __('Panoramic successfully created','nggpano') );
+            if($_POST['pid']) {
+                $pid = $_POST['pid'];
+                $gid = $_POST['gid'];
+                //Get paramaters
+                $hfov       = isset ($_POST['hfov']) ? $_POST['hfov'] : '';
+                $vfov       = isset ($_POST['vfov']) ? $_POST['vfov'] : '';
+                $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
+                
+                //Create pano
+                nggpanoAdmin::build_pano($pid, $gid, $hfov, $vfov, $voffset);          
+            }
+
             break;
-        
         case 'delete-pano':
             if (isset ( $_GET['id']) && isset ( $_GET['gid'])) {
                 nggpano_delete_pano($_GET['id'],$_GET['gid']);
+            }
+            break;
+        case 'resize-preview-pano':
+            check_admin_referer('resize-preview-pano');
+            if($_POST['pid']) {
+                $pid = $_POST['pid'];
+                $gid = $_POST['gid'];
+                //Get paramaters
+                $imgWidth       = isset ($_POST['imgWidth']) ? $_POST['imgWidth'] : '0';
+                $imgHeight      = isset ($_POST['imgHeight']) ? $_POST['imgHeight'] : '0';
+                $backup    = isset ($_POST['backup']) ? $_POST['backup'] : false;
+                
+                //Create pano
+                nggpanoAdmin::resize_preview_pano($pid, $gid, $imgWidth, $imgHeight, $backup);          
             }
             break;
         default:
