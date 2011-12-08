@@ -29,8 +29,6 @@ if ( !isset($_GET['pid']) )
     exit;
     
 $pid = (int) $_GET['pid'];
-$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
-
 // let's get the image data
 $picture  = nggdb::find_image( $pid );
 

@@ -26,6 +26,10 @@ DONE extract gps for one image ajax
 gps data picker for one image
 region for gallery
 
+add gps marker on image
+
+add license file config in admin
+
 DONE remove database record when remove a gallery
 
 NOT USEABLE TO REMOVE add option to automaticly create pano when image is added

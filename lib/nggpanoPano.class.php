@@ -731,9 +731,9 @@ class nggpanoPano{
 
   }
   
-  //TODO
-  public function show($divid) {
-              
+
+  public function show($divid, $width = '100%', $height = '100%', $no_output = false) {
+        $str_return = '';
         //Check all files for generation
         if($this->error == false) {
             //Throw an error if a file doesn't exist
@@ -765,20 +765,61 @@ class nggpanoPano{
             $krpano_path    = trailingslashit($this->krpanoFolderURL) . $this->krpanoSWF;
             $krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$this->pid;
 
-?>
-            <script>
-              var viewer = createPanoViewer({swf:"<?php echo $krpano_path; ?>", wmode:"opaque"});
-              viewer.addVariable("xml", "<?php echo $krpano_xml; ?>");
-              viewer.embed('<?php echo $divid; ?>');
-            </script>
+            $str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';">...Loading Panoramic...</div>';
+            
+            $str_return .='<script>';
+            $str_return .=' var viewer = createPanoViewer({swf:"'.$krpano_path.'", wmode:"opaque"});';
+            $str_return .=' viewer.addVariable("xml", "'.$krpano_xml.'");';
+            $str_return .=' viewer.embed("'.$divid.'");';
+            $str_return .='</script>';
+            $str_return .='';
+            
 
-            <div id="<?php echo $divid; ?>" style="width:100%; height: 100%;">...Loading Panoramic...</div>
 
-<?php
         } else {
-            echo "<h1>ERROR</h1>";
-            echo "<h4>" . $this->errmsg . "</h4>";
+            $str_return .='<h1>ERROR</h1>';
+            $str_return .='<h4>'. $this->errmsg . '</h4>';
         }
+        
+        if($no_output) {
+            return $str_return;
+        } else {
+            echo $str_return;
+        }
+  }
+  
+  
+  public function getObjectFromDB() {
+        //Check all files for generation
+        if($this->error == false) {
+            //Throw an error if a file doesn't exist
+            //VIEWER
+            //check to see if krpano viewer file exists
+            if(!file_exists(trailingslashit($this->krpanoFolderPath) . $this->krpanoSWF)) {
+                $this->errmsg = $this->krpanoSWF .' file not found in ' . $this->krpanoFolder;
+                $this->error = true;
+            }
+            //check to see if Skin file exists
+            elseif(!file_exists($this->viewerTemplatePath)) {
+                $this->errmsg = 'Template file '. $this->viewerTemplate .' not found';
+                $this->error = true;
+            }
+            //check to see if pano correctly build
+            elseif(!$this->exists()) {
+                $this->errmsg = 'Panorama not found';
+                $this->error = true;
+            }
+        }
+        
+        if($this->error == false) {
+            //load pano information from database
+            $this->loadFromDB();
+            return $this;
+
+        } else {
+            return false;
+        }
+
   }
     
     function __destruct() {

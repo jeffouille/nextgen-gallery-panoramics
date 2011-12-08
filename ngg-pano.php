@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Stop direct call
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 //
-//ini_set('display_errors', '1');
-//ini_set('error_reporting', E_ALL);
+ini_set('display_errors', '1');
+ini_set('error_reporting', E_ALL);
 if (!class_exists('nggPanoLoader')) {
 class nggPanoLoader {
 	
@@ -272,8 +272,8 @@ class nggPanoLoader {
 
             // Load frontend libraries							
             //require_once (dirname (__FILE__) . '/lib/navigation.php');		        // 242.016
-            //require_once (dirname (__FILE__) . '/nggfunctions.php');		        // n.a.
-            //require_once (dirname (__FILE__) . '/lib/shortcodes.php'); 		        // 92.664
+            require_once (dirname (__FILE__) . '/nggpanofunctions.php');		        // n.a.
+            require_once (dirname (__FILE__) . '/lib/shortcodes.php'); 		        // 92.664
 
             //Just needed if you access remote to WordPress
             //if ( defined('XMLRPC_REQUEST') )
@@ -320,7 +320,7 @@ class nggPanoLoader {
 //
 //		// activate modified Shutter reloaded if not use the Shutter plugin
 //		if ( ($ngg->options['thumbEffect'] == "shutter") && !function_exists('srel_makeshutter') ) {
-//			wp_register_script('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.js', false ,'1.3.3');
+//			wp_register_script('shutter', NGGPANOGALLERY_URLPATH .'shutter/shutter-reloaded.js', false ,'1.3.3');
 //			wp_localize_script('shutter', 'shutterSettings', array(
 //						'msgLoading' => __('L O A D I N G', 'nggallery'),
 //						'msgClose' => __('Click to Close', 'nggallery'),
@@ -331,18 +331,18 @@ class nggPanoLoader {
 //		
 //		// required for the slideshow
 //		if ( NGGALLERY_IREXIST == true && $this->options['enableIR'] == '1' && nggGallery::detect_mobile_phone() === false ) 
-//			wp_enqueue_script('swfobject', NGGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
+//			wp_enqueue_script('swfobject', NGGPANOGALLERY_URLPATH .'admin/js/swfobject.js', FALSE, '2.2');
 //        else {
-//            wp_register_script('jquery-cycle', NGGALLERY_URLPATH .'js/jquery.cycle.all.min.js', array('jquery'), '2.9995');
-//            wp_enqueue_script('ngg-slideshow', NGGALLERY_URLPATH .'js/ngg.slideshow.min.js', array('jquery-cycle'), '1.05'); 
+//            wp_register_script('jquery-cycle', NGGPANOGALLERY_URLPATH .'js/jquery.cycle.all.min.js', array('jquery'), '2.9995');
+//            wp_enqueue_script('ngg-slideshow', NGGPANOGALLERY_URLPATH .'js/ngg.slideshow.min.js', array('jquery-cycle'), '1.05'); 
 //                    
 //        }   
 //            
 //		// Load AJAX navigation script, works only with shutter script as we need to add the listener
 //		if ( $this->options['galAjaxNav'] ) { 
 //			if ( ($this->options['thumbEffect'] == "shutter") || function_exists('srel_makeshutter') ) {
-//				wp_enqueue_script ( 'ngg_script', NGGALLERY_URLPATH . 'js/ngg.js', array('jquery'), '2.1');
-//				wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGALLERY_URLPATH,
+//				wp_enqueue_script ( 'ngg_script', NGGPANOGALLERY_URLPATH . 'js/ngg.js', array('jquery'), '2.1');
+//				wp_localize_script( 'ngg_script', 'ngg_ajax', array('path'		=> NGGPANOGALLERY_URLPATH,
 //                                                                    'callback'  => home_url() . '/' . 'index.php?callback=ngg-ajax',
 //																	'loading'	=> __('loading', 'nggallery'),
 //				) );
@@ -359,17 +359,17 @@ class nggPanoLoader {
 	function load_styles() {
 		
 		// check first the theme folder for a nggallery.css
-//		if ( nggGallery::get_theme_css_file() )
-//			wp_enqueue_style('NextGEN', nggGallery::get_theme_css_file() , false, '1.0.0', 'screen'); 
-//		else if ($this->options['activateCSS'])
-//			wp_enqueue_style('NextGEN', NGGALLERY_URLPATH . 'css/' . $this->options['CSSfile'], false, '1.0.0', 'screen'); 
-//		
+		if ( nggPanoramic::get_theme_css_file() )
+			wp_enqueue_style('NextGENPanoramics', nggPanoramic::get_theme_css_file() , false, '1.0.0', 'screen'); 
+		else if ($this->options['activateCSS'])
+			wp_enqueue_style('NextGENPanoramics', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['CSSfile'], false, '1.0.0', 'screen'); 
+		
 		//	activate Thickbox
 		wp_enqueue_style( 'thickbox');
 
 		// activate modified Shutter reloaded if not use the Shutter plugin
 //		if ( ($this->options['thumbEffect'] == 'shutter') && !function_exists('srel_makeshutter') )
-//			wp_enqueue_style('shutter', NGGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.3', 'screen');
+//			wp_enqueue_style('shutter', NGGPANOGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.3', 'screen');
 //		
 	}
 	

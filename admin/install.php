@@ -139,7 +139,11 @@ function nggpano_default_options() {
         // Size for preview
 	$nggpano_options['widthPreview']          =	'2000';	// max width size for image preview
 	$nggpano_options['heightPreview']         =	'1000';	// max height size for image preview
-	
+
+	// CSS Style
+	$nggpano_options['activateCSS']			= true;							// activate the CSS file
+	$nggpano_options['CSSfile']			= 'nggpano.css';  			// set default css filename
+        
 	// special overrides for WPMU	
 //	if (is_multisite()) {
 //		// get the site options

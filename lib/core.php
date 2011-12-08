@@ -21,6 +21,105 @@ class nggPanoramic {
 	function show_message($message) {
 		echo '<div class="wrap"><h2></h2><div class="updated fade" id="message"><p>' . $message . '</p></div></div>' . "\n";
 	}
+        
+ 	
+	/**
+	 * Look for the stylesheet in the theme folder
+	 * 
+	 * @return string path to stylesheet
+	 */
+	function get_theme_css_file() {
+	   
+  		// allow other plugins to include a custom stylesheet
+		//$stylesheet = apply_filters( 'nggpano_load_stylesheet', false );
+        
+		//if ( $stylesheet !== false )
+		//	return ( $stylesheet );
+		//else
+                    if ( file_exists (STYLESHEETPATH . '/nggpano/css/nggpano.css') )
+			return get_stylesheet_directory_uri() . '/nggpano/css/nggpano.css';
+		else
+			return false;		
+	}
+
+	/**
+	 * Support for i18n with wpml, polyglot or qtrans
+	 * 
+	 * @param string $in
+	 * @param string $name (optional) required for wpml to determine the type of translation
+	 * @return string $in localized
+	 */
+	function i18n($in, $name = null) {
+		
+		if ( function_exists( 'langswitch_filter_langs_with_message' ) )
+			$in = langswitch_filter_langs_with_message($in);
+				
+		if ( function_exists( 'polyglot_filter' ))
+			$in = polyglot_filter($in);
+		
+		if ( function_exists( 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage' ))
+			$in = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($in);
+
+        if (is_string($name) && !empty($name) && function_exists('icl_translate'))
+            $in = icl_translate('plugin_ngg', $name, $in, true);
+		
+		$in = apply_filters('localization', $in);
+		
+		return $in;
+	}
+
+	/**
+	* Renders a section of user display code.  The code is first checked for in the current theme display directory
+	* before defaulting to the plugin
+	* Call the function :	nggPanoramic::render ('template_name', array ('var1' => $var1, 'var2' => $var2));
+	*
+	* @autor John Godley
+	* @param string $template_name Name of the template file (without extension)
+	* @param string $vars Array of variable name=>value that is available to the display code (optional)
+	* @param bool $callback In case we check we didn't find template we tested it one time more (optional)
+	* @return void
+	**/
+	function render($template_name, $vars = array (), $callback = false) {
+		foreach ($vars AS $key => $val) {
+			$$key = $val;
+		}
+		
+		// hook into the render feature to allow other plugins to include templates
+		//$custom_template = apply_filters( 'nggpano_render_template', false, $template_name );
+		
+		//if ( ( $custom_template != false ) &&  file_exists ($custom_template) ) {
+		//	include ( $custom_template );
+		//} else
+                    if (file_exists (STYLESHEETPATH . "/nggpano/templates/$template_name.php")) {
+			include (STYLESHEETPATH . "/nggpano/templates/$template_name.php");
+		} else if (file_exists (NGGPANOGALLERY_ABSPATH . "/view/$template_name.php")) {
+			include (NGGPANOGALLERY_ABSPATH . "/view/$template_name.php");
+		} else if ( $callback === true ) {
+            echo "<p>Rendering of template $template_name.php failed</p>";		  
+		} else {
+            //test without the "-template" name one time more
+            $template_name = array_shift( explode('-', $template_name , 2) );
+            nggPanoramic::render ($template_name, $vars , true);
+		}
+	}
+	
+	/**
+	* Captures an section of user display code.
+	*
+	* @autor John Godley
+	* @param string $template_name Name of the template file (without extension)
+	* @param string $vars Array of variable name=>value that is available to the display code (optional)
+	* @return void
+	**/
+	function capture ($template_name, $vars = array ()) {
+		ob_start ();
+		nggPanoramic::render ($template_name, $vars);
+		$output = ob_get_contents ();
+		ob_end_clean ();
+		
+		return $output;
+	} 
+        
 //
 //	/**
 //	* get the thumbnail url to the image
@@ -247,56 +346,7 @@ class nggPanoramic {
 //		return false;
 //	} 
 //	
-//	/**
-//	* Renders a section of user display code.  The code is first checked for in the current theme display directory
-//	* before defaulting to the plugin
-//	* Call the function :	nggGallery::render ('template_name', array ('var1' => $var1, 'var2' => $var2));
-//	*
-//	* @autor John Godley
-//	* @param string $template_name Name of the template file (without extension)
-//	* @param string $vars Array of variable name=>value that is available to the display code (optional)
-//	* @param bool $callback In case we check we didn't find template we tested it one time more (optional)
-//	* @return void
-//	**/
-//	function render($template_name, $vars = array (), $callback = false) {
-//		foreach ($vars AS $key => $val) {
-//			$$key = $val;
-//		}
-//		
-//		// hook into the render feature to allow other plugins to include templates
-//		$custom_template = apply_filters( 'ngg_render_template', false, $template_name );
-//		
-//		if ( ( $custom_template != false ) &&  file_exists ($custom_template) ) {
-//			include ( $custom_template );
-//		} else if (file_exists (STYLESHEETPATH . "/nggallery/$template_name.php")) {
-//			include (STYLESHEETPATH . "/nggallery/$template_name.php");
-//		} else if (file_exists (NGGPANOGALLERY_ABSPATH . "/view/$template_name.php")) {
-//			include (NGGPANOGALLERY_ABSPATH . "/view/$template_name.php");
-//		} else if ( $callback === true ) {
-//            echo "<p>Rendering of template $template_name.php failed</p>";		  
-//		} else {
-//            //test without the "-template" name one time more
-//            $template_name = array_shift( explode('-', $template_name , 2) );
-//            nggGallery::render ($template_name, $vars , true);
-//		}
-//	}
-//	
-//	/**
-//	* Captures an section of user display code.
-//	*
-//	* @autor John Godley
-//	* @param string $template_name Name of the template file (without extension)
-//	* @param string $vars Array of variable name=>value that is available to the display code (optional)
-//	* @return void
-//	**/
-//	function capture ($template_name, $vars = array ()) {
-//		ob_start ();
-//		nggGallery::render ($template_name, $vars);
-//		$output = ob_get_contents ();
-//		ob_end_clean ();
-//		
-//		return $output;
-//	}
+//
 //	
 //	/**
 //	 * nggGallery::graphic_library() - switch between GD and ImageMagick
@@ -312,50 +362,6 @@ class nggPanoramic {
 //		else
 //			return NGGPANOGALLERY_ABSPATH . '/lib/gd.thumbnail.inc.php';
 //		
-//	}
-//	
-//	/**
-//	 * Look for the stylesheet in the theme folder
-//	 * 
-//	 * @return string path to stylesheet
-//	 */
-//	function get_theme_css_file() {
-//	   
-//  		// allow other plugins to include a custom stylesheet
-//		$stylesheet = apply_filters( 'ngg_load_stylesheet', false );
-//        
-//		if ( $stylesheet !== false )
-//			return ( $stylesheet );
-//		elseif ( file_exists (STYLESHEETPATH . '/nggallery.css') )
-//			return get_stylesheet_directory_uri() . '/nggallery.css';
-//		else
-//			return false;		
-//	}
-//
-//	/**
-//	 * Support for i18n with wpml, polyglot or qtrans
-//	 * 
-//	 * @param string $in
-//	 * @param string $name (optional) required for wpml to determine the type of translation
-//	 * @return string $in localized
-//	 */
-//	function i18n($in, $name = null) {
-//		
-//		if ( function_exists( 'langswitch_filter_langs_with_message' ) )
-//			$in = langswitch_filter_langs_with_message($in);
-//				
-//		if ( function_exists( 'polyglot_filter' ))
-//			$in = polyglot_filter($in);
-//		
-//		if ( function_exists( 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage' ))
-//			$in = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($in);
-//
-//        if (is_string($name) && !empty($name) && function_exists('icl_translate'))
-//            $in = icl_translate('plugin_ngg', $name, $in, true);
-//		
-//		$in = apply_filters('localization', $in);
-//		
-//		return $in;
 //	}
 //
 //    /**

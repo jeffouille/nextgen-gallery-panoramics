@@ -119,6 +119,7 @@ class nggpanoAdminPanel{
     <h2><?php _e('Welcome to NextGEN Gallery Panoramics', 'nggpano'); ?></h2>
     <p><?php _e('This plugin adds the ability to create panoramics viewer using krpano (www.krpano.com) from NextGen Images', 'nggpano'); ?>
 <?php
+echo STYLESHEETPATH;
 //    
 //            $nggpano_options['toolConfigFile']	= 'default_kmakemultires.config';  	// set default config file for krapnotool
 	/*

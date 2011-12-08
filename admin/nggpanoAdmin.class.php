@@ -68,7 +68,7 @@ class nggpanoAdmin{
 	}
         
         function gps_image_form($pid) {
-                            //Get GPS values for the current image
+                //Get GPS values for the current image
                 $image_values = nggpano_getImagePanoramicOptions($pid);
                 $lat = isset($image_values->gps_lat) ? $image_values->gps_lat : '';
                 $lng = isset($image_values->gps_lng) ? $image_values->gps_lng : '';
@@ -96,17 +96,8 @@ class nggpanoAdmin{
                     <img class="nggpano-gps-loader" src="<?php echo NGGPANOGALLERY_URLPATH ; ?>admin/images/loading.gif" style="display:none;" />
                     <?php
                     $actions = array();
-                    //$actions['extractgps']   = '<a class="shutter" href="' . $picture->imageURL . '" title="' . esc_attr(sprintf(__('View "%s"'), $picture->filename)) . '">' . __('View', 'nggallery') . '</a>';
-                    //$actions['meta']   = '<a class="nggpano-dialog" href="' . NGGALLERY_URLPATH . 'admin/showmeta.php?id=' . $pid . '" title="' . __('Show Meta data','nggallery') . '">' . __('Meta', 'nggallery') . '</a>';
-                    //$actions['custom_thumb']   = '<a class="nggpano-dialog" href="' . NGGALLERY_URLPATH . 'admin/edit-thumbnail.php?id=' . $pid . '" title="' . __('Customize thumbnail','nggallery') . '">' . __('Edit thumb', 'nggallery') . '</a>';							
-                    //$actions['rotate'] = '<a class="nggpano-dialog" href="' . NGGALLERY_URLPATH . 'admin/rotate.php?id=' . $pid . '" title="' . __('Rotate','nggallery') . '">' . __('Rotate', 'nggallery') . '</a>';
-                    //if ( current_user_can( 'publish_posts' ) )
-//$actions['publish'] = '<a class="nggpano-dialog" href="' . NGGPANOGALLERY_URLPATH . 'admin/publish.php?id=' . $pid . '&h=230" title="' . __('Publish this image','nggallery') . '">' . __('Publish', 'nggallery') . '</a>';
-                    //if ( file_exists( $picture->imagePath . '_backup' ) )	
-//$actions['recover']   = '<a class="confirmrecover" href="' .wp_nonce_url("admin.php?page=nggallery-manage-gallery&amp;mode=recoverpic&amp;gid=" . $act_gid . "&amp;pid=" . $pid, 'ngg_recoverpicture'). '" title="' . __('Recover','nggallery') . '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Recover "%s" ?' , 'nggallery'), $picture->filename)). '\');if(check==false) return false;">' . __('Recover', 'nggallery') . '</a>';
                     $actions['extractgps']  = '<a class="extractgps" href="' . NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=extractgps&id=' . $pid.'" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Replace current GPS data for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Get GPS from picture' , 'nggpano') . '</a>';
                     $actions['pickgps']     = '<a class="nggpano-dialog" href="' . NGGPANOGALLERY_URLPATH . 'admin/pick-gps.php?id=' . $pid . '" title="' . __('Pick GPS on map','nggpano') . '">' . __('Pick GPS on map','nggpano') . '</a>';
-                    //$actions['debug']       = nggpano_get_exif_gps($pid);
                     $action_count = count($actions);
                     $i = 0;
                     echo '<div class="row-actions">';
@@ -169,7 +160,7 @@ class nggpanoAdmin{
                         $actions['delete']      = '<a class="submitdelete delete-pano" href="' . NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-pano&gid=' . $gid . '&id=' . $pid. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
                         $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
-                        $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Make a flat Preview for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';
+                        $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Resize image for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';
 
                         
                     }

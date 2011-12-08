@@ -7,8 +7,57 @@ Version: 1
 
 */
 
-/* ----------- Album Styles Extend -------------*/
+/* ----------- Single Pano -------------*/
+.nggpano-singlepano {
+	background-color:#FFFFFF;
+	display:block;  
+	padding:4px;
+        clear: both;
+        margin: 5px;
+}
 
+.nggpano-left {
+	float: left;
+	margin-right:10px;
+}
+
+.nggpano-right {
+	float: right;
+	margin-left:10px;
+}
+
+.nggpano-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.nggpano-title {
+	float: left;
+        text-align: center;
+        width:100%;
+        display:block;  
+	padding:4px;
+}
+
+.nggpano-caption {
+	float: left;
+        text-align: center;
+        width:100%;
+        display:block;  
+	padding:4px;
+}
+
+.nggpano-description {
+	float: left;
+        text-align: center;
+        width:100%;
+        display:block;  
+	padding:4px;
+}
+
+/*
+/* ----------- Album Styles Extend -------------*/
+/*
 .ngg-albumoverview {
 	margin-top: 10px;
 	width: 100%;
@@ -21,11 +70,11 @@ Version: 1
     padding: 5px;
     margin-bottom: 5px;
     border: 1px solid #fff;
-}
+}*/
 
 /* IE6 will ignore this , again I hate IE6 */
 /* See also http://www.sitepoint.com/article/browser-specific-css-hacks */
-html>body .ngg-album {
+/*html>body .ngg-album {
     overflow:hidden;
     padding: 5px;
     margin-bottom: 5px;
@@ -67,10 +116,10 @@ html>body .ngg-album {
 
 .ngg-description {
 	text-align: left;
-}
+}*/
 
 /* ----------- Album Styles Compact -------------*/
-
+/*
 .ngg-album-compact {
 	float:left;
 	height:180px;
@@ -108,10 +157,10 @@ html>body .ngg-album {
 .ngg-album-compact p {
 	font-size:11px;
 	margin-top:2px;
-}
+}*/
 
 /* ----------- Gallery style -------------*/
-
+/*
 .ngg-galleryoverview {
 	overflow: hidden;
 	margin-top: 10px;
@@ -121,7 +170,7 @@ html>body .ngg-album {
 }
 
 .ngg-galleryoverview .desc {
-/* required for description */
+ required for description 
    margin:0px 10px 10px 0px;
    padding:5px;
 }
@@ -150,7 +199,7 @@ html>body .ngg-album {
 } 
 
 .ngg-gallery-thumbnail span {
-	/* Images description */
+	 Images description 
 	font-size:90%;
 	padding-left:5px;
 	display:block;
@@ -158,11 +207,11 @@ html>body .ngg-album {
 
 .ngg-clear {
 	clear: both;
-}
+}*/
 
 /* ----------- Gallery navigation -------------*/
 
-.ngg-navigation {
+/*.ngg-navigation {
 	font-size:0.9em !important;
 	clear:both !important;
 	display:block !important;
@@ -197,11 +246,11 @@ html>body .ngg-album {
 	background-color: #0066CC;
 	color: #FFFFFF !important;
 	text-decoration: none !important;
-}
+}*/
 
 /* ----------- Image browser style -------------*/
 
-.ngg-imagebrowser {
+/*.ngg-imagebrowser {
 	
 }
 
@@ -245,10 +294,10 @@ html>body .ngg-album {
 .exif-data {
   	margin-left: auto !important;
     margin-right: auto !important;	
-}
+}*/
 
 /* ----------- Slideshow -------------*/
-.slideshow {
+/*.slideshow {
 	margin-left: auto; 
 	margin-right: auto;
 	text-align:center;
@@ -257,20 +306,20 @@ html>body .ngg-album {
 
 .slideshowlink {
 	
-}
+}*/
 
 /* ----------- JS Slideshow -------------*/
-.ngg-slideshow {
+/*.ngg-slideshow {
     overflow:hidden;
     position: relative;
 }
 
 .ngg-slideshow * {
     vertical-align:middle;
-}
+}*/
 
 /* See also : http://www.brunildo.org/test/img_center.html */
-.ngg-slideshow-loader{
+/*.ngg-slideshow-loader{
     display: table-cell;
     text-align: center;
     vertical-align:middle;
@@ -280,10 +329,10 @@ html>body .ngg-album {
     background: none !important; 
     border: 0 none !important;
     margin:auto !important; 
-}
+}*/
 
 /* ----------- Single picture -------------*/
-.ngg-singlepic {
+/*.ngg-singlepic {
 	background-color:#FFFFFF;
 	display:block;  
 	padding:4px;
@@ -302,10 +351,10 @@ html>body .ngg-album {
 .ngg-center {
   	margin-left: auto !important;
     margin-right: auto !important;
-}
+}*/
 
 /* ----------- Sidebar widget -------------*/
-.ngg-widget,
+/*.ngg-widget,
 .ngg-widget-slideshow {
 	overflow: hidden;
 	margin:0pt;
@@ -317,10 +366,10 @@ html>body .ngg-album {
 	border:2px solid #A9A9A9;
 	margin:0pt 2px 2px 0px; 
 	padding:1px; 
-}
+}*/
 
 /* ----------- Related images -------------*/
-.ngg-related-gallery {
+/*.ngg-related-gallery {
 	background:#F9F9F9;
 	border:1px solid #E0E0E0;
 	overflow:hidden;
@@ -339,10 +388,10 @@ html>body .ngg-album {
 
 .ngg-related-gallery img:hover {
 	border: 1px solid #000000;
-} 
+} */
 
 /* ----------- Gallery list -------------*/
-
+/*
 .ngg-galleryoverview ul li:before {
 	content: '' !important;
 }
@@ -391,4 +440,5 @@ li.ngg-next a, li.ngg-prev a  {
 	padding-top: 10px;
 	border: none;
 	text-decoration: none;
-}
+}*/
+
