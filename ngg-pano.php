@@ -312,10 +312,15 @@ class nggPanoLoader {
 		// activate swfkrpano.js
                 wp_register_script( 'swfkrpano', NGGPANOGALLERY_URLPATH . 'krpano/swfkrpano.js',array(), '1' );
                 wp_enqueue_script( 'swfkrpano' );
-            	//	activate Thickbox
-			wp_enqueue_script( 'thickbox' );
-			// Load the thickbox images after all other scripts
-			add_action( 'wp_footer', array(&$this, 'load_thickbox_images'), 11 );
+		// activate gmap3.min.js
+                wp_register_script( 'googlemap', 'http://maps.google.com/maps/api/js?sensor=false',array(), '1' );
+                wp_enqueue_script( 'googlemap' );     
+                wp_register_script( 'gmap3', NGGPANOGALLERY_URLPATH . 'js/gmap3.min.js',array('jquery','googlemap'), '4.1' );
+                wp_enqueue_script( 'gmap3' );
+            	// activate Thickbox
+                wp_enqueue_script( 'thickbox' );
+                // Load the thickbox images after all other scripts
+                add_action( 'wp_footer', array(&$this, 'load_thickbox_images'), 11 );
 
 //
 //		// activate modified Shutter reloaded if not use the Shutter plugin

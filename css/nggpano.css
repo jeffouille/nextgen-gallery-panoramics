@@ -55,6 +55,29 @@ Version: 1
 	padding:4px;
 }
 
+/* ----------- Single Pano With Map -------------*/
+
+.nggpano-map{
+/*        height: 350px;
+        width: 600px;
+        margin: 20px auto;*/
+}
+
+.nggpano-map-left {
+	float: left;
+	margin-right:10px;
+}
+
+.nggpano-map-right {
+	float: right;
+	margin-left:10px;
+}
+
+.nggpano-map-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
 /*
 /* ----------- Album Styles Extend -------------*/
 /*

@@ -38,4 +38,24 @@ Please note : A Image resize or watermarking operation will remove all meta info
     viewer.embed("<?php echo $pano->contentdiv ?>");
 </script>
 
+    <?php if(is_array($gps) && isset($gps["lat"]) ) : ?>
+        <div id="map_<?php echo $pano->pid ?>" class="<?php echo $mapinfos['classname'] ?>" style="width:<?php echo $mapinfos['width'] ?>; height:<?php echo $mapinfos['height'] ?>;"></div>
+
+
+        <script>
+        jQuery('#map_<?php echo $pano->pid ?>').gmap3(
+            {   action:'init',
+                options:{
+                    center:[<?php echo $gps["lat"] ?>,<?php echo $gps["lng"] ?>],
+                    zoom: <?php echo $mapinfos['zoom'] ?>,
+                    mapTypeId : google.maps.MapTypeId.<?php echo $mapinfos['maptype'] ?>
+                }
+            },
+            { action: 'addMarker',
+            latLng:[<?php echo $gps["lat"] ?>,<?php echo $gps["lng"] ?>]
+            }
+        );
+        </script>
+
+    <?php endif; ?>
 <?php endif; ?>   

@@ -20,7 +20,7 @@ class NGPano_shortcodes {
         // add_filter('the_excerpt', 'do_shortcode', 11);
         
         add_shortcode( 'singlepano', array(&$this, 'show_singlepano' ) );
-        add_shortcode( 'album', array(&$this, 'show_album' ) );
+        add_shortcode( 'singlepanowithmap', array(&$this, 'show_panowithmap' ) );
         add_shortcode( 'nggallery', array(&$this, 'show_gallery') );
         add_shortcode( 'imagebrowser', array(&$this, 'show_imagebrowser' ) );
         add_shortcode( 'slideshow', array(&$this, 'show_slideshow' ) );
@@ -34,7 +34,7 @@ class NGPano_shortcodes {
     /**
      * Function to show a single panorama:
      * 
-     *     [singlepano id="10" float="none|left|right" width="" height="" link="url" "template="filename" mode="none|caption|gps" /]
+     *     [singlepano id="10" float="none|left|right" w="" h="" link="url" "template="filename" mode="none|caption" /]
      *
      * where
      *  - id is one picture id
@@ -43,7 +43,7 @@ class NGPano_shortcodes {
      *  - height is height of the single picture you want to show (original height if this parameter is missing)
      *  - link is optional and could link to a other url instead the full image
      *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
-     *  - mode 
+     *  - mode
      * 
      * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
      *      [singlepano id="10"]This is an additional caption[/singlepano]
@@ -58,8 +58,8 @@ class NGPano_shortcodes {
     
         extract(shortcode_atts(array(
             'id'        => 0,
-            'w'         => '',
-            'h'         => '',
+            'w'         => '100%',
+            'h'         => '100%',
             'mode'      => '',
             'float'     => '',
             'link'      => '',
@@ -71,7 +71,50 @@ class NGPano_shortcodes {
         return $out;
     }
     
+    /**
+     * Function to show a single panorama:
+     * 
+     *     [singlepanowithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" mode="none|caption" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *
+     * where
+     *  - id is one picture id
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - mode to display or not captions for the image
+     *  - mapw, maph and mapz are width, height and zoom level for the map
+     *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [singlepanowithmap id="10"]This is an additional caption[/singlepanowithmap]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_panowithmap( $atts, $content = '' ) {
     
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '',
+            'h'         => '',
+            'mode'      => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => 'withmap',
+            'mapw'      => '250',
+            'maph'      => '250',
+            'mapz'      => '13',
+            'maptype'   => 'HYBRID'
+        ), $atts ));
+        $out = nggpanoSinglePano($id, $w, $h, $mode, $float, $template, $content, $link, $mapw, $maph, $mapz, $maptype );
+            
+        return $out;
+    }
 
     /**
      * Function to show a collection of galleries:

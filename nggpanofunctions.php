@@ -25,9 +25,13 @@ function getSizeForPano($size = '100%') {
  * @param string $caption (optional) additional caption text
  * @param string $link (optional) link to a other url instead the full image
  * @param string $mode (optional) could be none, caption
+ * @param int (optional) $mapwidth, width of the map
+ * @param int (optional) $mapheight, height of the map
+ * @param int (optional) $mapzoom, zoom level of the map
+ * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
  * @return the content
  */
-function nggpanoSinglePano($imageID, $width = '', $height = '', $mode = '', $float = '' , $template = '', $caption = '') {
+function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = '', $float = '' , $template = '', $caption = '', $link = '', $mapwidth = 250, $mapheight = 250, $mapzoom = 10, $maptype = 'HYBRID') {
     global $post;
     
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
@@ -65,60 +69,47 @@ function nggpanoSinglePano($imageID, $width = '', $height = '', $mode = '', $flo
     
     //return $out;
     
-    // add float to img
+    // add float to pano
     switch ($float) {
         
         case 'left': 
-            $float =' nggpano-left';
+            $floatpano =' nggpano-left';
         break;
         
         case 'right': 
-            $float =' nggpano-right';
+            $floatpano =' nggpano-right';
         break;
 
         case 'center': 
-            $float =' nggpano-center';
+            $floatpano =' nggpano-center';
         break;
         
         default: 
-            $float ='';
+            $floatpano ='';
         break;
     }
     
      // clean mode if needed 
     $mode = ( preg_match('/(caption)/i', $mode) ) ? $mode : '';
     
-    /*
-    //let's initiate the url
-    $picture->thumbnailURL = false;
-
-    // check fo cached picture
-    if ( $post->post_status == 'publish' )
-        $picture->thumbnailURL = $picture->cached_singlepic_file($width, $height);
-    
-    // if we didn't use a cached image then we take the on-the-fly mode 
-    if (!$picture->thumbnailURL) 
-        $picture->thumbnailURL = home_url() . '/' . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height;
-    */
-    // add more variables for render output
-//    $picture->imageURL = ( empty($link) ) ? $picture->imageURL : $link;
-//    $picture->href_link = $picture->get_href_link();
-//    $picture->alttext = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
-//    $picture->linktitle = htmlspecialchars( stripslashes(nggPanoramic::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
-//    $picture->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
-//    $picture->classname = 'nggpano-singlepic'. $float;
-//    $picture->thumbcode = $picture->get_thumbcode( 'singlepic' . $imageID);
-//    $picture->height = (int) $height;
-//    $picture->width = (int) $width;
     
     // add more variables for render output
     $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
     $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
     $pano->caption = nggPanoramic::i18n($caption);
-    $pano->classname = 'nggpano-singlepano'. $float;
+    $pano->classname = 'nggpano-singlepano'. $floatpano;
     $pano->contentdiv = 'panocontent_' . $picture->pid;
+    
+    
+    //Height and Width for pano div
+    //get width and size
+    $widthpano = getSizeForPano($width);
+    $heightpano = getSizeForPano($height);
+    $panosize = array('width' => $widthpano, 'height' => $heightpano);
+    
+    /* MAP */
 
-     //Get GPS values for the current image
+    //Get GPS values for the current image
     $image_values = nggpano_getImagePanoramicOptions($imageID);
     $lat = isset($image_values->gps_lat) ? $image_values->gps_lat : '';
     $lng = isset($image_values->gps_lng) ? $image_values->gps_lng : '';
@@ -129,18 +120,42 @@ function nggpanoSinglePano($imageID, $width = '', $height = '', $mode = '', $flo
         'alt' => $alt
     );
     
-    //Height and Width for pano div
-    //get width and size
-    $widthpano = getSizeForPano(isset($width) && $width <> '' ? $width : '100%');
-    $heightpano = getSizeForPano(isset($height) && $height <> '' ? $height : '100%');
-    $panosize = array('width' => $widthpano, 'height' => $heightpano);
+    // add float to map
+    switch ($float) {
+        
+        case 'left': 
+            $floatmap =' nggpano-map-left';
+        break;
+        
+        case 'right': 
+            $floatmap =' nggpano-map-right';
+        break;
+
+        case 'center': 
+            $floatmap =' nggpano-map-center';
+        break;
+        
+        default: 
+            $floatmap ='';
+        break;
+    }
     
-       
+    // clean maptype if needed 
+    $maptype = ( preg_match('/(HYBRID|ROADMAP|SATELLITE|TERRAIN)/i', strtoupper($maptype)) ) ? strtoupper($maptype) : '';
+    //Get Map infos
+    $mapinfos = array(
+        'width'     => getSizeForPano($mapwidth),
+        'height'    => getSizeForPano($mapheight),
+        'zoom'      => $mapzoom,
+        'classname' => 'nggpano-map'. $floatmap,
+        'maptype'   => $maptype
+    );
+
     // look for singlepano-$template.php or pure singlepano.php
     $filename = ( empty($template) ) ? 'singlepano' : 'singlepano-' . $template;
 
     // create the output
-    $out = nggPanoramic::capture ( $filename, array ('pano' => $pano, 'gps' => $gps, 'panosize' => $panosize, 'mode' => $mode) );
+    $out = nggPanoramic::capture ( $filename, array ('pano' => $pano, 'gps' => $gps, 'panosize' => $panosize, 'mode' => $mode, 'mapinfos' => $mapinfos) );
 
     //$out = apply_filters('nggpano_show_singlepano_content', $out, $picture );
     
