@@ -58,9 +58,7 @@ Version: 1
 /* ----------- Single Pano With Map -------------*/
 
 .nggpano-map{
-/*        height: 350px;
-        width: 600px;
-        margin: 20px auto;*/
+        margin: 5px;
 }
 
 .nggpano-map-left {
@@ -76,6 +74,12 @@ Version: 1
 .nggpano-map-center {
     margin-left: auto !important;
     margin-right: auto !important;
+}
+
+
+.nggpano-picture-actions {
+    padding: 2px 0 0;
+/*    visibility: hidden;*/
 }
 
 /*

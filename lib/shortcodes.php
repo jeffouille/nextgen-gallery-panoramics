@@ -21,8 +21,8 @@ class NGPano_shortcodes {
         
         add_shortcode( 'singlepano', array(&$this, 'show_singlepano' ) );
         add_shortcode( 'singlepanowithmap', array(&$this, 'show_panowithmap' ) );
-        add_shortcode( 'nggallery', array(&$this, 'show_gallery') );
-        add_shortcode( 'imagebrowser', array(&$this, 'show_imagebrowser' ) );
+        add_shortcode( 'singlepicwithmap', array(&$this, 'show_singlepicwithmap') );
+        add_shortcode( 'singlepicwithlinks', array(&$this, 'show_singlepicwithlinks' ) );
         add_shortcode( 'slideshow', array(&$this, 'show_slideshow' ) );
         add_shortcode( 'nggtags', array(&$this, 'show_tags' ) );
         add_shortcode( 'thumb', array(&$this, 'show_thumbs' ) );
@@ -115,7 +115,102 @@ class NGPano_shortcodes {
             
         return $out;
     }
+    
+    /**
+     * Function to show a single picture:
+     * 
+     *     [singlepicwithmap id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" link="url" "template="filename" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *
+     * where
+     *  - id is one picture id
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - mode is one of none, watermark or web20 (transformation applied to the picture)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - mapw, maph and mapz are width, height and zoom level for the map
+     *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [singlepicwithmap id="10"]This is an additional caption[/singlepicwithmap]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_singlepicwithmap( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '',
+            'h'         => '',
+            'mode'      => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => 'withmap',
+            'mapw'      => '250',
+            'maph'      => '250',
+            'mapz'      => '13',
+            'maptype'   => 'HYBRID'
+        ), $atts ));
+    
+        $out = nggpanoSinglePictureWithMap($id, $w, $h, $mode, $float, $template, $content, $link, $mapw, $maph, $mapz, $maptype);
+            
+        return $out;
+    }
 
+    /**
+     * Function to show a single pic with links:
+     *
+     *     [singlepicwithlinks id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" "template="filename" mapz="" maptype="HYBRID|ROADMAP|SATELLITE|TERRAIN" links="all|picture|map|pano" mainlink="picture|map|pano|none" caption="full|none|title|description" /]
+     *
+     * where
+     *  - id is one picture id
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - mode is one of none, watermark or web20 (transformation applied to the picture)
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - mapz zoom level for the map
+     *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
+     *  - links links to display with the picture links all|picture|map|pano (possiblity to have 2 links : picture&map
+     *  - mainlink link to follow when click on the thumbnail picture|map|pano|none
+     *  - caption display or not the caption full|none|title|description
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [singlepicwithlinks id="10"]This is an additional caption[/singlepicwithlinks]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_singlepicwithlinks( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '100%',
+            'h'         => '100%',
+            'mode'      => '',
+            'float'     => '',
+            'template'  => '',
+            'mapz'      => '13',
+            'maptype'   => 'HYBRID',
+            'links'     => 'ALL',
+            'mainlink'  => 'PICTURE',
+            'captionmode'   => ''
+        ), $atts ));
+
+        $out = nggpanoSinglePictureWithLinks($id, $w, $h, $mode, $float, $template, $content, $mapz, $maptype, $links, $mainlink, $captionmode);
+            
+        return $out;
+    }
+    
+    
     /**
      * Function to show a collection of galleries:
      * 

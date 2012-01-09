@@ -55,4 +55,10 @@ nbproject
 # Mac OS
 .DS_Store
 ._.DS_Store
-
+/fancybox/jquery.fancybox.pack.js
+/fancybox/jquery.fancybox.css
+/fancybox/jquery.fancybox.js
+/fancybox/helpers/
+/fancybox/blank.gif
+/fancybox/fancybox_sprite.png
+/fancybox/fancybox_loading.gif

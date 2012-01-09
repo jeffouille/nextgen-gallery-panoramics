@@ -37,7 +37,7 @@ function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = 
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');
     //get the next Gen Gallery Options
-    $ngg_options = nggGallery::get_option('ngg_options');
+    //$ngg_options = nggGallery::get_option('ngg_options');
     
     
     // get the ngg Panoramic plugin options
@@ -94,11 +94,16 @@ function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = 
     
     
     // add more variables for render output
-    $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
-    $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pano_' . $picture->pid . '_alttext')) );
+    $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pano_' . $picture->pid . '_description')) );
     $pano->caption = nggPanoramic::i18n($caption);
     $pano->classname = 'nggpano-singlepano'. $floatpano;
-    $pano->contentdiv = 'panocontent_' . $picture->pid;
+    //random id for pano div
+    $pano->contentdiv = 'panocontent_' . rand() . '_' . $picture->pid;
+    $pano->swfid = 'krpanoSWFObject_' . rand() . '_' . $picture->pid;
+    
+    $pano->krpano_path    = trailingslashit($pano->krpanoFolderURL) . $pano->krpanoSWF;
+    $pano->krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$pano->pid;
     
     
     //Height and Width for pano div
@@ -148,7 +153,8 @@ function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = 
         'height'    => getSizeForPano($mapheight),
         'zoom'      => $mapzoom,
         'classname' => 'nggpano-map'. $floatmap,
-        'maptype'   => $maptype
+        'maptype'   => $maptype,
+        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
     );
 
     // look for singlepano-$template.php or pure singlepano.php
@@ -158,6 +164,397 @@ function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = 
     $out = nggPanoramic::capture ( $filename, array ('pano' => $pano, 'gps' => $gps, 'panosize' => $panosize, 'mode' => $mode, 'mapinfos' => $mapinfos) );
 
     //$out = apply_filters('nggpano_show_singlepano_content', $out, $picture );
+    
+    return $out;
+}
+
+/**
+ * nggpanoSinglePictureWithMap() - show a single picture based on the id with map under
+ * 
+ * @access public 
+ * @param int $imageID, db-ID of the image
+ * @param int (optional) $width, width of the image
+ * @param int (optional) $height, height of the image
+ * @param string $mode (optional) could be none, watermark, web20
+ * @param string $float (optional) could be none, left, right
+ * @param string $template (optional) name for a template file, look for singlepic-$template
+ * @param string $caption (optional) additional caption text
+ * @param string $link (optional) link to a other url instead the full image
+ * @param int (optional) $mapwidth, width of the map
+ * @param int (optional) $mapheight, height of the map
+ * @param int (optional) $mapzoom, zoom level of the map
+ * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
+ * @return the content
+ */
+function nggpanoSinglePictureWithMap($imageID, $width = 250, $height = 250, $mode = '', $float = '' , $template = '', $caption = '', $link = '', $mapwidth = 250, $mapheight = 250, $mapzoom = 10, $maptype = 'HYBRID') {
+    global $post;
+    
+    //$ngg_options = nggGallery::get_option('ngg_options');
+    
+    // get picturedata
+    $picture = nggdb::find_image($imageID);
+    
+    // if we didn't get some data, exit now
+    if ($picture == null)
+        return __('[SinglePic not found]','nggallery');
+            
+    // add float to img
+    switch ($float) {
+        
+        case 'left': 
+            $floatpic =' ngg-left';
+        break;
+        
+        case 'right': 
+            $floatpic =' ngg-right';
+        break;
+
+        case 'center': 
+            $floatpic =' ngg-center';
+        break;
+        
+        default: 
+            $floatpic ='';
+        break;
+    }
+    
+    // clean mode if needed 
+    $mode = ( preg_match('/(web20|watermark)/i', $mode) ) ? $mode : '';
+    
+    //let's initiate the url
+    $picture->thumbnailURL = false;
+
+    // check fo cached picture
+    if ( $post->post_status == 'publish' )
+        $picture->thumbnailURL = $picture->cached_singlepic_file($width, $height, $mode );
+    
+    // if we didn't use a cached image then we take the on-the-fly mode 
+    if (!$picture->thumbnailURL) 
+        $picture->thumbnailURL = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
+
+    // add more variables for render output
+    $picture->imageURL = ( empty($link) ) ? $picture->imageURL : $link;
+    $picture->href_link = $picture->get_href_link();
+    $picture->alttext = html_entity_decode( stripslashes(nggGallery::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
+    $picture->linktitle = htmlspecialchars( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $picture->description = html_entity_decode( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $picture->classname = 'ngg-singlepic'. $floatpic;
+    $picture->thumbcode = $picture->get_thumbcode( 'singlepic' . $imageID);
+    $picture->height = (int) $height;
+    $picture->width = (int) $width;
+    $picture->caption = nggPanoramic::i18n($caption);
+
+    // filter to add custom content for the output
+    $picture = apply_filters('ngg_image_object', $picture, $imageID);
+
+    // let's get the meta data
+    $meta = new nggMeta($imageID);
+    $meta->sanitize();
+    $exif = $meta->get_EXIF();
+    $iptc = $meta->get_IPTC();
+    $xmp  = $meta->get_XMP();
+    $db   = $meta->get_saved_meta();
+    
+    //if we get no exif information we try the database 
+    $exif = ($exif == false) ? $db : $exif;
+	       
+    // look for singlepic-$template.php or pure singlepic.php
+    $filename = ( empty($template) ) ? 'singlepic' : 'singlepic-' . $template;
+    /* MAP */
+
+    //Get GPS values for the current image
+    $image_values = nggpano_getImagePanoramicOptions($imageID);
+    $lat = isset($image_values->gps_lat) ? $image_values->gps_lat : '';
+    $lng = isset($image_values->gps_lng) ? $image_values->gps_lng : '';
+    $alt = isset($image_values->gps_alt) ? $image_values->gps_alt : '';
+    $gps = array(
+        'lat' => $lat,
+        'lng' => $lng,
+        'alt' => $alt
+    );
+    
+    // add float to map
+    switch ($float) {
+        
+        case 'left': 
+            $floatmap =' nggpano-map-left';
+        break;
+        
+        case 'right': 
+            $floatmap =' nggpano-map-right';
+        break;
+
+        case 'center': 
+            $floatmap =' nggpano-map-center';
+        break;
+        
+        default: 
+            $floatmap ='';
+        break;
+    }
+    
+    // clean maptype if needed 
+    $maptype = ( preg_match('/(HYBRID|ROADMAP|SATELLITE|TERRAIN)/i', strtoupper($maptype)) ) ? strtoupper($maptype) : '';
+    //Get Map infos
+
+    $mapinfos = array(
+        'width'     => getSizeForPano($mapwidth),
+        'height'    => getSizeForPano($mapheight),
+        'zoom'      => $mapzoom,
+        'classname' => 'nggpano-map'. $floatmap,
+        'maptype'   => $maptype,
+        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
+    );
+
+    // create the output
+    $out = nggPanoramic::capture ( $filename, array ('image' => $picture , 'meta' => $meta, 'exif' => $exif, 'iptc' => $iptc, 'xmp' => $xmp, 'db' => $db, 'mapinfos' => $mapinfos, 'gps' => $gps) );
+
+    $out = apply_filters('ngg_show_singlepic_content', $out, $picture );
+    
+    return $out;
+}
+
+/**
+ * nggpanoSinglePictureWithMap() - show a single picture based on the id
+ * 
+ * @access public 
+ * @param int $imageID, db-ID of the image
+ * @param int (optional) $width, width of the image
+ * @param int (optional) $height, height of the image
+ * @param string $mode (optional) could be none, watermark, web20
+ * @param string $float (optional) could be none, left, right
+ * @param string $template (optional) name for a template file, look for singlepic-$template
+ * @param string $caption (optional) additional caption text
+ * @param int (optional) $mapzoom, zoom level of the map
+ * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
+ * @param string (optional) $links, links to display under the thumbnail, could be all, picture, map, pano, picture&map, picture&pano, map&pano. Default all
+ * @param string (optional) $mainlink, link to follow when click on the thumbnail, could be picture, map, pano, none. Default none
+ * $param string (optional) $captionmode, display or not the caption, could be full, none, title, description. Default none
+ * @return the content
+ */
+function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $mode = '', $float = '' , $template = '', $caption = '', $mapzoom = 10, $maptype = 'HYBRID', $links = 'ALL', $mainlink = '', $captionmode = '') {
+    global $post;
+    
+    $nggpano_options = nggGallery::get_option('nggpano_options');
+    
+    /* PICTURE */
+    // get picturedata
+    $picture = nggdb::find_image($imageID);
+    
+    // if we didn't get some data, exit now
+    if ($picture == null)
+        return __('[SinglePic not found]','nggallery');
+            
+    // add float to img
+    switch ($float) {
+        
+        case 'left': 
+            $floatpic =' ngg-left';
+        break;
+        
+        case 'right': 
+            $floatpic =' ngg-right';
+        break;
+
+        case 'center': 
+            $floatpic =' ngg-center';
+        break;
+        
+        default: 
+            $floatpic ='';
+        break;
+    }
+    
+    // clean mode if needed 
+    $mode = ( preg_match('/(web20|watermark)/i', $mode) ) ? $mode : '';
+    
+    //let's initiate the url
+    $picture->thumbnailURL = false;
+
+    // check fo cached picture
+    if ( $post->post_status == 'publish' )
+        $picture->thumbnailURL = $picture->cached_singlepic_file($width, $height, $mode );
+    
+    // if we didn't use a cached image then we take the on-the-fly mode 
+    if (!$picture->thumbnailURL) 
+        $picture->thumbnailURL = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=' . $mode;
+
+    // add more variables for render output
+    $picture->imageURL = ( empty($link) ) ? $picture->imageURL : $link;
+    $picture->href_link = $picture->get_href_link();
+    $picture->alttext = html_entity_decode( stripslashes(nggGallery::i18n($picture->alttext, 'pic_' . $picture->pid . '_alttext')) );
+    $picture->linktitle = htmlspecialchars( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $picture->description = html_entity_decode( stripslashes(nggGallery::i18n($picture->description, 'pic_' . $picture->pid . '_description')) );
+    $picture->classname = 'ngg-singlepic'. $floatpic;
+    $picture->thumbcode = $picture->get_thumbcode( 'singlepic' . $imageID);
+    $picture->height = (int) $height;
+    $picture->width = (int) $width;
+    $picture->caption = nggPanoramic::i18n($caption);
+
+    // filter to add custom content for the output
+    $picture = apply_filters('ngg_image_object', $picture, $imageID);
+
+    // let's get the meta data
+    $meta = new nggMeta($imageID);
+    $meta->sanitize();
+    $exif = $meta->get_EXIF();
+    $iptc = $meta->get_IPTC();
+    $xmp  = $meta->get_XMP();
+    $db   = $meta->get_saved_meta();
+    
+    //if we get no exif information we try the database 
+    $exif = ($exif == false) ? $db : $exif;
+	       
+    // look for singlepicwithlinks-$template.php or pure singlepicwithlinks.php
+    $filename = ( empty($template) ) ? 'singlepicwithlinks' : 'singlepicwithlinks-' . $template;
+    
+    // clean captionmode if needed 
+    $captionmode = ( preg_match('/(caption)/i', $captionmode) ) ? $captionmode : '';
+    
+ 
+    /* PANO */
+    //Get galleryid
+    $gid = $picture->galleryid;
+    
+    //new pano from pictureid
+    $pano = new nggpanoPano($imageID, $gid);
+    // if we didn't get pano, exit now
+    if (!$pano->exists())
+        return __('[Pano not build]','nggpano');
+
+    //get all infos from DB
+    $pano = $pano->getObjectFromDB();
+    
+    if (!$pano)
+        return __('[Pano not found in database]','nggpano');
+    
+    // add more variables for render output
+    $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pano_' . $picture->pid . '_alttext')) );
+    $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pano_' . $picture->pid . '_description')) );
+    $pano->caption = nggPanoramic::i18n($caption);
+    $pano->contentdiv = 'panocontent_' . rand() . '_' . $picture->pid;
+    $pano->swfid = 'krpanoSWFObject_' . rand() . '_' . $picture->pid;
+    $pano->krpano_path    = trailingslashit($pano->krpanoFolderURL) . $pano->krpanoSWF;
+    $pano->krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$pano->pid;
+
+    
+    /* MAP */
+
+    //Get GPS values for the current image
+    $image_values = nggpano_getImagePanoramicOptions($imageID);
+    $lat = isset($image_values->gps_lat) ? $image_values->gps_lat : '';
+    $lng = isset($image_values->gps_lng) ? $image_values->gps_lng : '';
+    $alt = isset($image_values->gps_alt) ? $image_values->gps_alt : '';
+    $gps = array(
+        'lat' => $lat,
+        'lng' => $lng,
+        'alt' => $alt
+    );
+
+    
+    // clean maptype if needed 
+    $maptype = ( preg_match('/(HYBRID|ROADMAP|SATELLITE|TERRAIN)/i', strtoupper($maptype)) ) ? strtoupper($maptype) : '';
+    //Get Map infos
+    $mapinfos = array(
+        'zoom'      => $mapzoom,
+        'maptype'   => $maptype,
+        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
+    );
+    
+    
+    
+    /* LINKS TO SHOW */
+    $links_to_show = array(
+        'picture'   => array('available' => false, 'url' => ''),
+        'map'       => array('available' => false, 'url' => ''),
+        'pano'      => array('available' => false, 'url' => '')
+    );
+    
+
+    // clean links if needed
+    $links = ( preg_match('/(ALL|PICTURE|MAP|PANO)/i', strtoupper($links)) ) ? strtoupper($links) : '';
+    $links_array = split('&', strtoupper($links));
+    if (in_array('PICTURE', $links_array)) {
+        $links_to_show['picture']['available']= true;
+    }
+    if (in_array('MAP', $links_array)) {
+        $links_to_show['map']['available']= true;
+    }
+    if (in_array('PANO', $links_array)) {
+        $links_to_show['pano']['available']= true;
+    }
+    if (in_array('ALL', $links_array)) {
+        $links_to_show['picture']['available']= true;
+        $links_to_show['map']['available']= true;
+        $links_to_show['pano']['available']= true;
+    }
+    
+    //set url
+    
+    //get lightbox effect
+    $lightboxEffect = $nggpano_options['lightboxEffect'];
+
+    switch ($lightboxEffect) {
+        case 'colorbox':
+            $links_to_show['picture']['url'] = 'class="colorbox" href="' . $picture->imageURL . '"' ;
+            $links_to_show['map']['url'] = $picture->imageURL; //NGGPANOGALLERY_URLPATH . 'admin/pick-gps.php?id=' . $pano->pid
+            $links_to_show['pano']['url'] = 'class="colorboxpano" href="' . NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $pano->gid . '&pid=' . $pano->pid. '"';
+            break;
+
+        case 'thickbox':
+        default:
+            $links_to_show['picture']['url'] = 'class="thickbox" href="' . $picture->imageURL . '"' ;
+            $links_to_show['map']['url'] = 'class="thickbox" href="' . $picture->imageURL . '"' ;
+            $links_to_show['pano']['url'] = 'class="thickbox" href="' . NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $pano->gid . '&pid=' . $pano->pid. '&height=600&width=800"';
+            break;
+    }
+    
+    /* MAINLINK */
+    $mainlink = ( preg_match('/(PICTURE|MAP|PANO)/i', strtoupper($mainlink)) ) ? strtoupper($mainlink) : '';
+    switch ($mainlink) {
+        case 'PICTURE':
+            $mainlink = $links_to_show['picture']['url'];
+            break;
+        case 'MAP':
+            $mainlink = $links_to_show['map']['url'];
+            break;
+        case 'PANO':
+            $mainlink = $links_to_show['pano']['url'];
+            break;
+        default:
+            $mainlink = '' ;
+            break;
+    }
+
+    //xml=krpano.xml
+    //$links_to_show['pano']['custom_url'] = $pano->krpano_path . "&" . $pano->krpano_xml;
+////URL to show Pano
+//$url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $pano->gid . '&pid=' . $pano->pid. '&h=500&w=800';
+    //<a rel="prettyPhoto[ajax]" href="/demos/prettyPhoto-jquery-lightbox-clone/xhr_response.html?ajax=true&width=325&height=185">Ajax content</a>
+    ////    foreach ($links_array as $link) {
+//        $link = ( preg_match('/(ALL|PICTURE|MAP|PANO)/i', strtoupper($link)) ) ? strtoupper($link) : '';
+//    }
+    
+    
+    
+
+    // create the output
+    $out = nggPanoramic::capture ( $filename, array (
+                                                'image'     => $picture ,
+                                                'meta'      => $meta,
+                                                'exif'      => $exif,
+                                                'iptc'      => $iptc,
+                                                'xmp'       => $xmp,
+                                                'db'        => $db,
+                                                'mapinfos'  => $mapinfos,
+                                                'gps'       => $gps,
+                                                'pano'      => $pano,
+                                                'links'     => $links_to_show,
+                                                'mainlink'  => $mainlink,
+                                                'captionmode' => $captionmode
+                                              )
+                                );
+
     
     return $out;
 }

@@ -41,6 +41,19 @@ class nggPanoramic {
 		else
 			return false;		
 	}
+        
+	/**
+	 * Look for the stylesheet in the theme folder for colorbox
+	 * 
+	 * @return string path to stylesheet
+	 */
+	function get_colorbox_css_file() {
+	   
+            if ( file_exists (STYLESHEETPATH . '/nggpano/css/colorbox.css') )
+                    return get_stylesheet_directory_uri() . '/nggpano/css/colorbox.css';
+            else
+                    return false;		
+	}
 
 	/**
 	 * Support for i18n with wpml, polyglot or qtrans

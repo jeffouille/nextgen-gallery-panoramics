@@ -1,0 +1,7 @@
+Put Here from http://fancyapps.com/fancybox/ all fancybox files:
+jquery.fancybox.pack.js
+jquery.fancybox.css
+fancybox_sprite.png
+fancybox_loading.gif
+blank.gif
+helpers/ directory

@@ -30,6 +30,8 @@ add gps marker on image
 
 add license file config in admin
 
+DONE add shortcode simplepic with map
+
 DONE remove database record when remove a gallery
 
 NOT USEABLE TO REMOVE add option to automaticly create pano when image is added
@@ -40,7 +42,7 @@ add krpanoplugin configuration in plugin options and in gallery option
 
 check memory limit (gd vs imagemagik)
 
-create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
+DONE create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
 
 add possibility to add manually a pano (memory limit)
 

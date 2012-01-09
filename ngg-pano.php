@@ -308,7 +308,7 @@ class nggPanoLoader {
 	}
 	
 	function load_scripts() {
-            //global $ngg;
+            global $nggpano;
 		// activate swfkrpano.js
                 wp_register_script( 'swfkrpano', NGGPANOGALLERY_URLPATH . 'krpano/swfkrpano.js',array(), '1' );
                 wp_enqueue_script( 'swfkrpano' );
@@ -317,10 +317,31 @@ class nggPanoLoader {
                 wp_enqueue_script( 'googlemap' );     
                 wp_register_script( 'gmap3', NGGPANOGALLERY_URLPATH . 'js/gmap3.min.js',array('jquery','googlemap'), '4.1' );
                 wp_enqueue_script( 'gmap3' );
-            	// activate Thickbox
-                wp_enqueue_script( 'thickbox' );
-                // Load the thickbox images after all other scripts
-                add_action( 'wp_footer', array(&$this, 'load_thickbox_images'), 11 );
+                // activate the good lightbox script
+                //colorBox (http://jacklmoore.com/colorbox/)
+                if ( ($nggpano->options['lightboxEffect']) == "colorbox") {
+                    wp_register_script( 'colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/jquery.colorbox-min.js',array('jquery'), '1.3.19' );
+                    wp_enqueue_script( 'colorbox' );
+//                    //Load the colorbox for link after all other scripts before end of body tag
+                    wp_register_script( 'nggpanocolorbox', NGGPANOGALLERY_URLPATH . 'js/nggpano.colorbox.js',array('colorbox'), '1.0', true );
+                    wp_enqueue_script( 'nggpanocolorbox' );
+                }
+                //thickbox (include in Wordpress)
+                if ( ($nggpano->options['lightboxEffect']) == "thickbox") {
+                //add_action('wp_footer', array(&$this, 'load_prettyphoto_links'), 12 );
+                    // activate Thickbox
+                    wp_enqueue_script( 'thickbox' );
+                    // Load the thickbox images after all other scripts
+                    add_action( 'wp_footer', array(&$this, 'load_thickbox_images'), 11 );
+                }
+                //fancybox (http://fancyapps.com/fancybox/)
+                if ( ($nggpano->options['lightboxEffect']) == "fancybox") {
+                    wp_register_script( 'fancybox', NGGPANOGALLERY_URLPATH . 'fancybox/jquery.fancybox.pack.js',array('jquery'), '2.0.4' );
+                    wp_enqueue_script( 'fancybox' );
+//                    //Load the colorbox for link after all other scripts before end of body tag
+                    wp_register_script( 'nggpanofancybox', NGGPANOGALLERY_URLPATH . 'js/nggpano.fancybox.js',array('fancybox'), '1.0', true );
+                    wp_enqueue_script( 'nggpanofancybox' );
+                }
 
 //
 //		// activate modified Shutter reloaded if not use the Shutter plugin
@@ -355,6 +376,14 @@ class nggPanoLoader {
 //		}
 		
 	}
+        
+//        function load_prettyphoto_links() {
+//                wp_register_script( 'nggpanoprettyphoto', NGGPANOGALLERY_URLPATH . 'js/nggpano.prettyPhoto.js',array('prettyphoto'), '1.0', true );
+//                wp_enqueue_script( 'nggpanoprettyphoto' );
+
+//        }
+        
+        
 	
 	function load_thickbox_images() {
 		// WP core reference relative to the images. Bad idea
@@ -363,15 +392,26 @@ class nggPanoLoader {
 	
 	function load_styles() {
 		
-		// check first the theme folder for a nggallery.css
+		// check first the theme folder for a nggpano.css
 		if ( nggPanoramic::get_theme_css_file() )
 			wp_enqueue_style('NextGENPanoramics', nggPanoramic::get_theme_css_file() , false, '1.0.0', 'screen'); 
 		else if ($this->options['activateCSS'])
 			wp_enqueue_style('NextGENPanoramics', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['CSSfile'], false, '1.0.0', 'screen'); 
 		
+                if ( ($this->options['lightboxEffect'] == 'colorbox') ) {
+                    // get css for colorbox
+                    if ( nggPanoramic::get_colorbox_css_file() )
+                            wp_enqueue_style('colorbox', nggPanoramic::get_colorbox_css_file() , false, '1.0.0', 'screen'); 
+                    else 
+                            wp_enqueue_style('colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/colorbox.css' , false, '1.0.0', 'screen'); 
+                    //else if ($this->options['activateprettyPhotoCSS'])
+                    //	wp_enqueue_style('prettyPhoto', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['prettyPhotoCSSfile'], false, '1.0.0', 'screen'); 
+                }
+                
+                if ( ($this->options['lightboxEffect'] == 'thickbox') ) {
 		//	activate Thickbox
-		wp_enqueue_style( 'thickbox');
-
+                    wp_enqueue_style( 'thickbox');
+                }
 		// activate modified Shutter reloaded if not use the Shutter plugin
 //		if ( ($this->options['thumbEffect'] == 'shutter') && !function_exists('srel_makeshutter') )
 //			wp_enqueue_style('shutter', NGGPANOGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.3', 'screen');

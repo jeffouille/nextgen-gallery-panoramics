@@ -767,10 +767,71 @@ class nggpanoPano{
 
             $str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';">...Loading Panoramic...</div>';
             
-            $str_return .='<script>';
+            $str_return .='<script type="text/javascript">';
+            $str_return .='function initializePano() {';
             $str_return .=' var viewer = createPanoViewer({swf:"'.$krpano_path.'", wmode:"opaque"});';
             $str_return .=' viewer.addVariable("xml", "'.$krpano_xml.'");';
             $str_return .=' viewer.embed("'.$divid.'");';
+            $str_return .='}';
+            $str_return .='initializePano()';
+            $str_return .='</script>';
+            $str_return .='';
+            
+
+
+        } else {
+            $str_return .='<h1>ERROR</h1>';
+            $str_return .='<h4>'. $this->errmsg . '</h4>';
+        }
+        
+        if($no_output) {
+            return $str_return;
+        } else {
+            echo $str_return;
+        }
+  }
+  
+  public function getScriptForPrettyPhoto($no_output=false) {
+        $str_return = '';
+        //Check all files for generation
+        if($this->error == false) {
+            //Throw an error if a file doesn't exist
+            //VIEWER
+            //check to see if krpano viewer file exists
+            if(!file_exists(trailingslashit($this->krpanoFolderPath) . $this->krpanoSWF)) {
+                $this->errmsg = $this->krpanoSWF .' file not found in ' . $this->krpanoFolder;
+                $this->error = true;
+            }
+            //check to see if Skin file exists
+            elseif(!file_exists($this->viewerTemplatePath)) {
+                $this->errmsg = 'Template file '. $this->viewerTemplate .' not found';
+                $this->error = true;
+            }
+            //check to see if pano correctly build
+            elseif(!$this->exists()) {
+                $this->errmsg = 'Panorama not found';
+                $this->error = true;
+            }
+        }
+        
+        if($this->error == false) {
+
+            //load pano information from database
+            $this->loadFromDB();
+
+            //$is_mobile_phone = nggGallery::detect_mobile_phone();
+
+            $krpano_path    = trailingslashit($this->krpanoFolderURL) . $this->krpanoSWF;
+            $krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$this->pid;
+
+            //$str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';">...Loading Panoramic...</div>';
+            
+            $str_return .='<script type="text/javascript">';
+            $str_return .='function initializePano() {';
+            $str_return .=' var viewer = createPanoViewer({swf:"'.$krpano_path.'", wmode:"opaque"});';
+            $str_return .=' viewer.addVariable("xml", "'.$krpano_xml.'");';
+            $str_return .=' viewer.embed("pano_canvas");';
+            $str_return .='}';
             $str_return .='</script>';
             $str_return .='';
             

@@ -119,7 +119,6 @@ class nggpanoAdminPanel{
     <h2><?php _e('Welcome to NextGEN Gallery Panoramics', 'nggpano'); ?></h2>
     <p><?php _e('This plugin adds the ability to create panoramics viewer using krpano (www.krpano.com) from NextGen Images', 'nggpano'); ?>
 <?php
-echo STYLESHEETPATH;
 //    
 //            $nggpano_options['toolConfigFile']	= 'default_kmakemultires.config';  	// set default config file for krapnotool
 	/*
@@ -140,21 +139,32 @@ echo STYLESHEETPATH;
     <div id="poststuff">
         <form id="" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
             <?php wp_nonce_field('nggpano_settings') ?>
-            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview" />	
+            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect" />	
 <!--            <input type="hidden" name="force" value="1" />  this will just force _POST['nggpano'] even if all checkboxes are unchecked -->
             <div class="postbox">
                 <h3><?php _e('Preview Options', 'nggpano'); ?></h3>
                 <p class="inside"><?php _e('Here you can set the default size for the preview of a panoramic', 'nggpano'); ?></p>
                 <table class="form-table">
                     <tr valign="top">
-                        <th colspan="4" align="left"><p class="inside" style="text-align:left"><?php _e('Once the pnaoramic is built, you can reduce the origianl image to have nice preview', 'nggpano'); ?></th>
+                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Once the panoramic is built, you can reduce the original image to have nice preview', 'nggpano'); ?></th>
+                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Script for LightBox effect', 'nggpano'); ?></th>
                     </tr>
                     <tr valign="top">
-                        <th colspan="1"><?php _e('Preview Size','nggpano'); ?></th>
-                        <td colspan="3">
+                        <th align="left"><?php _e('Preview Size','nggpano'); ?></th>
+                        <td>
                             <input type="text" size="5" name="widthPreview" value="<?php echo $nggpano->options['widthPreview']; ?>" />
                             x <input type="text" size="5" name="heightPreview" value="<?php echo $nggpano->options['heightPreview']; ?>" />
                             <span class="setting-description"><?php _e('Max Width and Height in Pixel for the preview','nggpano') ?></span>
+                        </td>
+                        <th align="left"><?php _e('Script','nggpano'); ?></th>
+                        <td>
+                            <select name="lightboxEffect" id="lightboxEffect" style="margin: 0pt; padding: 0pt;">
+                                <?php
+                                $act_scriptfile = $nggpano->options['lightboxEffect'];
+                                ?>
+                                <option value="thickbox" <?php echo ($act_scriptfile == "thickbox" ) ? "selected='selected'" : "" ?>>Default Wordpress Thickbox</option>
+                                <option value="colorbox" <?php echo ($act_scriptfile == "colorbox" ) ? "selected='selected'" : "" ?>>ColorBox (http://jacklmoore.com/colorbox/)</option>
+                            </select>
                         </td>
                     </tr>
                 </table>               

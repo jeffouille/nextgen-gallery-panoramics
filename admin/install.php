@@ -118,11 +118,14 @@ function nggpano_default_options() {
 	global $blog_id, $nggpano;
 
 	//Krpano Tool
-        $nggpano_options['toolConfigFile']	= 'default_kmakemultires.config';  	// set default config file for krapnotool
-	$nggpano_options['krpanoToolsTempFolder']		= get_temp_dir()."/temp/";			// default temp path to for krpanotool works
+        $nggpano_options['toolConfigFile']              = 'default_kmakemultires.config';  	// set default config file for krapnotool
+	$nggpano_options['krpanoToolsTempFolder']	= get_temp_dir()."/temp/";		// default temp path to for krpanotool works
         $nggpano_options['kmakemultiresFolder']         = "wp-content/plugins/".NGGPANOFOLDER."/krpanotools/";
         $nggpano_options['kmakemultiresConfigFolder']	= "wp-content/plugins/".NGGPANOFOLDER."/krpanotools_configs/";
         $nggpano_options['kmakemultiresXMLConfig']	= "wp-content/plugins/".NGGPANOFOLDER."/krpanotools_xml_config/default.xml";
+        
+        //Lightbox Script
+        $nggpano_options['lightboxEffect']              = 'thickbox';
         
 	
 	//Krpano Viewer

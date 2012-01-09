@@ -71,7 +71,7 @@ class nggpanoKrpanoXML {
             $this->result	= array();
 
             $this->start_process();
-            $this->render_output();
+            $this->render_output(true);
     }
 
     function start_process() {
@@ -140,7 +140,7 @@ class nggpanoKrpanoXML {
         return $xml;
     }
 	
-    function render_output() {
+    function render_output($debug) {
         global $ngg, $nggpano;
         
         
@@ -149,7 +149,11 @@ class nggpanoKrpanoXML {
         $this->output  = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n";
         //$this->output .= "<xml>\n";
         //$this->output .= "<debug>" .$this->create_xml_array($this->method) . $this->create_xml_array($this->id) .$this->create_xml_array($this->result) . "</debug>\n";
-        $this->output .= $this->result['xmlpanonode'];	
+        $this->output .= $this->result['xmlpanonode'];
+        
+        if($debug) {
+            $this->output .= '<plugin name="options" url="../krpano_plugins/options.swf" />';
+        }
         //$this->output .= "<krpano>" . $this->result['xmlpanonode']  . "</krpano>\n";
         //$this->output .="</xml>";
         
