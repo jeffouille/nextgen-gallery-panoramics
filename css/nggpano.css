@@ -19,21 +19,23 @@ Version: 1
 .nggpano-left {
 	float: left;
 	margin-right:10px;
+        text-align: left;
 }
 
 .nggpano-right {
 	float: right;
 	margin-left:10px;
+        text-align: right;
 }
 
 .nggpano-center {
     margin-left: auto !important;
     margin-right: auto !important;
+    text-align: center;
 }
 
 .nggpano-title {
 	float: left;
-        text-align: center;
         width:100%;
         display:block;  
 	padding:4px;
@@ -41,7 +43,6 @@ Version: 1
 
 .nggpano-caption {
 	float: left;
-        text-align: center;
         width:100%;
         display:block;  
 	padding:4px;
@@ -49,7 +50,6 @@ Version: 1
 
 .nggpano-description {
 	float: left;
-        text-align: center;
         width:100%;
         display:block;  
 	padding:4px;
@@ -76,12 +76,66 @@ Version: 1
     margin-right: auto !important;
 }
 
-
+/* ----------- Single Pano With Links -------------*/
 .nggpano-picture-actions {
-    padding: 2px 0 0;
+    padding: 2px 0;
+    clear: both;
 /*    visibility: hidden;*/
 }
 
+.nggpano-links-left {
+	float: left;
+	margin-right:10px;
+        text-align: left;
+}
+
+.nggpano-links-right {
+	float: right;
+	margin-left:10px;
+        text-align: right;
+}
+
+.nggpano-links-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center;
+}
+
+/* Zoom optional icon style for ColorBox */
+.zoomIcon { 
+        width:33px; 
+        height:33px; 
+        position:absolute; 
+        top:0;
+        right:0;
+        background: url(../images/zoom-icon.png);
+}
+
+#cboxLoadedContent img:hover { cursor: url(../images/grab.cur), default; }
+#cboxLoadedContent img:active { cursor: url(../images/grabbed.cur), default; }
+
+
+/**/
+
+.map_infowindow
+{
+    width:100%; 
+    height:100%;
+    float: left;
+}
+.map_infowindow span.thumb
+{
+    float: left;
+    text-align: center;
+    width:100%; 
+}
+.map_infowindow span.title
+{
+    float: left;
+    width:100%; 
+    height:100%;
+    text-align: center;
+}
 /*
 /* ----------- Album Styles Extend -------------*/
 /*

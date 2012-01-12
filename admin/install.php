@@ -95,7 +95,7 @@ function nggpano_install () {
 		return;
 	}
 	//TODO Remove this delete line after test
-        //delete_option( 'nggpano_options' );
+        delete_option( 'nggpano_options' );
 	$options = get_option('nggpano_options');
 	// set the default settings, if we didn't upgrade
 	if ( empty( $options ) )	
@@ -126,6 +126,7 @@ function nggpano_default_options() {
         
         //Lightbox Script
         $nggpano_options['lightboxEffect']              = 'thickbox';
+        $nggpano_options['colorboxCSSfile']                 = 'colorbox-1.css';
         
 	
 	//Krpano Viewer

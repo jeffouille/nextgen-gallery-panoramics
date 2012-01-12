@@ -54,6 +54,54 @@ class nggPanoramic {
             else
                     return false;		
 	}
+        
+	/**
+	 * Look for the stylesheet in the theme folder for fancybox
+	 * 
+	 * @return string path to stylesheet
+	 */
+	function get_fancybox_css_file($option = '') {
+           
+           switch ($option) {
+               case 'thumbs':
+                    if ( file_exists (STYLESHEETPATH . '/nggpano/css/fancybox-thumbs.css') )
+                        return get_stylesheet_directory_uri() . '/nggpano/css/fancybox-thumbs.css';
+                    else
+                        return false;
+                   break;
+               case 'buttons':
+                    if ( file_exists (STYLESHEETPATH . '/nggpano/css/fancybox-buttons.css') )
+                        return get_stylesheet_directory_uri() . '/nggpano/css/fancybox-buttons.css';
+                    else
+                        return false;
+                   break;
+               default:
+                    if ( file_exists (STYLESHEETPATH . '/nggpano/css/fancybox.css') )
+                        return get_stylesheet_directory_uri() . '/nggpano/css/fancybox.css';
+                    else
+                        return false;
+                   break;
+           }
+           
+            		
+	}
+        
+	/**
+	 * Look for the stylesheet in the theme folder for prettyphoto
+	 * 
+	 * @return string path to stylesheet
+	 */
+	function get_prettyphoto_css_file() {
+
+            if ( file_exists (STYLESHEETPATH . '/nggpano/css/prettyphoto.css') )
+                return get_stylesheet_directory_uri() . '/nggpano/css/prettyphoto.css';
+            else
+                return false;
+		
+	}
+        
+        
+        
 
 	/**
 	 * Support for i18n with wpml, polyglot or qtrans

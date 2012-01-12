@@ -12,14 +12,21 @@
 jQuery(document).ready(function(){
     jQuery('a.colorbox').colorbox({
         width:'95%',
-        rel:'picture'
+        onComplete: function(){
+            jQuery('#cboxLoadedContent').zoom({grab: true});
+        }
     });
     jQuery('a.colorboxpano').colorbox({
         width:'95%',
         height:'95%',
         scrolling : false,
-        rel:'pano',
-        onComplete:function(){ initializePano(); console.log('onComplete: colorbox has displayed the loaded content'); console.log(jQuery(this)); }
+        onComplete:function(){ initializePano(); }
+    });
+    jQuery('a.colorboxmap').colorbox({
+        scrolling : false,
+        width:'600',
+        height:'600',
+        onComplete:function(){ initializeMap(); }
     });
     //jQuery('a.colorbox').colorbox({ opacity:0.5 , rel:'group1' });
 });

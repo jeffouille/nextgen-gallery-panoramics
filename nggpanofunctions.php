@@ -154,14 +154,22 @@ function nggpanoSinglePano($imageID, $width = '100%', $height = '100%', $mode = 
         'zoom'      => $mapzoom,
         'classname' => 'nggpano-map'. $floatmap,
         'maptype'   => $maptype,
-        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
+        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid,
+        'thumbinfowindow' => trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=200'
     );
 
     // look for singlepano-$template.php or pure singlepano.php
     $filename = ( empty($template) ) ? 'singlepano' : 'singlepano-' . $template;
 
     // create the output
-    $out = nggPanoramic::capture ( $filename, array ('pano' => $pano, 'gps' => $gps, 'panosize' => $panosize, 'mode' => $mode, 'mapinfos' => $mapinfos) );
+    $out = nggPanoramic::capture ( $filename, array (
+                                               'pano' => $pano,
+                                               'gps' => $gps,
+                                               'panosize' => $panosize,
+                                               'mode' => $mode,
+                                               'mapinfos' => $mapinfos,
+                                               'float' => $floatpano)
+                                );
 
     //$out = apply_filters('nggpano_show_singlepano_content', $out, $picture );
     
@@ -303,7 +311,8 @@ function nggpanoSinglePictureWithMap($imageID, $width = 250, $height = 250, $mod
         'zoom'      => $mapzoom,
         'classname' => 'nggpano-map'. $floatmap,
         'maptype'   => $maptype,
-        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
+        'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid,
+        'thumbinfowindow' => trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $imageID . '&amp;width=200'
     );
 
     // create the output
@@ -350,18 +359,22 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
         
         case 'left': 
             $floatpic =' ngg-left';
+            $floatlinks = ' nggpano-links-left';
         break;
         
         case 'right': 
             $floatpic =' ngg-right';
+            $floatlinks = ' nggpano-links-right';
         break;
 
         case 'center': 
             $floatpic =' ngg-center';
+            $floatlinks = ' nggpano-links-center';
         break;
         
         default: 
             $floatpic ='';
+            $floatlinks = '';
         break;
     }
     
@@ -419,24 +432,21 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
     //new pano from pictureid
     $pano = new nggpanoPano($imageID, $gid);
     // if we didn't get pano, exit now
-    if (!$pano->exists())
-        return __('[Pano not build]','nggpano');
-
-    //get all infos from DB
-    $pano = $pano->getObjectFromDB();
+    $panoexist = $pano->exists();
+    if ($panoexist) {
+        $panoobj = $pano->getObjectFromDB();
     
-    if (!$pano)
-        return __('[Pano not found in database]','nggpano');
-    
-    // add more variables for render output
-    $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pano_' . $picture->pid . '_alttext')) );
-    $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pano_' . $picture->pid . '_description')) );
-    $pano->caption = nggPanoramic::i18n($caption);
-    $pano->contentdiv = 'panocontent_' . rand() . '_' . $picture->pid;
-    $pano->swfid = 'krpanoSWFObject_' . rand() . '_' . $picture->pid;
-    $pano->krpano_path    = trailingslashit($pano->krpanoFolderURL) . $pano->krpanoSWF;
-    $pano->krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$pano->pid;
-
+        if ($panoobj) {
+            // add more variables for render output
+            $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pano_' . $picture->pid . '_alttext')) );
+            $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pano_' . $picture->pid . '_description')) );
+            $pano->caption = nggPanoramic::i18n($caption);
+            $pano->contentdiv = 'panocontent_' . rand() . '_' . $picture->pid;
+            $pano->swfid = 'krpanoSWFObject_' . rand() . '_' . $picture->pid;
+            $pano->krpano_path    = trailingslashit($pano->krpanoFolderURL) . $pano->krpanoSWF;
+            $pano->krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$pano->pid;
+        }
+    }
     
     /* MAP */
 
@@ -461,6 +471,10 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
         'div_id'    => 'map_pic_' . rand() . '_' . $picture->pid
     );
     
+    $mapavailable = false;
+    if(is_array($gps) && (isset($gps["lat"]) && strlen($gps["lat"]) > 0) && (isset($gps["lng"]) && strlen($gps["lng"]) > 0))
+        $mapavailable = true;
+    
     
     
     /* LINKS TO SHOW */
@@ -478,34 +492,47 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
         $links_to_show['picture']['available']= true;
     }
     if (in_array('MAP', $links_array)) {
-        $links_to_show['map']['available']= true;
+        if($mapavailable)
+            $links_to_show['map']['available']= true;
     }
     if (in_array('PANO', $links_array)) {
-        $links_to_show['pano']['available']= true;
+        if($panoexist && $panoobj)
+            $links_to_show['pano']['available']= true;
     }
     if (in_array('ALL', $links_array)) {
         $links_to_show['picture']['available']= true;
-        $links_to_show['map']['available']= true;
-        $links_to_show['pano']['available']= true;
+        if($mapavailable)
+            $links_to_show['map']['available']= true;
+        if($panoexist && $panoobj)
+            $links_to_show['pano']['available']= true;
     }
     
     //set url
+    $picture_href = $picture->imageURL;
+    $pano_href = NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $pano->gid . '&pid=' . $pano->pid;
+    $map_href = NGGPANOGALLERY_URLPATH . 'nggpanomap.php?pid=' . $pano->pid . '&type=' . $maptype . '&zoom=' . $mapzoom;
     
     //get lightbox effect
     $lightboxEffect = $nggpano_options['lightboxEffect'];
 
     switch ($lightboxEffect) {
         case 'colorbox':
-            $links_to_show['picture']['url'] = 'class="colorbox" href="' . $picture->imageURL . '"' ;
-            $links_to_show['map']['url'] = $picture->imageURL; //NGGPANOGALLERY_URLPATH . 'admin/pick-gps.php?id=' . $pano->pid
-            $links_to_show['pano']['url'] = 'class="colorboxpano" href="' . NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $pano->gid . '&pid=' . $pano->pid. '"';
+            $links_to_show['picture']['url'] = 'class="colorbox" rel="colorbox[picture]" href="' . $picture_href . '"' ;
+            $links_to_show['map']['url'] = 'class="colorboxmap" rel="colorbox[map]" href="' . $map_href . '"' ;
+            $links_to_show['pano']['url'] = 'class="colorboxpano" rel="colorbox[pano]" href="' . $pano_href . '"';
+            break;
+        
+        case 'fancybox':
+            $links_to_show['picture']['url'] = 'class="fancybox" rel="fancybox[picture]" href="' . $picture_href . '"' ;
+            $links_to_show['map']['url'] = 'class="fancyboxmap" rel="fancybox[map]" href="' . $map_href . '"' ;
+            $links_to_show['pano']['url'] = 'class="fancyboxpano" rel="fancybox[pano]" href="' . $pano_href . '"';
             break;
 
         case 'thickbox':
         default:
-            $links_to_show['picture']['url'] = 'class="thickbox" href="' . $picture->imageURL . '"' ;
-            $links_to_show['map']['url'] = 'class="thickbox" href="' . $picture->imageURL . '"' ;
-            $links_to_show['pano']['url'] = 'class="thickbox" href="' . NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $pano->gid . '&pid=' . $pano->pid. '&height=600&width=800"';
+            $links_to_show['picture']['url'] = 'class="thickbox" rel="thickbox[picture]" href="' . $picture_href . '"' ;
+            $links_to_show['map']['url'] = 'class="thickbox" rel="thickbox[map]" href="' . $map_href . '&init=true&height=600&width=600" ';
+            $links_to_show['pano']['url'] = 'class="thickbox" rel="thickbox[pano]" href="' . $pano_href. '&height=600&width=800"';
             break;
     }
     
@@ -513,13 +540,19 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
     $mainlink = ( preg_match('/(PICTURE|MAP|PANO)/i', strtoupper($mainlink)) ) ? strtoupper($mainlink) : '';
     switch ($mainlink) {
         case 'PICTURE':
-            $mainlink = $links_to_show['picture']['url'];
+            $mainlink = str_replace('[picture]"', '[mainpicture]"', $links_to_show['picture']['url']);
             break;
         case 'MAP':
-            $mainlink = $links_to_show['map']['url'];
+            if($mapavailable)
+                $mainlink = str_replace('[map]"', '[mainmap]"', $links_to_show['map']['url'] );
+            else
+                $mainlink = str_replace('[picture]"', '[mainpicture]"', $links_to_show['picture']['url']);
             break;
         case 'PANO':
-            $mainlink = $links_to_show['pano']['url'];
+            if($panoexist && $panoobj)
+                $mainlink = str_replace('[pano]"', '[mainpano]"', $links_to_show['pano']['url']);
+            else
+                $mainlink = str_replace('[picture]"', '[mainpicture]"', $links_to_show['picture']['url']);
             break;
         default:
             $mainlink = '' ;
@@ -551,7 +584,8 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
                                                 'pano'      => $pano,
                                                 'links'     => $links_to_show,
                                                 'mainlink'  => $mainlink,
-                                                'captionmode' => $captionmode
+                                                'captionmode' => $captionmode,
+                                                'float'     => $floatlinks
                                               )
                                 );
 

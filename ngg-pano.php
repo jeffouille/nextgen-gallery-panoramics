@@ -320,11 +320,16 @@ class nggPanoLoader {
                 // activate the good lightbox script
                 //colorBox (http://jacklmoore.com/colorbox/)
                 if ( ($nggpano->options['lightboxEffect']) == "colorbox") {
-                    wp_register_script( 'colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/jquery.colorbox-min.js',array('jquery'), '1.3.19' );
-                    wp_enqueue_script( 'colorbox' );
-//                    //Load the colorbox for link after all other scripts before end of body tag
-                    wp_register_script( 'nggpanocolorbox', NGGPANOGALLERY_URLPATH . 'js/nggpano.colorbox.js',array('colorbox'), '1.0', true );
-                    wp_enqueue_script( 'nggpanocolorbox' );
+                    wp_register_script( 'jquery.colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/jquery.colorbox-min.js',array('jquery'), '1.3.19' );
+                    wp_enqueue_script( 'jquery.colorbox' );
+                    //Zoom Effect
+                    wp_register_script( 'jquery.zoom', NGGPANOGALLERY_URLPATH . 'colorbox/jquery.zoom-min.js',array('jquery'), '1.3' );
+                    wp_enqueue_script( 'jquery.zoom' );
+                    //Load the colorbox for link after all other scripts before end of body tag
+                    wp_register_script( 'nggpano.colorbox', NGGPANOGALLERY_URLPATH . 'js/nggpano.colorbox.js',array('jquery.colorbox'), '1.0', true );
+                    wp_enqueue_script( 'nggpano.colorbox' );
+                    
+                    
                 }
                 //thickbox (include in Wordpress)
                 if ( ($nggpano->options['lightboxEffect']) == "thickbox") {
@@ -336,12 +341,44 @@ class nggPanoLoader {
                 }
                 //fancybox (http://fancyapps.com/fancybox/)
                 if ( ($nggpano->options['lightboxEffect']) == "fancybox") {
-                    wp_register_script( 'fancybox', NGGPANOGALLERY_URLPATH . 'fancybox/jquery.fancybox.pack.js',array('jquery'), '2.0.4' );
-                    wp_enqueue_script( 'fancybox' );
-//                    //Load the colorbox for link after all other scripts before end of body tag
-                    wp_register_script( 'nggpanofancybox', NGGPANOGALLERY_URLPATH . 'js/nggpano.fancybox.js',array('fancybox'), '1.0', true );
-                    wp_enqueue_script( 'nggpanofancybox' );
+                    wp_register_script( 'jquery.fancybox', NGGPANOGALLERY_URLPATH . 'fancybox/jquery.fancybox.pack.js',array('jquery'), '2.0.4' );
+                    wp_enqueue_script( 'jquery.fancybox' );
+                    wp_register_script( 'mousewheel', NGGPANOGALLERY_URLPATH . 'js/jquery.mousewheel.pack.js',array('jquery'), '3.0.6' );
+                    wp_enqueue_script( 'mousewheel' );
+                    //Helpers
+                    wp_register_script( 'fancybox.buttons', NGGPANOGALLERY_URLPATH . 'fancybox/helpers/jquery.fancybox-buttons.js',array('jquery.fancybox'), '2.0.4' );
+                    wp_enqueue_script( 'fancybox.buttons' );
+                    wp_register_script( 'fancybox.thumbs', NGGPANOGALLERY_URLPATH . 'fancybox/helpers/jquery.fancybox-thumbs.js',array('jquery.fancybox'), '2.0.4' );
+                    wp_enqueue_script( 'fancybox.thumbs' );
+                    //Load the fancybox for link after all other scripts before end of body tag
+                    wp_register_script( 'nggpano.fancybox', NGGPANOGALLERY_URLPATH . 'js/nggpano.fancybox.js',array('jquery.fancybox'), '1.0', true );
+                    wp_localize_script('nggpano.fancybox', 'fancyboxi10nSettings', array(
+						'msgError' => __('The requested content cannot be loaded.<br/>Please try again later.', 'nggpano'),
+						'msgClose' => __('Click to Close', 'nggpano'),
+						'msgNext' =>  __('Next', 'nggpano'),
+                                                'msgPrevious' => __('Previous', 'nggpano'),
+                                                'msgStartSlideshow' => __('Start Slideshow', 'nggpano'),
+                                                'msgStopSlideshow' => __('Pause Slideshow', 'nggpano'),
+                                                'msgToggleSize' => __('Toggle Size', 'nggpano')
+			) );
+
+                    
+                    wp_enqueue_script( 'nggpano.fancybox' );
                 }
+                
+                //prettyPhoto (http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/)
+                //Callback doesnt work with this (good for image but not for pano and gmap
+                /*
+                if ( ($nggpano->options['lightboxEffect']) == "prettyphoto") {
+                    wp_register_script( 'jquery.prettyphoto', NGGPANOGALLERY_URLPATH . 'prettyphoto/jquery.prettyPhoto.js',array('jquery'), '3.1.3' );
+                    wp_enqueue_script( 'jquery.prettyphoto' );
+                    //Load the fancybox for link after all other scripts before end of body tag
+                    wp_register_script( 'nggpano.prettyphoto', NGGPANOGALLERY_URLPATH . 'js/nggpano.prettyphoto.js',array('jquery.prettyphoto'), '1.0', true );
+                    
+                    wp_enqueue_script( 'nggpano.prettyphoto' );
+                }
+                 
+                 */
 
 //
 //		// activate modified Shutter reloaded if not use the Shutter plugin
@@ -398,20 +435,57 @@ class nggPanoLoader {
 		else if ($this->options['activateCSS'])
 			wp_enqueue_style('NextGENPanoramics', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['CSSfile'], false, '1.0.0', 'screen'); 
 		
+                //colorBox (http://jacklmoore.com/colorbox/)
                 if ( ($this->options['lightboxEffect'] == 'colorbox') ) {
                     // get css for colorbox
                     if ( nggPanoramic::get_colorbox_css_file() )
-                            wp_enqueue_style('colorbox', nggPanoramic::get_colorbox_css_file() , false, '1.0.0', 'screen'); 
+                            wp_enqueue_style('colorbox', nggPanoramic::get_colorbox_css_file() , false, '1.3.19', 'screen');
+                    else if ($this->options['colorboxCSSfile'])
+                    	wp_enqueue_style('colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/css/' . $this->options['colorboxCSSfile'], false, '1.3.19', 'screen'); 
                     else 
-                            wp_enqueue_style('colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/colorbox.css' , false, '1.0.0', 'screen'); 
-                    //else if ($this->options['activateprettyPhotoCSS'])
-                    //	wp_enqueue_style('prettyPhoto', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['prettyPhotoCSSfile'], false, '1.0.0', 'screen'); 
+                        wp_enqueue_style('colorbox', NGGPANOGALLERY_URLPATH . 'colorbox/css/colorbox-1.css' , false, '1.3.19', 'screen'); 
+                    
                 }
                 
+                //thickbox (include in Wordpress)
                 if ( ($this->options['lightboxEffect'] == 'thickbox') ) {
 		//	activate Thickbox
                     wp_enqueue_style( 'thickbox');
                 }
+                
+                //fancybox (http://fancyapps.com/fancybox/)
+                if ( $this->options['lightboxEffect'] == "fancybox") {
+                    // get css for fancybox
+                    if ( nggPanoramic::get_fancybox_css_file() )
+                            wp_enqueue_style('fancybox', nggPanoramic::get_fancybox_css_file() , false, '2.0.4', 'screen'); 
+                    else 
+                            wp_enqueue_style('fancybox', NGGPANOGALLERY_URLPATH . 'fancybox/jquery.fancybox.css' , false, '2.0.4', 'screen');
+                    
+                    if ( nggPanoramic::get_fancybox_css_file('buttons') )
+                            wp_enqueue_style('fancyboxbuttons', nggPanoramic::get_fancybox_css_file('buttons') , false, '2.0.4', 'screen'); 
+                    else 
+                            wp_enqueue_style('fancyboxbuttons', NGGPANOGALLERY_URLPATH . 'fancybox/helpers/jquery.fancybox-buttons.css' , false, '2.0.4', 'screen');
+                    
+                    if ( nggPanoramic::get_fancybox_css_file('thumbs') )
+                            wp_enqueue_style('fancyboxthumbs', nggPanoramic::get_fancybox_css_file('thumbs') , false, '2.0.4', 'screen'); 
+                    else 
+                            wp_enqueue_style('fancyboxthumbs', NGGPANOGALLERY_URLPATH . 'fancybox/helpers/jquery.fancybox-thumbs.css' , false, '2.0.4', 'screen');
+
+                    //else if ($this->options['activateprettyPhotoCSS'])
+                    //	wp_enqueue_style('fancybox', NGGPANOGALLERY_URLPATH . 'css/' . $this->options['fancyBoxCSSfile'], false, '1.0.0', 'screen'); 
+                }
+                
+                //prettyPhoto (http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/)
+                //Callback doesnt work with this (good for image but not for pano and gmap
+                /*
+                if ( ($this->options['lightboxEffect']) == "prettyphoto") {
+                    if ( nggPanoramic::get_prettyphoto_css_file() )
+                            wp_enqueue_style('prettyphoto', nggPanoramic::get_prettyphoto_css_file() , false, '3.1.3', 'screen'); 
+                    else 
+                            wp_enqueue_style('prettyphoto', NGGPANOGALLERY_URLPATH . 'prettyphoto/css/prettyPhoto.css' , false, '3.1.3', 'screen');
+                    
+                }
+                 */
 		// activate modified Shutter reloaded if not use the Shutter plugin
 //		if ( ($this->options['thumbEffect'] == 'shutter') && !function_exists('srel_makeshutter') )
 //			wp_enqueue_style('shutter', NGGPANOGALLERY_URLPATH .'shutter/shutter-reloaded.css', false, '1.3.3', 'screen');

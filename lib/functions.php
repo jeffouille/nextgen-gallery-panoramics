@@ -245,7 +245,57 @@ if(preg_match("#".basename(__FILE__)."#", $_SERVER["PHP_SELF"])) {die("You are n
         $gps_data = $meta->get_Exif_GPS($assoc);
         return $gps_data;
 
-    }                           
+    }  
+    
+// read in the colorbox config files
+    function nggpano_get_colorboxcssfile() {
+            global $cssfiles;
+
+            if (isset ($cssfiles)) {
+                    return $cssfiles;
+            }
+            
+            $nggpano_options = get_option('nggpano_options');
+            
+            $cssfiles = array ();
+
+            // Files in wp-content/plugins/nextgen-gallery-panoramics/krpanotools_configs directory
+            $plugin_root = ABSPATH . "wp-content/plugins/".NGGPANOFOLDER . "/colorbox/css/";
+            
+            $plugins_dir = @dir($plugin_root);
+            if ($plugins_dir) {
+                    while (($file = $plugins_dir->read()) !== false) {
+                            if (preg_match('|^\.+$|', $file))
+                                    continue;
+                            if (is_dir($plugin_root.'/'.$file)) {
+                                    $plugins_subdir = @ dir($plugin_root.'/'.$file);
+                                    if ($plugins_subdir) {
+                                            while (($subfile = $plugins_subdir->read()) !== false) {
+                                                    if (preg_match('|^\.+$|', $subfile))
+                                                            continue;
+                                                    if (preg_match('|\.css$|', $subfile))
+                                                            $plugin_files[] = "$file/$subfile";
+                                            }
+                                    }
+                            } else {
+                                    if (preg_match('|\.css$|', $file))
+                                            $plugin_files[] = $file;
+                            }
+                    }
+            }
+
+            if ( !$plugins_dir || !$plugin_files )
+                    return $cssfiles;
+
+            foreach ( $plugin_files as $plugin_file ) {
+                    $cssfiles[plugin_basename($plugin_file)] = $plugin_file;
+            }
+            asort($cssfiles);
+            //uasort($cssfiles, create_function('$a, $b', 'return strnatcasecmp($a["Name"], $b["Name"]);'));
+
+            return $cssfiles;
+    }
+    
 //    /**
 //     * Gets the voting options for a specific gallery
 //     * @param int $gid The NextGEN Gallery ID

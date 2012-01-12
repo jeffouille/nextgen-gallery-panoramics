@@ -16,6 +16,7 @@ Follow variables are useable :
         $links : Array with all links to show data array( 'picture' => ['available' => 'true|false', 'url' =>''], 'map' => ['available' => 'true|false', 'url' =>''], 'pano' => ['available' => 'true|false', 'url' =>''])
         $mainlink : link for the thumbnail
         $captionmode : display caption or not
+        $float : display item in left, center or right
 
 Please note : A Image resize or watermarking operation will remove all meta information, exif will in this case loaded from database 
 
@@ -27,42 +28,13 @@ Please note : A Image resize or watermarking operation will remove all meta info
 <a <?php echo $mainlink ?> title="<?php echo $image->linktitle ?>" <?php //echo $image->thumbcode ?> >
 	<img class="<?php echo $image->classname ?>" src="<?php echo $image->thumbnailURL ?>" alt="<?php echo $image->alttext ?>" title="<?php echo $image->alttext ?>" />
 </a>
-<?php if (!empty ($image->caption)) : ?><span><?php echo $image->caption ?></span><?php endif; ?>
-    <?php
-    if(is_array($gps) && (isset($gps["lat"]) && strlen($gps["lat"]) > 0) && (isset($gps["lng"]) && strlen($gps["lng"]) > 0) && $links['map']['available']) : ?>
-        <div id="<?php echo $mapinfos['div_id'] ?>" style="width:<?php echo $mapinfos['width'] ?>; height:<?php echo $mapinfos['height'] ?>;"></div>
-<!--        
-                        <script type="text/javascript">
-				  function initializeMap() {
-				    var latlng = new google.maps.LatLng(-34.397, 150.644);
-				    var myOptions = {
-				      zoom: 8,
-				      center: latlng,
-				      mapTypeId: google.maps.MapTypeId.ROADMAP
-				    };
-				    var map = new google.maps.Map(document.getElementById("map_canvas"),
-				        myOptions);
-				  }
 
-				</script>
-        <script>
-        jQuery('#<?php echo $mapinfos['div_id'] ?>').gmap3(
-            {   action:'init',
-                options:{
-                    center:[<?php echo $gps["lat"] ?>,<?php echo $gps["lng"] ?>],
-                    zoom: <?php echo $mapinfos['zoom'] ?>,
-                    mapTypeId : google.maps.MapTypeId.<?php echo $mapinfos['maptype'] ?>
-                }
-            },
-            { action: 'addMarker',
-            latLng:[<?php echo $gps["lat"] ?>,<?php echo $gps["lng"] ?>]
-            }
-        );
-        </script>-->
-
-    <?php endif; ?>
 <?php endif; ?>
-
+<?php if ($captionmode == 'caption') : ?>
+<?php if (!empty ($pano->title)) : ?><span class="nggpano-title<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
+<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
+<?php if (!empty ($pano->description)) : ?><span class="nggpano-description<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
+<?php endif; ?> 
 <?php
 // if($pano_exist) :
 $actions = array();
@@ -74,7 +46,7 @@ if ($links['map']['available'])
     $actions['map']     = '<a ' . $links['map']['url'] . ' title="' . __('Map','nggpano') . '">' . __('Map','nggpano') . '</a>';
 $action_count = count($actions);
 $i = 0;
-echo '<div class="nggpano-picture-actions">';
+echo '<div class="nggpano-picture-actions' . $float . '">';
 foreach ( $actions as $action => $link ) {
         ++$i;
         ( $i == $action_count ) ? $sep = '' : $sep = ' | ';

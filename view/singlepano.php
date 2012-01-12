@@ -9,6 +9,7 @@ Follow variables are useable :
         $mapinfos : Array with all infos about the map (zoom, matype, width, height)
         $panosize : Array size of the pano
         $mode : display caption or not
+        $float : display item in left, center or right
 
  You can check the content when you insert the tag <?php var_dump($variable) ?>
  If you would like to show the timestamp of the image ,you can use <?php echo $exif['created_timestamp'] ?>
@@ -19,9 +20,9 @@ Follow variables are useable :
 
 <div id="<?php echo $pano->contentdiv ?>" class="<?php echo $pano->classname ?>" style="width:<?php echo $panosize['width'] ?>; height:<?php echo $panosize['height'] ?>;">...Loading Panoramic...</div>
 <?php if ($mode == 'caption') : ?>
-<?php if (!empty ($pano->title)) : ?><span class="nggpano-title"><?php echo $pano->title ?></span><?php endif; ?>
-<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption"><?php echo $pano->caption ?></span><?php endif; ?>
-<?php if (!empty ($pano->description)) : ?><span class="nggpano-description"><?php echo $pano->description ?></span><?php endif; ?>
+<?php if (!empty ($pano->title)) : ?><span class="nggpano-title<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
+<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
+<?php if (!empty ($pano->description)) : ?><span class="nggpano-description<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
 <?php endif; ?> 
 
 

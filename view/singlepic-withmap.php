@@ -39,8 +39,35 @@ Please note : A Image resize or watermarking operation will remove all meta info
                     mapTypeId : google.maps.MapTypeId.<?php echo $mapinfos['maptype'] ?>
                 }
             },
-            { action: 'addMarker',
-            latLng:[<?php echo $gps["lat"] ?>,<?php echo $gps["lng"] ?>]
+            { action: 'addMarkers',
+                markers:[
+                        {lat:<?php echo $gps["lat"] ?>, lng:<?php echo $gps["lng"] ?>, data:'<div class="map_infowindow"><span class="thumb"><img src="<?php echo $mapinfos['thumbinfowindow'] ?>" /></span><span class="title"><?php echo $image->alttext ; ?></span></div>'}
+                    ],
+                marker:{
+                    options:{
+                        draggable: false,
+                        icon:new google.maps.MarkerImage("<?php echo NGGPANOGALLERY_URLPATH ?>images/icons/gpsmapicons01.png", new google.maps.Size(32, 32), new google.maps.Point((0), (0)),new google.maps.Point(16, 32))
+                    },
+                    events:{
+                        click: function(marker, event, data){
+                            jQuery(this).gmap3({action : 'clear', name : 'infowindow'});
+                            var map = jQuery(this).gmap3('get'),
+                            infowindow = jQuery(this).gmap3({action:'get', name:'infowindow'});
+                            if (infowindow){
+                            infowindow.open(map, marker);
+                            infowindow.setContent(data);
+                            } else {
+                            jQuery(this).gmap3({action:'addinfowindow', anchor:marker, options:{content: data}});
+                            }
+                        }/*,
+                        mouseout: function(){
+                            var infowindow = jQuery(this).gmap3({action:'get', name:'infowindow'});
+                            if (infowindow){
+                            infowindow.close();
+                            }
+                        }*/
+                    }
+                }
             }
         );
         </script>

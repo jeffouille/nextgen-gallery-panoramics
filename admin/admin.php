@@ -139,7 +139,7 @@ class nggpanoAdminPanel{
     <div id="poststuff">
         <form id="" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
             <?php wp_nonce_field('nggpano_settings') ?>
-            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect" />	
+            <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect,colorboxCSSfile" />	
 <!--            <input type="hidden" name="force" value="1" />  this will just force _POST['nggpano'] even if all checkboxes are unchecked -->
             <div class="postbox">
                 <h3><?php _e('Preview Options', 'nggpano'); ?></h3>
@@ -164,8 +164,32 @@ class nggpanoAdminPanel{
                                 ?>
                                 <option value="thickbox" <?php echo ($act_scriptfile == "thickbox" ) ? "selected='selected'" : "" ?>>Default Wordpress Thickbox</option>
                                 <option value="colorbox" <?php echo ($act_scriptfile == "colorbox" ) ? "selected='selected'" : "" ?>>ColorBox (http://jacklmoore.com/colorbox/)</option>
+<!--                                <option value="prettyphoto" <?php echo ($act_scriptfile == "prettyphoto" ) ? "selected='selected'" : "" ?>>PrettyPhoto (http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/)</option>-->
+                                <option value="fancybox" <?php echo ($act_scriptfile == "fancybox" ) ? "selected='selected'" : "" ?>>FancyBox (http://fancyapps.com/fancybox/)</option>
                             </select>
+                            <br/><span class="setting-description"><?php _e('For FancyBox in Creative Commons Attribution-NonCommercial 3.0 put the code source in the directory nextgen-gallery-panoramics/fancybox','nggpano') ?></span>
                         </td>
+                    </tr>
+                    <tr valign="top">
+                        <th align="left"></th>
+                        <td></td>
+                        <th align="left"><?php _e('css for ColorBox','nggpano'); ?></th>
+                        <td>
+                            <select name="colorboxCSSfile" id="colorboxCSSfile" style="margin: 0pt; padding: 0pt;">
+                                <?php
+                                $act_colorboxcss = $nggpano->options['colorboxCSSfile'];
+				$configlist = nggpano_get_colorboxcssfile();
+				foreach ($configlist as $key =>$configfile) {
+					if ($key == $act_colorboxcss) {
+						$file_show = $key;
+						$selected = " selected='selected'";
+					}
+					else $selected = '';
+					$configfile = esc_attr($configfile);
+					echo "\n\t<option value=\"$key\" $selected>$configfile</option>";
+				}
+                                ?>
+                            </select></td>
                     </tr>
                 </table>               
                 <h3><?php _e('KrpanoTools Options', 'nggpano'); ?></h3>
