@@ -321,8 +321,14 @@ class nggpanoAdminPanel{
 		if( !isset($_GET['page']) )
 			return;
 
-		wp_register_script('nggpano-ajax', NGGPANOGALLERY_URLPATH . 'admin/js/nggpano.admin.js', array('jquery'), '1.4.1');
+		wp_register_script('nggpano-admin', NGGPANOGALLERY_URLPATH . 'admin/js/nggpano.admin.js', array('jquery'), '1.4.1');
+		// activate gmap3.min.js
+                wp_register_script( 'googlemap', 'http://maps.google.com/maps/api/js?sensor=false',array(), '1' ); 
+                wp_register_script( 'gmap3', NGGPANOGALLERY_URLPATH . 'js/gmap3.min.js',array('jquery','googlemap'), '4.1' );
                 
+                wp_register_script( 'jquery-autocomplete', NGGPANOGALLERY_URLPATH . 'admin/js/jquery-autocomplete.min.js',array('jquery'), '4.1' );
+                
+                        
                 // activate swfkrpano.js
                 wp_register_script( 'swfkrpano', NGGPANOGALLERY_URLPATH . 'krpano/swfkrpano.js',array() , '1' );
                 wp_enqueue_script( 'swfkrpano' );
@@ -368,7 +374,11 @@ class nggpanoAdminPanel{
 		switch ($_GET['page']) {	
 			case "nggallery-manage-gallery" :
 				//wp_enqueue_script( 'postbox' );
-				wp_enqueue_script( 'nggpano-ajax' );
+                            wp_enqueue_script( 'nggpano-admin' );
+                            wp_enqueue_script( 'googlemap' ); 
+                            wp_enqueue_script( 'gmap3' );
+                            wp_enqueue_script( 'jquery-autocomplete' );
+                            
                             wp_enqueue_script('thickbox'); 
 				//wp_enqueue_script( 'ngg-progressbar' );
 				//wp_enqueue_script( 'jquery-ui-dialog' );
@@ -388,6 +398,7 @@ class nggpanoAdminPanel{
         // load the icon for the navigation menu
         //wp_enqueue_style( 'nggmenu', NGGPANOGALLERY_URLPATH .'admin/css/menu.css', array() );
 		wp_register_style( 'nggpanoadmin', NGGPANOGALLERY_URLPATH .'admin/css/nggpanoadmin.css', false, '1.0.0', 'screen' );
+                wp_register_style( 'jquery-autocomplete', NGGPANOGALLERY_URLPATH .'admin/css/jquery-autocomplete.css', false, '1.0.0', 'screen' );
 		//wp_register_style( 'ngg-jqueryui', NGGPANOGALLERY_URLPATH .'admin/css/jquery.ui.css', false, '1.8.5', 'screen' );
         
         // no need to go on if it's not a plugin page
@@ -412,6 +423,7 @@ class nggpanoAdminPanel{
 //            break;    
 			case "nggallery-manage-gallery" :
                             wp_enqueue_style('nggpanoadmin');
+                            wp_enqueue_style('jquery-autocomplete');
                             wp_enqueue_style('thickbox');
 //			case "nggallery-roles" :
 //			case "nggallery-manage-album" :

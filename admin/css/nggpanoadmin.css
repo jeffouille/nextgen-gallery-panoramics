@@ -13,6 +13,20 @@
     vertical-align: middle;
 }
 
+/* PICK GPS FORM */
+.nggpano-gps-label {
+    vertical-align: top;
+}
+
+#map_canvas {
+   /* width: 540px;
+    height: 100%;
+   */
+}
+
+#geolocalised_address {
+    vertical-align: top;
+}
 
 /* ----------- Admin Pano field -------------*/
 

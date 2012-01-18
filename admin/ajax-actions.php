@@ -33,6 +33,25 @@ if (isset ( $_GET['mode']) ) {
             }
 
             break;
+        case 'save-gps':
+            check_admin_referer('pick-gps');
+            if($_POST['pid']) {
+                $pid = $_POST['pid'];
+                $gps_array = array();
+                //Get paramaters
+                $lat    = isset ($_POST['picture_lat']) ? $_POST['picture_lat'] : '';
+                $lng    = isset ($_POST['picture_lng']) ? $_POST['picture_lng'] : '';
+                $alt    = isset ($_POST['picture_alt']) ? $_POST['picture_alt'] : '';
+                $gps_array["latitude"]  = $lat;
+                $gps_array["longitude"] = $lng;
+                $gps_array["altitude"]  = $alt;
+                
+                //Save gps values
+                nggpano_savegps($pid, $gps_array); 
+            }
+            break;
+            
+            
         case 'extractfov':
             if (isset ( $_GET['id']) ) {
                 nggpano_extractfov($_GET['id']);
@@ -182,6 +201,65 @@ function nggpano_extractfov($pid) {
 //    $vfov       = isset ($fov_data['vfov']) ? $fov_data['vfov'] : '';
 //    $voffset    = isset ($fov_data['voffset']) ? $fov_data['voffset'] : '';
     
+}
+
+
+/**
+ * Save gps data in database
+ * @param string $pid the image id
+ * @param array  $gps_array array with latitude, longitude, altitude values
+ * 
+ * @return void
+ */
+function nggpano_savegps($pid, $gps_array) {
+    global $wpdb;
+        if($pid) {
+            //echo "pid=".$pid;
+                $result = array();
+                $message = '';
+                $error = true;
+                //Get gps info from array
+                if($gps_array) {
+                
+                    $lat = (strlen($gps_array["latitude"]) == 0) ? 'NULL' : $gps_array["latitude"];
+                    $lng = (strlen($gps_array["longitude"]) == 0) ? 'NULL' : $gps_array["longitude"];
+                    $alt = (strlen($gps_array["altitude"]) == 0) ? 'NULL' : round($gps_array["altitude"],0);
+        
+                    //echo json_encode($gps_array);
+
+
+                    if(nggpano_getImagePanoramicOptions($pid)) {
+                        if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET gps_lat = ".$lat.", gps_lng = ".$lng.", gps_alt = ".$alt." WHERE pid = '".$wpdb->escape($pid)."'") !== false) {
+                            $error = false; 
+                            $message = __('GPS datas successfully saved','nggpano');
+                        } else {
+                            $message = 'Error with database';
+                        };
+                    }else{
+                        $image = nggdb::find_image( $id );
+                        $gid = $image->galleryid;
+                        if($wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_panoramic (id, pid, gid, gps_lat, gps_lng, gps_alt) VALUES (null, '".$wpdb->escape($pid)."', '".$wpdb->escape($gid)."', ".$lat.", ".$lng.", ".$alt.")") !== false) {
+                            $error = false;
+                            $message = __('GPS datas successfully saved','nggpano');
+                        } else {
+                            $message = 'Error with database';
+                        };
+                    }
+                        $result['error']    = $error;
+                        $result['message']  = $message;
+                        $result['gps_data'] = $gps_array;
+                //nggpano_update_gallery(null, $post);
+
+                } else {
+                    $result['error']= true;
+                    $result['message']=__('No GPS datas in paramater','nggpano');
+                    $result['gps_data'] = array();
+                }
+                $result['pid'] = $pid;
+                //nggpano_picture[1][lat]
+                
+                echo json_encode($result);
+        }
 }
 
 function debug_ratio($id) {

@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Stop direct call
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 //
-ini_set('display_errors', '1');
-ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', '1');
+//ini_set('error_reporting', E_ALL);
 if (!class_exists('nggPanoLoader')) {
 class nggPanoLoader {
 	
