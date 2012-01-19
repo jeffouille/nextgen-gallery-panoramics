@@ -12,6 +12,7 @@ Follow variables are useable :
 	$db    : Contain the clean up META data from the database (should be imported during upload)
         $gps   : Array with all gps data array( 'lat' => '', 'lng' => '', 'alt' => '')
         $mapinfos : Array with all infos about the map (zoom, matype, width, height, div_id)
+        $captionmode : - caption display or not the caption full|none|title|description
 
 Please note : A Image resize or watermarking operation will remove all meta information, exif will in this case loaded from database 
 
@@ -24,7 +25,13 @@ Please note : A Image resize or watermarking operation will remove all meta info
 <a href="<?php echo $image->imageURL ?>" title="<?php echo $image->linktitle ?>" <?php echo $image->thumbcode ?> >
 	<img class="<?php echo $image->classname ?>" src="<?php echo $image->thumbnailURL ?>" alt="<?php echo $image->alttext ?>" title="<?php echo $image->alttext ?>" />
 </a>
-<?php if (!empty ($image->caption)) : ?><span><?php echo $image->caption ?></span><?php endif; ?>
+
+<?php if ($captionmode <> '') : ?>
+<?php if (!empty ($image->title) && ($captionmode == 'full' || $captionmode == 'title' )) : ?><span class="nggpano-title nggpano-<?php echo $float; ?>"><?php echo $image->title ?></span><?php endif; ?>
+<?php if (!empty ($image->description) && ($captionmode == 'full' || $captionmode == 'description' )) : ?><span class="nggpano-description nggpano-<?php echo $float; ?>"><?php echo $image->description ?></span><?php endif; ?>
+<?php endif; ?>
+<?php if (!empty ($image->caption)) : ?><span class="nggpano-caption nggpano-<?php echo $float; ?>"><?php echo $image->caption ?></span><?php endif; ?>
+
     <?php
     if(is_array($gps) && (isset($gps["lat"]) && strlen($gps["lat"]) > 0) && (isset($gps["lng"]) && strlen($gps["lng"]) > 0) ) : ?>
         <div id="<?php echo $mapinfos['div_id'] ?>" class="<?php echo $mapinfos['classname'] ?>" style="width:<?php echo $mapinfos['width'] ?>; height:<?php echo $mapinfos['height'] ?>;"></div>

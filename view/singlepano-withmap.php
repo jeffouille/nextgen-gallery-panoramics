@@ -8,7 +8,7 @@ Follow variables are useable :
         $gps   : Array with all gps data array( 'lat' => '', 'lng' => '', 'alt' => '')
         $mapinfos : Array with all infos about the map (zoom, matype, width, height, div_id)
         $panosize : Array size of the pano
-        $mode : display caption or not
+        $captionmode : - caption display or not the caption full|none|title|description
         $float : display item in left, center or right
 
  You can check the content when you insert the tag <?php var_dump($variable) ?>
@@ -19,12 +19,14 @@ Follow variables are useable :
 <?php if (!empty ($pano)) : ?>
 
 <div id="<?php echo $pano->contentdiv ?>" class="<?php echo $pano->classname ?>" style="width:<?php echo $panosize['width'] ?>; height:<?php echo $panosize['height'] ?>;">...Loading Panoramic...</div>
-<?php if ($mode == 'caption') : ?>
-<?php if (!empty ($pano->title)) : ?><span class="nggpano-title<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
-<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
-<?php if (!empty ($pano->description)) : ?><span class="nggpano-description<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
-<?php endif; ?> 
 
+<?php if ($captionmode <> '') : ?>
+<?php if (!empty ($pano->title) && ($captionmode == 'full' || $captionmode == 'title' )) : ?><span class="nggpano-title nggpano-<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
+<?php if (!empty ($pano->description) && ($captionmode == 'full' || $captionmode == 'description' )) : ?><span class="nggpano-description nggpano-<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
+<?php endif; ?>
+<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption nggpano-<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
+
+    
 
 <script type="text/javascript">
     var viewer = createPanoViewer({swf:"<?php echo $pano->krpano_path ?>", wmode:"opaque", id:"<?php echo $pano->swfid ?>"});

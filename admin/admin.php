@@ -146,7 +146,7 @@ class nggpanoAdminPanel{
                 <p class="inside"><?php _e('Here you can set the default size for the preview of a panoramic', 'nggpano'); ?></p>
                 <table class="form-table">
                     <tr valign="top">
-                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Once the panoramic is built, you can reduce the original image to have nice preview', 'nggpano'); ?></th>
+                        <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Once the panoramic is built, you can reduce the original image to have a nice preview', 'nggpano'); ?></th>
                         <th colspan="2" align="left"><p class="inside" style="text-align:left"><?php _e('Script for LightBox effect', 'nggpano'); ?></th>
                     </tr>
                     <tr valign="top">
@@ -279,7 +279,7 @@ class nggpanoAdminPanel{
                         <th align="left"><?php _e('Folder for krpano viewer (krpano.swf)','nggpano'); ?></th>
                         <td>
                             <input type="text" size="60"  name="krpanoFolder" value="<?php echo $nggpano->options['krpanoFolder']; ?>" />
-                            <span class="setting-description"><?php _e('This is were krpano flash animations (krpano.swf) is locatedd','nggpano') ?></span>
+                            <span class="setting-description"><?php _e('This is where krpano flash animation (krpano.swf) is located','nggpano') ?></span>
                         </td>
                     </tr>
                     <tr valign="top">

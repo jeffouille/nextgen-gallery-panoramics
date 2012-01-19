@@ -15,7 +15,7 @@ Follow variables are useable :
         $mapinfos : Array with all infos about the map (zoom, matype ,div_id)
         $links : Array with all links to show data array( 'picture' => ['available' => 'true|false', 'url' =>''], 'map' => ['available' => 'true|false', 'url' =>''], 'pano' => ['available' => 'true|false', 'url' =>''])
         $mainlink : link for the thumbnail
-        $captionmode : display caption or not
+        $captionmode : - caption display or not the caption full|none|title|description
         $float : display item in left, center or right
 
 Please note : A Image resize or watermarking operation will remove all meta information, exif will in this case loaded from database 
@@ -30,11 +30,12 @@ Please note : A Image resize or watermarking operation will remove all meta info
 </a>
 
 <?php endif; ?>
-<?php if ($captionmode == 'caption') : ?>
-<?php if (!empty ($pano->title)) : ?><span class="nggpano-title<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
-<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
-<?php if (!empty ($pano->description)) : ?><span class="nggpano-description<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
-<?php endif; ?> 
+<?php if ($captionmode <> '') : ?>
+<?php if (!empty ($pano->title) && ($captionmode == 'full' || $captionmode == 'title' )) : ?><span class="nggpano-title nggpano-<?php echo $float; ?>"><?php echo $pano->title ?></span><?php endif; ?>
+<?php if (!empty ($pano->description) && ($captionmode == 'full' || $captionmode == 'description' )) : ?><span class="nggpano-description nggpano-<?php echo $float; ?>"><?php echo $pano->description ?></span><?php endif; ?>
+<?php endif; ?>
+<?php if (!empty ($pano->caption)) : ?><span class="nggpano-caption nggpano-<?php echo $float; ?>"><?php echo $pano->caption ?></span><?php endif; ?>
+
 <?php
 // if($pano_exist) :
 $actions = array();
@@ -46,7 +47,7 @@ if ($links['map']['available'])
     $actions['map']     = '<a ' . $links['map']['url'] . ' title="' . __('Map','nggpano') . '">' . __('Map','nggpano') . '</a>';
 $action_count = count($actions);
 $i = 0;
-echo '<div class="nggpano-picture-actions' . $float . '">';
+echo '<div class="nggpano-picture-actions' . $floatlinks . '">';
 foreach ( $actions as $action => $link ) {
         ++$i;
         ( $i == $action_count ) ? $sep = '' : $sep = ' | ';

@@ -23,10 +23,12 @@ This plugin adds the ability to create panoramics viewer using krpano (www.krpan
 == TODO ==
 DONE extract gps for all images in a gallery
 DONE extract gps for one image ajax
-gps data picker for one image
+DONE gps data picker for one image
 region for gallery
 
-add gps marker on image
+shortcode generator in wysiwyg
+
+DONE add gps marker on image
 
 add license file config in admin
 
@@ -67,28 +69,12 @@ DONE with live method.... make links added with ajax be correctly clickable
 
 == When ngg is update ==
 
-in /admin/manage.php
-line 84 after
-    if($delete_pic)
-            nggGallery::show_message( __('Picture','nggallery').' \''.$this->pid.'\' '.__('deleted successfully','nggallery') );
-add	
-    //Jeff Modif
-    //hook for other plugin to update the fields
-    do_action('ngg_delete_picture', $this->pid);
-
-
-line 178
-replace
-if($deleted)
-        nggGallery::show_message(__('Gallery deleted successfully ', 'nggallery'));
-with
-if($deleted) {
-        nggGallery::show_message(__('Gallery deleted successfully ', 'nggallery'));
-
-        //Jeff Modif
-        //hook for other plugin to update the fields
-        do_action('ngg_delete_gallery', $this->pid);
-}
+in /admin/manage-image.php
+line 465 remove esc_url() function
+<?php //Jeff Remove esc_url() ?> 
+<a href="<?php echo  ( add_query_arg('i', mt_rand(), $picture->imageURL) ); ?>" class="shutter" title="<?php echo $picture->filename ?>">
+            <img class="thumb" src="<?php echo  ( add_query_arg('i', mt_rand(), $picture->thumbURL) ); ?>" id="thumb<?php echo $pid ?>" />
+    </a>
 
 memory limit error
     @ini_set('memory_limit', '128M');
