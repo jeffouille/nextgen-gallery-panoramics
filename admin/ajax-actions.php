@@ -71,6 +71,46 @@ if (isset ( $_GET['mode']) ) {
                 //Create pano
                 nggpanoAdmin::build_pano($pid, $gid, $hfov, $vfov, $voffset);          
             }
+            
+        case 'edit-pano':
+            check_admin_referer('edit-pano');
+            if($_POST['pid']) {
+                $pid = $_POST['pid'];
+                $gid = $_POST['gid'];
+                //Get paramaters
+                $hfov       = isset ($_POST['hfov']) ? $_POST['hfov'] : '';
+                $vfov       = isset ($_POST['vfov']) ? $_POST['vfov'] : '';
+                $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
+                $xml_configuration = isset ($_POST['xml_configuration']) ? $_POST['xml_configuration'] : '';
+                $is_partial = isset ($_POST['is_partial']) ? $_POST['is_partial'] : '0';
+                
+                //Save pano values
+  		if(! class_exists('nggpanoPano'))
+                    require_once(NGGPANOGALLERY_ABSPATH . '/lib/nggpanoPano.class.php' );              
+                //Create pano
+                $pano = new nggpanoPano($pid, $gid);
+                $pano->loadFromDB();
+                $pano->setHFov($hfov);
+                $pano->setVFov($vfov);
+                $pano->setVOffset($voffset);
+                $pano->setXmlConfiguration($xml_configuration);
+                $pano->setIsPartial($is_partial);
+                
+                $pano->save();
+                $result = array();
+                $message = ''; 
+                if($pano->error) {
+                        $result['error']    = true;
+                        $result['message']  = $pano->errmsg;
+                } else {
+                        $result['error']    = false;
+                        $result['message']  = $pano->errmsg;
+                }
+                
+                echo json_encode($result);
+                //nggpano_savegps($pid, $gps_array); 
+            }
+            break;
 
             break;
         case 'delete-pano':

@@ -465,10 +465,61 @@ class nggpanoPano{
         }
     }
     
- 
+  /**
+   * Set HFOV for DB save
+   *
+   * @return Void
+   */
+    public function setHFov($hfov)
+    {
+        if($hfov)
+            $this->hfov = $hfov;
+    }
 
+  /**
+   * Set VFOV for DB save
+   *
+   * @return Void
+   */
+    public function setVFov($vfov)
+    {
+        if($vfov)
+            $this->vfov = $vfov;
+    }
     
-
+  /**
+   * Set Voffset for DB save
+   *
+   * @return Void
+   */
+    public function setVOffset($voffset)
+    {
+        if($voffset)
+            $this->voffset = $voffset;
+    }
+    
+  /**
+   * Set xml_configuration for DB save
+   *
+   * @return Void
+   */
+    public function setXmlConfiguration($xml_configuration)
+    {
+        if($xml_configuration)
+            $this->xml_configuration = $xml_configuration;
+    }
+    
+  /**
+   * Set is_partial for DB save
+   *
+   * @return Void
+   */
+    public function setIsPartial($is_partial)
+    {
+        //if($is_partial)
+            $this->is_partial = $is_partial;
+    }
+    
     /**
     * Load configuration for pano creation and viewer (default options or gallery configuration)
     *
