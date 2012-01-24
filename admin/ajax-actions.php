@@ -83,6 +83,7 @@ if (isset ( $_GET['mode']) ) {
                 $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
                 $xml_configuration = isset ($_POST['xml_configuration']) ? $_POST['xml_configuration'] : '';
                 $is_partial = isset ($_POST['is_partial']) ? $_POST['is_partial'] : '0';
+                $panoFolder = isset ($_POST['panoFolder']) ? $_POST['panoFolder'] : '';
                 
                 //Save pano values
   		if(! class_exists('nggpanoPano'))
@@ -94,6 +95,7 @@ if (isset ( $_GET['mode']) ) {
                 $pano->setVFov($vfov);
                 $pano->setVOffset($voffset);
                 $pano->setXmlConfiguration($xml_configuration);
+                $pano->setPanoFolder($panoFolder);
                 $pano->setIsPartial($is_partial);
                 
                 $pano->save();

@@ -510,6 +510,17 @@ class nggpanoPano{
     }
     
   /**
+   * Set panoFolder for DB save
+   *
+   * @return Void
+   */
+    public function setPanoFolder($panoFolder)
+    {
+        if($panoFolder)
+            $this->panoFolder = $panoFolder;
+    }
+    
+  /**
    * Set is_partial for DB save
    *
    * @return Void

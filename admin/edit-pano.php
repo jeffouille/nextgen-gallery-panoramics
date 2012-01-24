@@ -19,13 +19,13 @@ $picture = nggdb::find_image($id);
 $pano_infos = nggpano_getImagePanoramicOptions($id);
 
 // use defaults the first time
-if($pano_infos && isset ($pano_infos->hfov)) {
+//if($pano_infos && isset ($pano_infos->hfov)) {
     $hfov       = isset ($pano_infos->hfov) ? $pano_infos->hfov : '';
     $vfov       = isset ($pano_infos->vfov) ? $pano_infos->vfov : '';
     $voffset    = isset ($pano_infos->voffset) ? $pano_infos->voffset : '';
     $xml_configuration    = isset ($pano_infos->xml_configuration) ? $pano_infos->xml_configuration : '';
     $is_partial    = isset ($pano_infos->is_partial) ? $pano_infos->is_partial : '0';
-}
+    $panoFolder = isset ($pano_infos->pano_directory) ? $pano_infos->pano_directory : '';
 
 $action_filepath = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=edit-pano&id=' . $id;
 
@@ -64,20 +64,22 @@ $page_admin = admin_url()."admin.php?page=nggallery-manage-gallery&mode=edit&gid
             </td>
 	</tr>
 	<tr valign="top">
+            <th align="left"><?php _e('Folder with panoramic tiles','nggpano') ?></th>
+            <td>
+                <input type="text" size="40" id="panoFolder" name="panoFolder" value="<?php echo $panoFolder; ?>" />
+                <br /><small><?php _e('Put here all the tiles of your panoramic','nggpano') ?></small>
+            </td>
+	</tr>
+	<tr valign="top">
             <th colspan="2" align="left"><?php _e('Xml configuration','nggpano') ?></th>
 	</tr>
 	<tr valign="top">
             <td colspan="2">
-                <textarea name="xml_configuration" id="xml_configuration" cols="30" rows="13" style="width: 100%" ><?php echo $xml_configuration; ?></textarea>
+                <textarea name="xml_configuration" id="xml_configuration" cols="30" rows="10" style="width: 100%" ><?php echo $xml_configuration; ?></textarea>
             </td>
 	</tr>
-        <tr valign="top" align="right">
-            <td valign="center" align="center"><img class="nggpano-fov-loader" id="nggpano-fov-loader" src="<?php echo NGGPANOGALLERY_URLPATH ; ?>admin/images/loading.gif" style="display:none;" /></td>
-            <td align="left">
-            </td>
-        </tr>
   	<tr align="right">
-            <td align="center"><div id="form-edit-pano-error" class="nggpano-error" style="display:none;"></div></td>
+            <td align="center"><img class="nggpano-fov-loader" id="nggpano-fov-loader" src="<?php echo NGGPANOGALLERY_URLPATH ; ?>admin/images/loading.gif" style="display:none;" /><div id="form-edit-pano-error" class="nggpano-error" style="display:none;"></div></td>
             <td class="submit">
     		<input class="button-primary" type="submit" name="save" value="&nbsp;<?php _e('Update', 'nggalery');?>&nbsp;" onclick="if ( !checkEditForm() ) return false;" />
             </td>
