@@ -505,7 +505,7 @@ function nggpanoSinglePictureWithLinks($imageID, $width = 250, $height = 250, $m
 
     // clean links if needed
     $links = ( preg_match('/(ALL|PICTURE|MAP|PANO)/i', strtoupper($links)) ) ? strtoupper($links) : '';
-    $links_array = split('&', strtoupper($links));
+    $links_array = split('-', strtoupper($links));
     if (in_array('PICTURE', $links_array)) {
         $links_to_show['picture']['available']= true;
     }
@@ -801,7 +801,7 @@ function nggpanoSingleMap($imageID, $mapwidth = 250, $mapheight = 250, $mapzoom 
 
     // clean links if needed
     $links = ( preg_match('/(ALL|PICTURE|MAP|PANO)/i', strtoupper($links)) ) ? strtoupper($links) : '';
-    $links_array = split('&', strtoupper($links));
+    $links_array = split('-', strtoupper($links));
     if (in_array('PICTURE', $links_array)) {
         $links_to_show['picture']['available']= true;
     }

@@ -113,7 +113,7 @@ function checkBuildForm() {
         return false  
     }
     
-    var check=confirm( '<?php echo esc_attr(sprintf(__('Build panoramic for %s ?' , 'nggallery'), $picture->filename)); ?>');
+    var check=confirm( '<?php echo esc_attr(sprintf(__('Build panoramic for %s ?' , 'nggpano'), $picture->filename)); ?>');
     if(check==false)
         return false;
     

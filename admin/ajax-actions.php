@@ -69,8 +69,11 @@ if (isset ( $_GET['mode']) ) {
                 $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
                 
                 //Create pano
+                //echo "<H1>TATA</H1>";
                 nggpanoAdmin::build_pano($pid, $gid, $hfov, $vfov, $voffset);          
             }
+            
+            break;
             
         case 'edit-pano':
             check_admin_referer('edit-pano');
@@ -133,6 +136,14 @@ if (isset ( $_GET['mode']) ) {
                 //Create pano
                 nggpanoAdmin::resize_preview_pano($pid, $gid, $imgWidth, $imgHeight, $backup);          
             }
+            break;
+            
+        case 'publish-pano':
+            check_admin_referer('publish-pano');
+            // Should be called via a publish dialog	
+            if ( isset($_POST['page']) && $_POST['page'] == 'publish-pano' && $_POST['pid'] )
+                nggpanoAdmin::publish_pano();
+            
             break;
         default:
             break;
@@ -338,8 +349,6 @@ function debug_ratio($id) {
 //    $voffset    = isset ($fov_data['voffset']) ? $fov_data['voffset'] : '';
 echo json_encode($fov_data);
 }
-
-
 
 
 ?>

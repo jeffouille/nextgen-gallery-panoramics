@@ -119,8 +119,8 @@ Version: 1
 
 .map_infowindow
 {
-    width:100%; 
-    height:100%;
+   /* width:100%; 
+    height:100%;*/
     float: left;
 }
 .map_infowindow span.thumb

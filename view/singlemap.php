@@ -27,28 +27,28 @@ Please note : A Image resize or watermarking operation will remove all meta info
 <?php if (!defined ('ABSPATH')) die ('No direct access allowed'); ?>
 <?php $infowindowcontent = '';
     if (!empty ($image)) :
-        $infowindowcontent .= '<a '.$mainlink.' title="'.$image->linktitle.'">'.'\n\r';
-        $infowindowcontent .= '<img class="'.$image->classname.'" src="'.$image->thumbnailURL.'" alt="'.$image->alttext.'" title="'.$image->alttext.'" />';
+        $infowindowcontent .= '<a '.$mainlink.' title="'.esc_attr($image->alttext).'">'.'\n\r';
+        $infowindowcontent .= '<img class="'.$image->classname.'" src="'.$image->thumbnailURL.'" alt="'.esc_attr($image->alttext).'" title="'.esc_attr($image->alttext).'" />';
         $infowindowcontent .= '</a>';
     endif;
     if ($captionmode <> '') {
         //full|title|description
         if (!empty ($image->title) && ($captionmode == 'full' || $captionmode == 'title' )){
-            $infowindowcontent .= '<span class="nggpano-title nggpano-'.$float.'">'.$image->alttext.'</span>';
+            $infowindowcontent .= '<span class="nggpano-title nggpano-'.$float.'">'.esc_attr($image->alttext).'</span>';
         }
         if (!empty ($image->description) && ($captionmode == 'full' || $captionmode == 'description' )){
-            $infowindowcontent .= '<span class="nggpano-description nggpano-'.$float.'">'.$image->description.'</span>';
+            $infowindowcontent .= '<span class="nggpano-description nggpano-'.$float.'">'.esc_attr($image->description).'</span>';
         }
     }
     if (!empty ($image->caption)){
-        $infowindowcontent .= '<span class="nggpano-caption nggpano-'.$float.'">'.$image->caption.'</span>';
+        $infowindowcontent .= '<span class="nggpano-caption nggpano-'.$float.'">'.esc_attr($image->caption).'</span>';
     }
 // if($pano_exist) :
 $actions = array();
 if ($links['picture']['available'])
-    $actions['picture'] = '<a ' . $links['picture']['url'] . ' title="' . $image->linktitle . '">' . __('Zoom','nggpano') . '</a>';
+    $actions['picture'] = '<a ' . $links['picture']['url'] . ' title="' . esc_attr($image->alttext) . '">' . __('Zoom','nggpano') . '</a>';
 if ($links['pano']['available'])
-    $actions['pano']    = '<a ' . $links['pano']['url'] .' title="' . __('Panoramic view of ', 'nggpano')  . $image->linktitle . '">' . __('Panoramic', 'nggpano') . '</a>';
+    $actions['pano']    = '<a ' . $links['pano']['url'] .' title="' . __('Panoramic view of ', 'nggpano')  . esc_attr($image->alttext) . '">' . __('Panoramic', 'nggpano') . '</a>';
 if ($links['map']['available'])
     $actions['map']     = '<a ' . $links['map']['url'] . ' title="' . __('Map','nggpano') . '">' . __('Map','nggpano') . '</a>';
 $action_count = count($actions);

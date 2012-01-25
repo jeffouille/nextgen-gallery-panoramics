@@ -27,7 +27,7 @@ Please note : A Image resize or watermarking operation will remove all meta info
 </a>
 
 <?php if ($captionmode <> '') : ?>
-<?php if (!empty ($image->title) && ($captionmode == 'full' || $captionmode == 'title' )) : ?><span class="nggpano-title nggpano-<?php echo $float; ?>"><?php echo $image->title ?></span><?php endif; ?>
+<?php if (!empty ($image->alttext) && ($captionmode == 'full' || $captionmode == 'title' )) : ?><span class="nggpano-title nggpano-<?php echo $float; ?>"><?php echo $image->alttext ?></span><?php endif; ?>
 <?php if (!empty ($image->description) && ($captionmode == 'full' || $captionmode == 'description' )) : ?><span class="nggpano-description nggpano-<?php echo $float; ?>"><?php echo $image->description ?></span><?php endif; ?>
 <?php endif; ?>
 <?php if (!empty ($image->caption)) : ?><span class="nggpano-caption nggpano-<?php echo $float; ?>"><?php echo $image->caption ?></span><?php endif; ?>
@@ -48,7 +48,7 @@ Please note : A Image resize or watermarking operation will remove all meta info
             },
             { action: 'addMarkers',
                 markers:[
-                        {lat:<?php echo $gps["lat"] ?>, lng:<?php echo $gps["lng"] ?>, data:'<div class="map_infowindow"><span class="thumb"><img src="<?php echo $mapinfos['thumbinfowindow'] ?>" /></span><span class="title"><?php echo $image->alttext ; ?></span></div>'}
+                        {lat:<?php echo $gps["lat"] ?>, lng:<?php echo $gps["lng"] ?>, data:'<div class="map_infowindow"><span class="thumb"><img src="<?php echo $mapinfos['thumbinfowindow'] ?>" /></span><span class="title"><?php echo esc_attr($image->alttext) ; ?></span></div>'}
                     ],
                 marker:{
                     options:{

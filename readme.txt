@@ -24,19 +24,24 @@ This plugin adds the ability to create panoramics viewer using krpano (www.krpan
 DONE extract gps for all images in a gallery
 DONE extract gps for one image ajax
 DONE gps data picker for one image
+DONE add gps marker on image
+DONE add shortcode simplepic with map
+DONE remove database record when remove a gallery
+DONE create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
+DONE remove all pano file when remove an image
+DONE directory and option to place custom krpano tool and viewer
+DONE Admin options add folder settings
+DONE with live method.... make links added with ajax be correctly clickable
+DONE add possibility to add manually a pano (memory limit)
+DONE publish a pano from admin page
+
+map default options in admin (mapw, maph, map zoom, map_type, picto marker
+
 region for gallery
 
 shortcode generator in wysiwyg
 
-DONE add gps marker on image
-
 add license file config in admin
-
-DONE add shortcode simplepic with map
-
-DONE remove database record when remove a gallery
-
-NOT USEABLE TO REMOVE add option to automaticly create pano when image is added
 
 add admin page to edit skin file and config file
 
@@ -44,17 +49,9 @@ add krpanoplugin configuration in plugin options and in gallery option
 
 check memory limit (gd vs imagemagik)
 
-DONE create preview of image 2000px width (with watermark ?) - Make 2000x1000 thumbnail to replace the original photo
-
-add possibility to add manually a pano (memory limit)
-
-publish a pano (with featured image)
-
-DONE remove all pano file when remove an image
+publish a pano with featured image
 
 config file (skin.xml and krpanotool.config) edit panel (like css style edit)
-
-DONE directory and option to place custom krpano tool and viewer
 
 xml generator for plugin
 
@@ -62,10 +59,6 @@ verifiy security with use of check_admin_referer( 'myplugin-update' );
 //--> check this url : http://planetozh.com/blog/2009/09/top-10-most-common-coding-mistakes-in-wordpress-plugins/
 
 internationalize error messages ogf nggpanoPano.class.php
-
-DONE Admin options add folder settings
-
-DONE with live method.... make links added with ajax be correctly clickable
 
 == When ngg is update ==
 

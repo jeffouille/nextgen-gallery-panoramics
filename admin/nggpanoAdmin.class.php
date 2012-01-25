@@ -7,9 +7,9 @@ include_once ( dirname (__FILE__) . '/../lib/nggpanoPano.class.php' ); //nggpano
 /**
  * nggpanoAdmin - Class for admin operation
  * 
- * @package NextGEN Gallery
- * @author Alex Rabe
- * @copyright 2007-2010
+ * @package NGG Panoramic
+ * @author Geoffroy DELEURY
+ * @copyright 2011
  * @access public
  */
 class nggpanoAdmin{
@@ -115,7 +115,6 @@ class nggpanoAdmin{
         }
 
         function krpano_image_form($pano, $message = '') {
-                
                 if(is_numeric($pano)) {
                     $pid = $pano;
                     //Get krpano values for the current image
@@ -135,6 +134,9 @@ class nggpanoAdmin{
                 
                 //URL to build the pano
                 $url_build = NGGPANOGALLERY_URLPATH . 'admin/build-pano.php?id=' . $pid . '&h=340';
+                
+                //URL to publish the pano
+                $url_publish = NGGPANOGALLERY_URLPATH . 'admin/publish-pano.php?id=' . $pid . '&h=500';
                 
                 //URL to show Pano
                 $url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
@@ -162,14 +164,15 @@ class nggpanoAdmin{
                     <?php
                     $actions = array();
                     $actions['build'] = '<a class="nggpano-dialog" href="' . $url_build . '" title="' . __('Build the panoramic from this image','nggpano') . '">' . __('Build', 'nggpano') . '</a>';
-                    $actions['edit']  = '<a class="nggpano-dialog" href="' . $url_edit . '" title="' . __('Edit the panoramic data for this image','nggpano') . '">' . __('Edit', 'nggpano') . '</a>';
+                    if(!$pano_exist)
+                        $actions['add']  = '<a class="nggpano-dialog" href="' . $url_edit . '" title="' . __('Add manually the panoramic datas for this image','nggpano') . '">' . __('Add manually', 'nggpano') . '</a>';
                     if($pano_exist) {
+                        $actions['edit']  = '<a class="nggpano-dialog" href="' . $url_edit . '" title="' . __('Edit the panoramic datas for this image','nggpano') . '">' . __('Edit', 'nggpano') . '</a>';
                         $actions['delete']      = '<a class="submitdelete delete-pano" href="' . $url_delete. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
-                        $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
-                        $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Resize image for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';
-
-                        
+                        if ( current_user_can( 'publish_posts' ) )
+                            $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_publish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
+                        $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Resize image for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';  
                     }
                     $action_count = count($actions);
                     $i = 0;
@@ -205,10 +208,10 @@ class nggpanoAdmin{
             if($pid) {
 		if(! class_exists('nggpanoPano'))
                     require_once(NGGPANOGALLERY_ABSPATH . '/lib/nggpanoPano.class.php' );              
+                
                 //Create pano
                 $pano = new nggpanoPano($pid, $gid, $hfov, $vfov, $voffset);
                 $pano->createTiles();
-                
                 echo nggpanoAdmin::krpano_image_form($pano);
             }
         }
@@ -325,7 +328,106 @@ class nggpanoAdmin{
 		return $result;		
 
 	}
-        
+	/**
+	 * Publish a new post with the shortcode from the selected pano
+	 * 
+	 * @param int $pid, Id of the image
+	 * @param int (optional) $gid, id of the gallery
+	 * @param decimal (optional)  $hfov, Horizontal Field Of View
+         * @param decimal (optional)  $vfov, Vertical Field Of View
+         * @param decimal (optional)  $voffset, Vertical Offset
+	 * @return void
+	 */
+    function publish_pano() {
+
+
+            // Create a WP page
+            global $user_ID, $ngg;
+
+            $ngg->options['publish_width']  = (int) $_POST['width'];
+            $ngg->options['publish_height'] = (int) $_POST['height'];
+            $ngg->options['publish_align'] = $_POST['align'];
+            $align = ( $ngg->options['publish_align'] == 'none') ? '' : 'float='.$ngg->options['publish_align'];
+            
+            //parameters for shortcode
+            $mapw_attr       = isset ($_POST['mapw']) ? 'mapw='.$_POST['mapw'] : '';
+            $maph_attr       = isset ($_POST['maph']) ? 'maph='.$_POST['maph'] : '';
+            $mapz_attr       = isset ($_POST['mapz']) ? 'mapz='.$_POST['mapz'] : '';
+            $maptype_attr    = isset ($_POST['maptype']) ? 'maptype='.$_POST['maptype'] : '';
+            $captiontype_attr= isset ($_POST['captiontype']) && $_POST['captiontype'] != 'none' ? 'caption='.$_POST['captiontype'] : '';
+                   
+            //with link
+            //$links_attr       = isset ($_POST['links']) ? 'links='.$_POST['links'] : '';
+            $links_choice       = isset ($_POST['links']) && $_POST['links'] != 'none' ? $_POST['links'] : '';
+            if ($links_choice == 'all') {
+                $links_attr = 'links=all';
+            } elseif ($links_choice != '') {
+
+                $links_picture  = isset ($_POST['links_picture']) ? 'picture' : '';
+                $links_map      = isset ($_POST['links_map']) ? 'map' : '';
+                $links_pano     = isset ($_POST['links_pano']) ? 'pano' : '';
+                
+                $links_attr = ($links_picture == '') ? '' : $links_picture;
+                
+                $links_attr .= ($links_map == '') ? '' : ($links_attr == '' ? $links_map : '-'.$links_map);
+                
+                $links_attr .= ($links_pano == '') ? '' : ($links_attr == '' ? $links_pano : '-'.$links_pano);
+                
+               
+                $links_attr = ($links_attr == '') ? '' : 'links='.$links_attr;
+            }
+            
+            $mainlink_attr   = isset ($_POST['mainlink']) ? 'mainlink='.$_POST['mainlink'] : '';
+            
+            //parameters for singlmap shortcode
+            $singlemapw_attr       = isset ($_POST['mapw']) ? 'w='.$_POST['mapw'] : '';
+            $singlemaph_attr       = isset ($_POST['maph']) ? 'h='.$_POST['maph'] : '';
+            $singlemapz_attr       = isset ($_POST['mapz']) ? 'zoom='.$_POST['mapz'] : '';
+            $thumbw_attr           = 'thumbw='.$ngg->options['publish_width'];
+            $thumbh_attr           = 'thumbh='.$ngg->options['publish_height'];
+
+            //save the new values for the next operation
+            update_option('ngg_options', $ngg->options);
+            
+            //get shortcode
+            $post_content_shortcode = "";
+            switch ($_POST['shortcode']) {
+                case 'singlepanowithmap':
+                    $post_content_shortcode = '[singlepanowithmap id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' '.$captiontype_attr.' '.$mapw_attr.' '.$maph_attr.' '.$mapz_attr.' '.$maptype_attr.']';
+                    break;
+                
+                case 'singlepicwithmap':
+                    $post_content_shortcode = '[singlepicwithmap id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' '.$captiontype_attr.' '.$mapw_attr.' '.$maph_attr.' '.$mapz_attr.' '.$maptype_attr.']';
+                    break;
+                
+                case 'singlepicwithlinks':
+                    $post_content_shortcode = '[singlepicwithlinks id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' '.$captiontype_attr.' '.$mapz_attr.' '.$maptype_attr.' '.$links_attr.' '.$mainlink_attr.']';
+                    break;
+                
+                case 'singlemap':
+                    $post_content_shortcode = '[singlemap id=' . intval($_POST['pid']) . ' ' . $align . ' '.$singlemapw_attr.' '.$singlemaph_attr.' '.$singlemapz_attr.' '.$maptype_attr.' '.$links_attr.' '. $mainlink_attr.' '.$captiontype_attr.' '. $thumbw_attr . ' '.$thumbh_attr.']';
+                    break;
+                
+                case 'singlepano':
+                default:
+                    $post_content_shortcode = '[singlepano id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' ' . $captiontype_attr.']';
+
+                    break;
+            }
+
+            $post['post_type']    = 'post';
+            $post['post_content'] = $post_content_shortcode;
+            $post['post_author']  = $user_ID;
+            $post['post_status']  = isset ( $_POST['publish_state'] ) && $_POST['publish_state'] == 'true' ? 'publish' : 'draft';
+            $post['post_title']   = $_POST['post_title'];
+            $post = apply_filters('ngg_add_new_post', $post, $_POST['pid']);
+
+            $post_id = wp_insert_post ($post);
+
+            if ($post_id != 0)
+        nggGallery::show_message( __('Published a new post','nggallery') );
+
+}  
  
 } // END class nggpanoAdmin
 

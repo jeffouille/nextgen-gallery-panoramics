@@ -50,7 +50,7 @@ Follow variables are useable :
             },
             { action: 'addMarkers',
                 markers:[
-                        {lat:<?php echo $gps["lat"] ?>, lng:<?php echo $gps["lng"] ?>, data:'<div class="map_infowindow"><span class="thumb"><img src="<?php echo $mapinfos['thumbinfowindow'] ?>" /></span><span class="title"><?php echo $pano->title ; ?></span></div>'}
+                    {lat:<?php echo $gps["lat"] ?>, lng:<?php echo $gps["lng"] ?>, data:'<div class="map_infowindow"><span class="thumb"><img src="<?php echo $mapinfos['thumbinfowindow'] ?>" /></span><span class="title"><?php echo esc_attr($pano->title) ; ?></span></div>'}
                     ],
                 marker:{
                     options:{

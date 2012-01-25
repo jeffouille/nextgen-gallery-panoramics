@@ -73,7 +73,7 @@ class NGPano_shortcodes {
     /**
      * Function to show a single panorama with map under :
      * 
-     *     [singlepanowithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" mode="none|caption" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *     [singlepanowithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *
      * where
      *  - id is one picture id
@@ -118,7 +118,7 @@ class NGPano_shortcodes {
     /**
      * Function to show a single picture:
      * 
-     *     [singlepicwithmap id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" link="url" "template="filename" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *     [singlepicwithmap id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" caption="full|none|title|description" link="url" "template="filename" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *
      * where
      *  - id is one picture id
@@ -177,7 +177,7 @@ class NGPano_shortcodes {
      *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
      *  - mapz zoom level for the map
      *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
-     *  - links links to display with the picture links all|picture|map|pano (possiblity to have 2 links : picture&map
+     *  - links links to display with the picture links all|picture|map|pano (possiblity to have 2 links : picture-map
      *  - mainlink link to follow when click on the thumbnail picture|map|pano|none
      *  - caption display or not the caption full|none|title|description
      * 
@@ -225,7 +225,7 @@ class NGPano_shortcodes {
      *  - captionmode to display or not captions for the image
      *  - w, h and zoom are width, height and zoom level for the map
      *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
-     *  - links links to display with the picture links all|picture|map|pano (possiblity to have 2 links : picture&map
+     *  - links links to display with the picture links all|picture|map|pano (possiblity to have 2 links : picture-map
      *  - mainlink link to follow when click on the thumbnail picture|map|pano|none
      * 
      * 
