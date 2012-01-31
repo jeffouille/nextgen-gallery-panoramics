@@ -26,10 +26,12 @@ class nggpanoKrpanoXML {
       * @access private
       * @var string
       */
-    var $pano       =   false;          // $_GET['pano']  ex: method_type_id (single
-    var $method     =   false;		// $_GET['pano']    first item of $_GET['pano']	: single | mutiple
+    var $panorequest    =   false;          // $_GET['pano']  ex: methodtype_id (single
+    var $method         =   false;		// $_GET['pano']    first item of $_GET['pano']	: single | mutiple
     //var $type       =   false;		// $_GET['type']	: scene | image (required for method scene) TODO (get from method)
-    var $id         =   false;		// $_GET['id']      second item of $_GET['pano']    : object id (required for method multiple | single )
+    var $id             =   false;		// $_GET['id']      second item of $_GET['pano']    : object id (required for method multiple | single )
+    
+    var $pano           =   false;        //pano object
 
     /**
      * Contain the final output
@@ -58,10 +60,10 @@ class nggpanoKrpanoXML {
     //if ( !defined('ABSPATH') )
        // die('You are not allowed to call this page directly.');
             //Get pano and method from $_GET['pano']
-       $this->pano  = isset($_GET['pano']) ? strtolower( $_GET['pano'] ) : false; 
-       if($this->pano) {
-           if (strpos($this->pano, '_')) {
-                $splitpano = split('_', $this->pano);
+       $this->panorequest  = isset($_GET['pano']) ? strtolower( $_GET['pano'] ) : false; 
+       if($this->panorequest) {
+           if (strpos($this->panorequest, '_')) {
+                $splitpano = split('_', $this->panorequest);
                 // Read the parameter on init
                 $this->method 	= isset($splitpano[0]) ? strtolower( $splitpano[0] ) : false;
                 $this->id 	= isset($splitpano[1]) ? strtolower( $splitpano[1] ) : false;
@@ -70,25 +72,28 @@ class nggpanoKrpanoXML {
        }
             $this->result	= array();
 
-            $this->start_process();
-            $this->render_output(true);
+            $this->start_process(true);
+            $this->render_output();
     }
 
-    function start_process() {
+    function start_process($debug = false) {
 
         global $ngg, $nggpano;
 
         if ( !$this->valid_access() ) 
                 return;
-
+        //get Pano XML
         switch ( $this->method ) {
 
             case 'single' :
+                
                 //search for the pano
                 $pano = new nggpanoPano($this->id, '');
                 $pano->loadFromDB();
                 
-                $xmlpano = $pano->getXML('','%BASEDIR%/');
+                $this->pano = $pano;
+                
+                $xmlpano = $this->pano->getXML('', '%BASEDIR%/', $debug);
                 $this->result['xmlpanonode']= $xmlpano;
             break;            
             case 'multiple' :
@@ -102,7 +107,19 @@ class nggpanoKrpanoXML {
                 return false;	
             break;		
         }
-
+        
+        if($this->pano) {
+        //get Skin xml
+        //$skintemplate = $this->pano->viewerTemplateURL;
+        //$this->result['xmltemplatenode']= $skintemplate;
+        /*
+         $nggpano->options['krpanoToolsTempFolder']      = trailingslashit($nggpano->options['krpanoToolsTempFolder']);
+                    $nggpano->options['kmakemultiresFolder']        = trailingslashit($nggpano->options['kmakemultiresFolder']);
+                    $nggpano->options['kmakemultiresConfigFolder']  = trailingslashit($nggpano->options['kmakemultiresConfigFolder']);
+                    $nggpano->options['krpanoFolder']               = trailingslashit($nggpano->options['krpanoFolder']);
+                    $nggpano->options['skinFolder'] 
+        */
+        }
         // result should be fine	
         $this->result['stat'] = 'ok';	
     }
@@ -140,20 +157,17 @@ class nggpanoKrpanoXML {
         return $xml;
     }
 	
-    function render_output($debug) {
+    function render_output() {
         global $ngg, $nggpano;
         
         
         
         header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
-        $this->output  = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\n";
+        $this->output  = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>";
         //$this->output .= "<xml>\n";
         //$this->output .= "<debug>" .$this->create_xml_array($this->method) . $this->create_xml_array($this->id) .$this->create_xml_array($this->result) . "</debug>\n";
         $this->output .= $this->result['xmlpanonode'];
         
-        if($debug) {
-            $this->output .= '<plugin name="options" url="../krpano_plugins/options.swf" />';
-        }
         //$this->output .= "<krpano>" . $this->result['xmlpanonode']  . "</krpano>\n";
         //$this->output .="</xml>";
         

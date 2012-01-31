@@ -31,7 +31,7 @@ function nggpano_install () {
 //	$role->add_cap('NextGEN Manage tags');
 //	$role->add_cap('NextGEN Manage others gallery');
 //	$role->add_cap('NextGEN Edit album');
-//	$role->add_cap('NextGEN Change style');
+	$role->add_cap('NGG Panoramics Change style');
 //	$role->add_cap('NextGEN Change options');
 	
 	// upgrade function changed in WordPress 2.3	
@@ -130,7 +130,7 @@ function nggpano_default_options() {
         
 	
 	//Krpano Viewer
-	$nggpano_options['defaultSkinFile']	= 'default_template.xml';		// append related images
+	$nggpano_options['defaultSkinFile']	= 'default_template_krpano.xml';		// append related images
         $nggpano_options['krpanoFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano/";
         $nggpano_options['skinFolder']          = "wp-content/plugins/".NGGPANOFOLDER . "/krpano_skins/";
         $nggpano_options['pluginFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano_plugins/";

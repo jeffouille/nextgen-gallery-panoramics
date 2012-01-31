@@ -19,3 +19,5 @@ soundinterface.swf
 textfield.swf
 videoplayer.js
 videoplayer.swf
+dblclick.js
+dblclick.swf

@@ -768,13 +768,12 @@ class nggpanoPano{
    * @param String $URLsearchstring    Url string to search
    * @param String $URLreplacestring    Url string to search
    *
-   * @return Mixed Value of the option or $default if not found
+   * @return XML
    */
-  public function getXML($URLsearchstring = null, $URLreplacestring = null)
+  public function getXML($URLsearchstring = null, $URLreplacestring = null, $debug = false)
   {
     if (isset($this->xml_configuration)) {
-        $this->loadFromDB();
-        
+        $this->loadFromDB();   
     }
     $partial = isset($this->is_partial) ? 'ispartialpano="true"' : '';
     
@@ -787,9 +786,33 @@ class nggpanoPano{
     
     $xmlreturn  = '<krpano version="1.0.8.14" '. $partial . ' ' . $basedir . '>';
     $xmlreturn .= $xmlConfiguration;
+    $xmlreturn .= $this->getSkinXML();
+    if($debug) {
+        $xmlreturn  .= '<plugin name="options" url="'.$this->pluginFolderURL.'options.swf" />';
+    }
     $xmlreturn .= '</krpano>';
 
     return $xmlreturn;
+
+  }
+  
+  
+  /**
+   * Get skin xml node
+   *
+   * @return XML
+   */
+  function getSkinXML()
+  {
+    $xml_skin = file_get_contents($this->viewerTemplatePath);
+    $xml_skin = str_replace('%PLUGINDIR%', $this->pluginFolderURL, $xml_skin);
+    $xml_skin = str_replace('%SKINDIR%', $this->skinFolderURL, $xml_skin);
+    //%PLUGINDIR% = directory with krpano plugin
+    //%SKINDIR% = directory with krpano skin
+    
+    //$xmlreturn  = '<include url="'.$this->viewerTemplateURL.'" />';
+
+    return $xml_skin;
 
   }
   
