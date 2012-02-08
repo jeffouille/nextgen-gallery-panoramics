@@ -27,6 +27,23 @@ if (isset ( $_GET['mode']) ) {
     $mode = $_GET['mode'];
     
     switch ($mode) {
+        case 'save-gps-region':
+            check_admin_referer('pick-gps-region');
+            if (isset ( $_GET['gid']) ) {
+                if($_POST['picture_sw_lat'] <>'' && $_POST['picture_sw_lng'] <>'' && $_POST['picture_ne_lat'] <>'' && $_POST['picture_ne_lng'] <>'') {
+                $bounds_array = array(
+                    'sw' => array('lat' => $_POST['picture_sw_lat'],
+                                  'lng' => $_POST['picture_sw_lng']),
+                    'ne' => array('lat' => $_POST['picture_ne_lat'],
+                                  'lng' => $_POST['picture_ne_lng'])
+                    );
+                    nggpano_save_gps_region($_GET['gid'], serialize($bounds_array));
+                } else {
+                    nggpano_save_gps_region($_GET['gid'], null);
+                }
+            }
+            break;
+        
         case 'extractgps':
             if (isset ( $_GET['id']) ) {
                 nggpano_extractgps_and_save($_GET['id']);
@@ -350,5 +367,63 @@ function debug_ratio($id) {
 echo json_encode($fov_data);
 }
 
+
+
+/**
+ * Save region gps bounds of a gallery in database
+ * @param string $gid the gallery id
+ * 
+ * @return void
+ */
+function nggpano_save_gps_region($gid, $bounds_object) {
+    global $wpdb;
+        if($gid) {
+            // let's get the gallery data
+            $gallery = nggdb::find_gallery($gid);
+            if($gallery) {
+
+                $gallery_values = nggpano_getGalleryOptions($gid);
+            
+            //echo "pid=".$pid;
+                $result = array();
+                $message = '';
+                $error = true;
+                //if($bounds_object) {
+
+
+                    if($gallery_values) {
+                        if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET gps_region = '".$bounds_object."' WHERE gid = '".$wpdb->escape($gid)."'") !== false) {
+                            $error = false; 
+                            $message = __('GPS datas successfully saved','nggpano');
+                        } else {
+                            $message = 'Error with database1';
+                        };
+                    }else{
+                        $image = nggdb::find_image( $id );
+                        $gid = $image->galleryid;
+                        if($wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, gps_region) VALUES (null, '".$wpdb->escape($gid)."', '".$bounds_object."')") !== false) {
+                            $error = false;
+                            $message = __('GPS datas successfully saved','nggpano');
+                        } else {
+                            $message = 'Error with database2';
+                        };
+                    }
+                        $result['error']    = $error;
+                        $result['message']  = $message;
+                        $result['gps_data'] = unserialize($bounds_object);
+                //nggpano_update_gallery(null, $post);
+
+//                } else {
+//                    $result['error']= true;
+//                    $result['message']=__('No GPS datas in paramater','nggpano');
+//                    $result['gps_data'] = array();
+//                }
+                $result['gid'] = $gid;
+                //nggpano_picture[1][lat]
+                
+                echo json_encode($result);
+        }
+    }
+}
 
 ?>

@@ -69,7 +69,7 @@ class nggpanoAdminPanel{
                     nggpano_admin_style();
                 break;
                 case "nggpano-tool-config" :
-                    include_once ( dirname (__FILE__) . '/tool-config-file.php' );		// nggpano_admin_style
+                    include_once ( dirname (__FILE__) . '/tool-config-file.php' );		// nggpano_admin_tool_config_file
                     nggpano_admin_tool_config_file();
                 break;
                 case "nggallery-manage-gallery" :

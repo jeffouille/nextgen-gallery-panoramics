@@ -42,6 +42,105 @@
 }
 
 
+/* ----------- GPS REgion -------------*/
+.gps_region_tools {
+    padding-right: 20px;
+    text-align: right;
+}
+.gps_region_tools #tools span {
+    border: 1px solid #C8C8C8;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 14px;
+    margin-left: 5px;
+    text-align: center;
+    width: 123px;
+    background-color: #EEEEEE;
+}
+.gps_region_tools #tools #show-photo.checked {
+    background-color: #316AC5;
+    color: #FFFFFF;
+}
+/* cluster */
+.cluster{
+    color: #FFFFFF;
+    text-align:center;
+    font-family: Verdana;
+    font-size:14px;
+    font-weight:bold;
+    text-shadow: 0 0 2px #000;
+    -moz-text-shadow: 0 0 2px #000;
+    -webkit-text-shadow: 0 0 2px #000;
+}
+.cluster-1{
+    background: url(images/marker-green-pin.png) no-repeat;
+    line-height:20px;
+    width: 22px;
+    height: 40px;
+}
+.cluster-2{
+    background: url(images/marker-orange-pin.png) no-repeat;
+    line-height:25px;
+    width: 27px;
+    height: 48px;
+}
+.cluster-3{
+    background: url(images/marker-red-pin.png) no-repeat;
+    line-height:30px;
+    width: 31px;
+    height: 56px;
+}
+
+/* infobulle */
+.infobulle{
+    overflow: hidden; 
+    cursor: default; 
+    clear: both; 
+    position: relative; 
+    height: 34px; 
+    padding: 0pt; 
+    background-color: rgb(57, 57, 57);
+    border-radius: 4px 4px; 
+    -moz-border-radius: 4px 4px;
+    -webkit-border-radius: 4px 4px;
+    border: 1px solid #2C2C2C;
+}
+.infobulle .bg{
+    font-size:1px;
+    height:16px;
+    border:0px;
+    width:100%;
+    padding: 0px;
+    margin:0px;
+    background-color: #5E5E5E;
+}
+.infobulle .text{
+    color:#FFFFFF;
+    font-family: Verdana;
+    font-size:11px;
+    font-weight:bold;
+    line-height:25px;
+    padding:4px 20px;
+    text-shadow:0 -1px 0 #000000;
+    white-space: nowrap;
+    margin-top: -17px;
+}
+.infobulle.picto .text{
+    background: url(images/photo_thumbnail_map.png) no-repeat 2px center;
+    padding:4px 20px 4px 36px;
+}
+.arrow{
+    position: absolute; 
+    left: 45px; 
+    height: 0pt; 
+    width: 0pt; 
+    margin-left: 0pt; 
+    border-width: 10px 10px 0pt 0pt; 
+    border-color: #2C2C2C transparent transparent; 
+    border-style: solid;
+}
+
+
 /*TO REMOVE */
 
 

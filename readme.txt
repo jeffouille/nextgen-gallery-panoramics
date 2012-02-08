@@ -34,24 +34,24 @@ DONE Admin options add folder settings
 DONE with live method.... make links added with ajax be correctly clickable
 DONE add possibility to add manually a pano (memory limit)
 DONE publish a pano from admin page
+DONE add admin page to edit skin file and config file config file (skin.xml and krpanotool.config) edit panel (like css style edit)
+DONE region for gallery
+
+shortcode for photo gallery
 
 map default options in admin (mapw, maph, map zoom, map_type, picto marker
 
-region for gallery
 
 shortcode generator in wysiwyg
 
 add license file config in admin
 
-add admin page to edit skin file and config file
 
 add krpanoplugin configuration in plugin options and in gallery option
 
 check memory limit (gd vs imagemagik)
 
 publish a pano with featured image
-
-config file (skin.xml and krpanotool.config) edit panel (like css style edit)
 
 xml generator for plugin
 

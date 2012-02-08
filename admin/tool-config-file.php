@@ -120,13 +120,10 @@ if (!$error && filesize($real_file) > 0) {
 			<li><strong><?php _e('Version','nggallery') ?> :</strong> <?php echo $act_template_version ?></li>
 			<li><strong><?php _e('Description','nggallery') ?> :<br /></strong> <?php echo $act_template_description ?></li>
 		</ul>
-		<p><?php _e('Tip : Copy your skin file (nggpano-tool.config) to your theme folder (THEMEDIR/nggpano/krpano/), so it will be not lost during a upgrade','nggpano') ?></p>
+		<p><?php _e('Tip : Copy your config file (nggpano-tool.config) to your theme folder (THEMEDIR/nggpano/krpano/), so it will be not lost during a upgrade','nggpano') ?></p>
 	<?php else: ?>
 		<p><?php _e('Your theme contain a NextGEN Gallery Panoramic Building Template (THEMEDIR/nggpano/krpano/nggpano-tool.config), this file will be used','nggpano') ?></p>
 	<?php endif; ?>
-        <p><?php _e('Tip No. 3: Use these variables : <ul><li>%PLUGINDIR% = directory with krpano plugins</li><li>%SKINDIR% = directory with krpano skin</li></ul>','nggpano') ?></p>
-        <p><?php echo sprintf(__('&#37;PLUGINDIR&#37; will be replaced with : <strong>%s</strong>','nggpano'), $nggpano->options['pluginFolder']) ?></p>
-        <p><?php echo sprintf(__('&#37;SKINDIR&#37; will be replaced with : <strong>%s</strong>','nggpano'), $nggpano->options['skinFolder']) ?></p> 
 	</div>
 		<?php
 		if (!$error) {

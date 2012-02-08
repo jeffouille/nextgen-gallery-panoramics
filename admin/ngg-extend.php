@@ -26,6 +26,7 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                 $default_templatefile = $nggpano->options['defaultSkinFile'];
                 $act_gallery_settings = nggpano_getGalleryOptions($act_gid);
                 $act_templatefile = isset($act_gallery_settings->skin) ? $act_gallery_settings->skin : '';
+                $act_gallery_region = isset($act_gallery_settings->gps_region) ? unserialize($act_gallery_settings->gps_region) : '';
                 
                 ?>
                 <tr>
@@ -34,14 +35,14 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                     <hr />
                     <input type="hidden" name="nggpano_gallery[ngg_gallery_id]" value="<?php echo $act_gid ?>" />
                     <!-- TODO -->
-                    <input type="hidden" name="nggpano_gallery[gps_region]" value="" />
+<!--                    <input type="hidden" name="nggpano_gallery[gps_region]" value="" />-->
                     </td>
                 </tr>
                 <tr valign="top">
-                    <td align="right">
-                        <?php _e('Skin file','nggpano');?>
-                    </td>
-                    <td colspan="3">
+                    <th align="right">
+                        <?php _e('Skin file','nggpano');?> : 
+                    </th>
+                    <th align="left">
                         <select name="nggpano_gallery[skin_file]" id="nggpano_gallery[skin_file]" style="margin: 0pt; padding: 0pt;">
                         <?php               
                         $templatelist = nggpano_get_viewerskinfiles();
@@ -63,14 +64,24 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                         ?>
 
                         </select>
-                    </td>
+                    </th>
+                    <th align="right">
+                        <?php _e('Map Region','nggpano');?> : 
+                    </th>
+                    <th align="left">
+                        <div id="map_gps_region" style="float: left; width: 300px; height: 200px;"></div>
+                        <span class="pickgpsregion">
+                           <a class="nggpano-dialog" href="<?php echo NGGPANOGALLERY_URLPATH  ?>admin/pick-gps-region.php?gid=<?php echo $act_gid ?>&h=680" title="<?php _e('Pick GPS Region on map','nggpano') ?>"><?php _e('Pick GPS Region on map','nggpano') ?></a>
+                        </span>
+<!--                        <input class="button-secondary nggpano-dialog" type="submit" name="pickgpsregion" value="<?php _e('Edit', 'nggpano'); ?>" onclick="    return false;" />-->
+                    </th>
                 </tr>
+                <hr/>
                 <tr>
-                    <td align="right">
-                        <?php _e('Bulk actions','nggpano');?>
-                    </td>
-                    <td colspan="3" align="left">
-                        <hr />
+                    <th align="left">
+                        <?php _e('Bulk actions','nggpano');?> : 
+                    </th>
+                    <th colspan="3" align="left">
                         <div class="tablenav top ngg-tablenav">
                             <div class="alignleft actions">
                                 <select id="nggpano_bulkaction" name="nggpano_bulkaction">
@@ -83,16 +94,16 @@ Why are you even reading this? Maybe you should consider helping me stock that f
 
                             </div>
                         </div>
-                    </td>
+                    </th>
                 </tr>
                 <tr>
-                    <td colspan="4" align="left">
+                    <th colspan="4" align="left">
                     <hr />
-                    </td>
+                    </th>
                 </tr>
 
                 <script type="text/javascript"> 
-                <!--
+//<![CDATA[
 
                 // this function check for a the number of selected images, sumbmit false when no one selected
                 function checkPanoSelected() {
@@ -150,9 +161,59 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                         return elementlist;
                 }
 
-                //-->
+jQuery(document).ready(function(){
+    //initalize map
+    jQuery('#map_gps_region').gmap3(
+    {
+        action:'init',
+        options:{
+            center:['46.578498','2.457275'],
+            zoom: 4,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        },
+        events:{
+            idle: function(map){
+                //console.log(map.getCenter());
+            
+            }
+        }
+    }
+    <?php if ($act_gallery_region <> "" && (isset($gps_region_array['sw']['lat']) && $gps_region_array['sw']['lat'] <> '')) : ?>,
+    {
+        action: 'addRectangle',
+        rectangle:{
+            options:{
+                bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(<?php echo $act_gallery_region['sw']['lat'] ?>, <?php echo $act_gallery_region['sw']['lng'] ?>),
+                    new google.maps.LatLng(<?php echo $act_gallery_region['ne']['lat'] ?>, <?php echo $act_gallery_region['ne']['lng'] ?>)          
+                ),
+                fillColor : "#008BB2",
+                strokeColor : "#005BB7",
+                clickable:true,
+                editable:false
+            }
+        },
+        map:{
+            center: true//,
+            //zoom:12
+        }
+    }
+    <?php endif; ?>
+
+    );
+    <?php if ($act_gallery_region <> "" && (isset($gps_region_array['sw']['lat']) && $gps_region_array['sw']['lat'] <> '')) : ?>
+    var map = jQuery("#map_gps_region").gmap3('get');
+    var bounds= new google.maps.LatLngBounds(
+                    new google.maps.LatLng(<?php echo $act_gallery_region['sw']['lat'] ?>, <?php echo $act_gallery_region['sw']['lng'] ?>),
+                    new google.maps.LatLng(<?php echo $act_gallery_region['ne']['lat'] ?>, <?php echo $act_gallery_region['ne']['lng'] ?>)          
+                );
+                map.setCenter(bounds.getCenter());
+                map.fitBounds(bounds);
+                //map.panToBounds(bounds);
+    <?php endif; ?>
+});
+//]]> 
                 </script>
-           
                 <?php
         }
 
