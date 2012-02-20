@@ -138,6 +138,9 @@ class nggpanoAdmin{
                 //URL to publish the pano
                 $url_publish = NGGPANOGALLERY_URLPATH . 'admin/publish-pano.php?id=' . $pid . '&h=500';
                 
+                //URL to publish with featured image and infocus theme meta options the pano
+                $url_quickpublish = NGGPANOGALLERY_URLPATH . 'admin/publish-pano-infocus.php?id=' . $pid . '&h=500';
+                
                 //URL to show Pano
                 $url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
                 //$url_show = NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
@@ -172,6 +175,8 @@ class nggpanoAdmin{
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
                         if ( current_user_can( 'publish_posts' ) )
                             $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_publish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
+                        if( current_user_can('publish_posts') && get_current_theme() == 'inFocus')
+                            $actions['quick-publish'] = '<a class="nggpano-dialog" href="' . $url_quickpublish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Create Article', 'nggpano') . '</a>';
                         $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Resize image for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';  
                     }
                     $action_count = count($actions);
@@ -331,11 +336,6 @@ class nggpanoAdmin{
 	/**
 	 * Publish a new post with the shortcode from the selected pano
 	 * 
-	 * @param int $pid, Id of the image
-	 * @param int (optional) $gid, id of the gallery
-	 * @param decimal (optional)  $hfov, Horizontal Field Of View
-         * @param decimal (optional)  $vfov, Vertical Field Of View
-         * @param decimal (optional)  $voffset, Vertical Offset
 	 * @return void
 	 */
     function publish_pano() {
@@ -411,7 +411,7 @@ class nggpanoAdmin{
                 case 'singlepano':
                 default:
                     $post_content_shortcode = '[singlepano id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' ' . $captiontype_attr.']';
-
+                    
                     break;
             }
 
@@ -420,15 +420,148 @@ class nggpanoAdmin{
             $post['post_author']  = $user_ID;
             $post['post_status']  = isset ( $_POST['publish_state'] ) && $_POST['publish_state'] == 'true' ? 'publish' : 'draft';
             $post['post_title']   = $_POST['post_title'];
+            
+            //tags
+            $with_tags = (isset ($_POST['with_tags']) && $_POST['with_tags'] == '1') ? true : false;
+            if ($with_tags) {
+                // let's get the image data
+                $picture = nggdb::find_image($_POST['pid']);
+                $tags = $picture->get_tags();
+                $tag_names = '';
+                foreach ($tags as $tag) {
+                        $tag_names .= ($tag_names=='' ? $tag->name : ', ' . $tag->name);
+                }
+                $post['tags_input']   =  $tag_names;
+            }
+            
+            //Exif Date
+            $use_exif_date = (isset ($_POST['exif_date']) && $_POST['exif_date'] == '1') ? true : false;
+            if($picture) {
+                if($use_exif_date) {
+                    if($picture->imagedate) {
+                        $picturedate = mysql2date('Y-m-d H:i:s', $picture->imagedate);
+                        $post['post_date'] = $picturedate;
+                    //'post_date' => [ Y-m-d H:i:s ]
+                    }
+                }
+            }
+            
+            //category
+            $category = (isset ($_POST['category'])) ? $_POST['category'] : '';
+            $post['post_category'] = $category;
+            
             $post = apply_filters('ngg_add_new_post', $post, $_POST['pid']);
-
+            
+            
             $post_id = wp_insert_post ($post);
+            
+            // Add featured image
+            $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
+            if ($featured) {
+                add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
+            }
 
             if ($post_id != 0)
         nggGallery::show_message( __('Published a new post','nggallery') );
 
-}  
- 
+    }  
+
+	/**
+	 * Publish a new post with the shortcode from the selected pano with infocus post meta
+	 * 
+	 * @param int $pid, Id of the image
+	 * @param int (optional) $gid, id of the gallery
+	 * @param decimal (optional)  $hfov, Horizontal Field Of View
+         * @param decimal (optional)  $vfov, Vertical Field Of View
+         * @param decimal (optional)  $voffset, Vertical Offset
+	 * @return void
+	 */
+    function publish_pano_infocus() {
+
+
+            // Create a WP page
+            global $user_ID, $ngg;
+
+            $post['post_type']    = 'post';
+            $post['post_content'] = $_POST['post_content'];
+            $post['post_author']  = $user_ID;
+            $post['post_status']  = isset ( $_POST['publish_state'] ) && $_POST['publish_state'] == 'true' ? 'publish' : 'draft';
+            $post['post_title']   = $_POST['post_title'];
+            
+            // let's get the image data
+            $picture = nggdb::find_image($_POST['pid']);
+            if($picture) {
+                //tags
+                $with_tags = (isset ($_POST['with_tags']) && $_POST['with_tags'] == '1') ? true : false;
+                if ($with_tags) {
+
+                    $tags = $picture->get_tags();
+                    $tag_names = '';
+                    foreach ($tags as $tag) {
+                            $tag_names .= ($tag_names=='' ? $tag->name : ', ' . $tag->name);
+                    }
+                    $post['tags_input']   =  $tag_names;
+                }
+            }
+            
+            //Exif Date
+            $use_exif_date = (isset ($_POST['exif_date']) && $_POST['exif_date'] == '1') ? true : false;
+            if($picture) {
+                if($use_exif_date) {
+                    if($picture->imagedate) {
+                        $picturedate = mysql2date('Y-m-d H:i:s', $picture->imagedate);
+                        $post['post_date'] = $picturedate;
+                    //'post_date' => [ Y-m-d H:i:s ]
+                    }
+                }
+            }
+            
+            //category
+            $category = (isset ($_POST['category'])) ? $_POST['category'] : '';
+            $post['post_category'] = $category;
+            
+            $post = apply_filters('ngg_add_new_post', $post, $_POST['pid']);
+            
+            
+            $post_id = wp_insert_post ($post);
+            
+            //Add infocus theme option
+            $post_intro_panoramic_html = '[singlepano id=' . intval($_POST['pid']) .']';
+            
+            $mysite_infocus_options_array = array(
+                    '_intro_panoramic_html' => $post_intro_panoramic_html,
+                    '_intro_text'           => 'panoramic',
+                    '_disable_post_image'   => array('true'),
+                    '_disable_breadcrumbs'  => array('true'),
+                    '_layout'               => 'full_width'
+          
+            );
+
+            # save the meta boxes
+            foreach ( $mysite_infocus_options_array as $key => $value ) {
+
+                    $old = get_post_meta( $post_id, $key, true );
+
+                    if ( $value && $value != $old ) {
+                            update_post_meta( $post_id, $key, $value );
+                    } elseif ('' == $value && $old) {
+                            delete_post_meta( $post_id, $key, $old );
+                    }
+            }
+            
+            // Add featured image
+            $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
+            if ($featured) {
+                add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
+            }
+            
+            
+            if ($post_id != 0)
+        nggGallery::show_message( __('Published a new post','nggallery') );
+
+    }  
+    
+    
 } // END class nggpanoAdmin
 
 /**

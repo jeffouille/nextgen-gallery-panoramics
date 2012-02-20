@@ -36,6 +36,10 @@ DONE add possibility to add manually a pano (memory limit)
 DONE publish a pano from admin page
 DONE add admin page to edit skin file and config file config file (skin.xml and krpanotool.config) edit panel (like css style edit)
 DONE region for gallery
+DONE publish a pano with featured image
+DONE checkbox exif date in article
+DONE checkbox featured image in article published
+DONE category in publish pano
 
 shortcode for photo gallery
 
@@ -51,7 +55,15 @@ add krpanoplugin configuration in plugin options and in gallery option
 
 check memory limit (gd vs imagemagik)
 
-publish a pano with featured image
+save post_id in ngpano_picture
+
+delete post_id when publish article
+
+
+
+
+
+
 
 xml generator for plugin
 

@@ -58,6 +58,54 @@ $action_filepath = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=publish
             </td>
 	</tr>
 	<tr valign="top">
+            <th align="left"><?php _e('Add Featured Image','nggpano') ?></th>
+            <td>
+                <input type="checkbox" name="featured_image" checked="checked" value="1" />
+                <br /><small><?php _e('Use this picture as the featured image of the article ','nggpano') ?></small>
+            </td>
+	</tr>
+	<tr valign="top">
+            <th align="left"><?php _e('With tags','nggpano') ?></th>
+            <td>
+                <input type="checkbox" name="with_tags" checked="checked" value="1" />
+                <br /><small><?php _e('Use all image\'s the keyword for the article ','nggpano') ?></small>
+            </td>
+	</tr>
+	<tr valign="top">
+            <th align="left"><?php _e('Use EXIF date','nggpano') ?></th>
+            <td>
+                <input type="checkbox" name="exif_date" checked="checked" value="1" />
+            </td>
+	</tr>
+	<tr valign="top">
+            <th align="left"><?php _e('Category','nggpano') ?></th>
+            <td>
+                <?php $args = array(
+                        'show_option_all'    => '',
+                        'show_option_none'   => '',
+                        'orderby'            => 'NAME', 
+                        'order'              => 'ASC',
+                        'show_count'         => 1,
+                        'hide_empty'         => 0, 
+                        'child_of'           => 0,
+                        'exclude'            => '',
+                        'echo'               => 0,
+                        'selected'           => 0,
+                        'hierarchical'       => 1, 
+                        'name'               => 'category[]',
+                        'id'                 => 'category_select',
+                        'class'              => 'category_select',
+                        'depth'              => 3,
+                        'tab_index'          => 0,
+                        'taxonomy'           => 'category',
+                        'hide_if_empty'      => false );
+                    $select_cats = wp_dropdown_categories( $args );
+                    $select_cats = str_replace( 'id=', 'multiple="multiple" id=', $select_cats );
+                    echo $select_cats;
+                ?>
+            </td>
+	</tr>
+	<tr valign="top">
             <th align="left"><?php _e('Width x height (in pixel)','nggallery') ?></th>
             <td>
                 <input type="text" size="5" maxlength="5" name="width" value="<?php echo $width; ?>" /> x <input type="text" size="5" maxlength="5" name="height" value="<?php echo $height; ?>" />

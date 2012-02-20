@@ -29,6 +29,7 @@ Follow variables are useable :
 <script type="text/javascript">
     var viewer = createPanoViewer({swf:"<?php echo $pano->krpano_path ?>", wmode:"opaque", id:"<?php echo $pano->swfid ?>"});
     viewer.addVariable("xml", "<?php echo $pano->krpano_xml ?>");
+    viewer.addParam("class", "krpanoSWFObject");
     viewer.embed("<?php echo $pano->contentdiv ?>");
 </script>
 

@@ -162,6 +162,14 @@ if (isset ( $_GET['mode']) ) {
                 nggpanoAdmin::publish_pano();
             
             break;
+            
+        case 'publish-pano-infocus':
+            check_admin_referer('publish-pano-infocus');
+            // Should be called via a publish dialog	
+            if ( isset($_POST['page']) && $_POST['page'] == 'publish-pano-infocus' && $_POST['pid'] )
+                nggpanoAdmin::publish_pano_infocus();
+            
+            break;
         default:
             break;
     }
