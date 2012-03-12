@@ -138,7 +138,7 @@ function checkPublishForm(publish) {
     
     if (jQuery.trim(post_title) == ""){
         
-        errormessage = '<?php _e('Article title is required','nggpano') ?>';
+            errormessage = '<?php esc_js('Article title is required','nggpano') ?>';
         jQuery('#form-publish-pano-infocus-error').removeClass('success').addClass('error').text(errormessage).show(1000);
         return false                                       
     }
@@ -173,12 +173,12 @@ jQuery('#form-publish-pano-infocus').submit(function(e) {
     jQuery.ajax({
                     url: url,
                     data: jQuery(this).serialize(),
-                    dataType : 'json',
+                    dataType : 'html',
                     type: 'POST',
                     success: function(data, textStatus, XMLHttpRequest) {
                         //{"error":false,"message":"GPS datas successfully saved","gps_data":{"latitude":48.27710215,"longitude":-4.59594487998,"altitude":7,"timestamp":"9:44:45"}}
                             if(data) {
-                                return true;
+                                container.html(data);
                             }
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {

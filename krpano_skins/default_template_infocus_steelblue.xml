@@ -1,0 +1,556 @@
+<!-- 
+Skin Name: Default Template Skin from Infocus Theme SteelBlue
+Description: NextGEN Gallery Panoramic Infocus SteelBlue Default Skin - Use plugins dblclick.swf, dblclick.js, textfield.swf
+Author: Geoffroy Deleury
+Version: 1.00
+
+%PLUGINDIR% = directory with krpano plugin
+%SKINDIR% = directory with krpano skin
+
+This is a template skin that can be used with NextGEN Gallery Panoramic.
+More info in krpano.com
+Modify it when your theme struggle with it, it's only a template design
+ -->
+<krpano version="1.0.8.14" logkey="true">
+    <panoview h="0" v="0" fov="90"/>
+    <action name="initialize">
+        <!--firstloadcompleteaction();-->
+        changescene(%1);
+        <!--Gestion Pile Miniature -->
+        set(laststackthumbindex, get(scene.count));
+	dec(laststackthumbindex);
+	buildstackthumbs(0, get(laststackthumbindex));
+        <!--Gestion Liste Miniature -->
+        initThumbList();
+        thumbsResizeEventHandler();
+    </action>
+    <action name="changescene">
+        <!--loadscene(%1,null,KEEPDISPLAY|KEEPCONTROL|KEEPPLUGINS|KEEPPROGRESS);-->
+        if(plugin[data].actualscene != %1,
+            loadscene(%1,null,MERGE);
+            set(plugin[data].actualscene, %1);
+            <!--change combobox selected item-->
+            if(plugin[combo-pano-list] !== null ,
+                txtadd(itemcombo, 'combobox-item-', %1);
+                plugin[combo-pano-list].selectIdItem(get(itemcombo));
+
+            );
+        );
+    </action>
+    
+    <action name="mainloadpano">
+		closepanoobjects();
+		ifnot(stopSequence === undefined,interruptAnimation(););
+    </action>
+    <!-- Actions à exécuter au chargement -->
+    <events onxmlcomplete="onxmlcompleteaction();"/>
+    <action name="onxmlcompleteaction">
+		changerotationmenu();;
+	</action>
+    <action name="playpanosounds">
+		playbackgroundsound(none);
+	</action>
+    <action name="stoppanosounds">
+		stopbackgroundsound();
+	</action>
+    <action name="closepanoobjects">
+	</action>
+    <!--************** Hotspots et reflets ********************************************************-->
+    <action name="hidepanospotsaction">
+	</action>
+    <action name="showpanospotsaction">
+	</action>
+        
+    <progress showload="bar(midbottom, 100%, 2, 0, 55, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0)" showreloads="true" showwait="true" parent="STAGE" />
+
+
+    <!--************** Introduction ***************************************************************-->
+    <action name="fromlittleplanetintrotonormalview">
+		tweennormalview();
+		showpanospotsaction();
+	</action>
+    <action name="firstloadcompleteaction">
+		if(plugin[data].firstPanoHasBeenPlayed==false,
+			setlittleplanet();
+			wait(load);
+			set(plugin[data].firstPanoHasBeenPlayed,true);
+			startLittlePlanetIntroEffect();
+		);
+	</action>
+    <action name="startLittlePlanetIntroEffect">
+		if(plugin[data].firstPanoHasBeenPlayed == true,
+			delayedcall(1.0,
+				fromlittleplanetintrotonormalview();
+			);
+		);
+	</action>
+        
+    <action name="tweennormalview">
+		tween(view.hlookat, 0, 3, easeInOutQuad);
+		tween(view.vlookat, 0, 3, easeInOutQuad);
+		tween(view.fov    , 90, 3, easeInOutQuad );
+		tween(view.fisheye, 0.0, 3, easeInOutQuad, WAIT);
+		set(display.flash10, on);
+		set(view.limitview , range);
+		set(view.vlookatmin, -90);
+		set(view.vlookatmax, 90);
+		set(view.hlookatmin, -180);
+		set(view.hlookatmax, 180);
+		set(view.fovmin    , 1);
+		set(view.fovmax    , 90);
+	</action>
+        
+    <action name="setlittleplanet">
+		set(view.stereographic, true);
+		set(view.fisheye      , 1.0);
+		set(view.limitview    , lookat);
+		set(view.vlookatmin   , -90);
+		set(view.vlookatmax   , 90);
+		set(view.fov          , 150);
+		set(view.fovmax       , 150);
+		set(view.hlookat      , 0);
+		set(view.vlookat      , 90);
+		set(display.flash10   , off);
+		set(display.details   , 14);
+	</action>
+        
+    <!-- Fermeture de tous les spots -->
+    
+    <!--************** Logo ***********************************************************************-->
+    <plugin name="logo" visible="false" x="5" y="0" align="lefttop" edge="lefttop" keep="true" url="%SKINDIR%/graphics/infocus-steelblue/logo.png"  zorder="2"/>
+    
+    
+    <!--************** Plugins et données KrPano **************************************************-->
+    <plugin name="data" firstPanoHasBeenPlayed="false" actualscene="" keep="true"/>
+    <autorotate enabled="false"/>
+    <!--************** Polices ********************************************************************-->
+    <textstyle name="DEFAULT" bold="false" font="Arial Narrow" fontsize="16" italic="false" textcolor="0xff000000"/>
+    <textstyle name="infobulleTitle" bold="false" font="Arial" fontsize="16" italic="false" textcolor="0x788794" border="false" background="true" effect="glow(0x000000,1,1,1);" />
+    <!--************** Menu ***********************************************************************-->
+    <plugin name="dblclick" alturl="%PLUGINDIR%/dblclick.js" keep="true" ondblclick="switch(fullscreen)" url="%PLUGINDIR%/dblclick.swf"/>
+    <plugin name="leftmenutxt" align="leftbottom" background="false" css="p{color:#788794; font-family:Arial; font-size:18; margin-left:5; margin-right:5; text-align:left; }" devices="flash" edge="leftbottom" height="30" keep="true" selectable="false" textglow="4" textglowcolor="0x000000" url="%PLUGINDIR%/textfield.swf" x="0" y="50"/>
+    <plugin name="rightmenutxt" align="rightbottom" background="false" css="p{color:#788794; font-family:Arial; font-size:18; margin-left:5; margin-right:5; text-align:right; }" devices="flash" edge="rightbottom" height="30" keep="true" selectable="false" textglow="4" textglowcolor="0x000000" url="%PLUGINDIR%/textfield.swf" x="0" y="50"/>
+    <plugin name="centermenutxt" align="bottom" background="false" css="p{color:#788794; font-family:Arial; font-size:18; margin-left:5; margin-right:5; text-align:center; }" devices="flash" edge="bottom" height="30" keep="true" selectable="false" textglow="4" textglowcolor="0x000000" url="%PLUGINDIR%/textfield.swf" x="0" y="50"/>
+    <events onenterfullscreen="changefullscreenmenu();" onexitfullscreen="changefullscreenmenu();"/>
+    <action name="changefullscreenmenu">
+      if (fullscreen,
+        set(plugin[fullscreenmenuON].visible, false);
+        set(plugin[fullscreenmenuOFF].visible, true);
+          ,
+        set(plugin[fullscreenmenuON].visible, true);
+        set(plugin[fullscreenmenuOFF].visible, false);
+      );
+    </action>
+    <action name="changerotationmenu">
+      if (autorotate.enabled,
+        set(plugin[rotationmenuON].visible, false);
+        set(plugin[rotationmenuOFF].visible, true);
+          ,  
+        set(plugin[rotationmenuON].visible, true);
+        set(plugin[rotationmenuOFF].visible, false);
+      );
+    </action>
+    <events onnewpano="newPanoIsLoadedAction"/>
+    <action name="newPanoIsLoadedAction">
+      setMouseType(get(plugin[menudata].mousetype));
+    </action>
+    <action name="setmenutext">set(plugin[%1].html, [p] %2 [/p]);</action>
+    <action name="resetmenutext">set(plugin[%1].html, '');</action>
+    <plugin name="menudata" keep="true" mousetype="moveto" playsounds="false"/>
+    <plugin name="banner" align="bottom" enabled="false" handcursor="false" keep="true" url="%SKINDIR%/graphics/infocus-steelblue/banner.png" width="100%" zorder="0"/>
+
+    <plugin name="menuBackground" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" x="0" y="0" align="bottom" edge="bottom" width="100%" height="55"/>
+
+    <style name="leftstyle" parent="menuBackground" align="leftbottom" keep="true" onout="resetmenutext(leftmenutxt);" url="%SKINDIR%/graphics/infocus-steelblue/buttons.png" y="0" zorder="2"/>
+    <style name="rightstyle" parent="menuBackground" align="rightbottom" keep="true" onout="resetmenutext(rightmenutxt);" url="%SKINDIR%/graphics/infocus-steelblue/buttons.png" y="0" zorder="2"/>
+    
+    <plugin name="slidemenu" crop="40|0|40|25" onclick="menu_slide_out" onhover="setmenutext(centermenutxt, Masquer le menu);" parent="menuBackground" align="bottom" keep="true" onout="resetmenutext(centermenutxt);" url="%SKINDIR%/graphics/infocus-steelblue/buttons-slice.png" y="35" zorder="2" x="5"/>
+    
+    <plugin name="zoomin" crop="0|0|40|40" ondown="set(fov_moveforce,-1);" ondowncrop="0|80|40|40" onhover="setmenutext(leftmenutxt, Zoomer);" onovercrop="0|40|40|40" onup="set(fov_moveforce,0);" style="leftstyle" x="5"/>
+    <plugin name="zoomout" crop="40|0|40|40" ondown="set(fov_moveforce,+1);" ondowncrop="40|80|40|40" onhover="setmenutext(leftmenutxt, Dézoomer);" onovercrop="40|40|40|40" onup="set(fov_moveforce,0);" style="leftstyle" x="42"/>
+    <plugin name="moveleft" crop="80|0|40|40" ondown="set(hlookat_moveforce,-1);" ondowncrop="80|80|40|40" onhover="setmenutext(leftmenutxt, Gauche);" onovercrop="80|40|40|40" onup="set(hlookat_moveforce,0);" style="leftstyle" x="79"/>
+    <plugin name="moveright" crop="120|0|40|40" ondown="set(hlookat_moveforce,+1);" ondowncrop="120|80|40|40" onhover="setmenutext(leftmenutxt, Droite);" onovercrop="120|40|40|40" onup="set(hlookat_moveforce,0);" style="leftstyle" x="116"/>
+    <plugin name="moveup" crop="160|0|40|40" ondown="set(vlookat_moveforce,-1);" ondowncrop="160|80|40|40" onhover="setmenutext(leftmenutxt, Haut);" onovercrop="160|40|40|40" onup="set(vlookat_moveforce,0);" style="leftstyle" x="153"/>
+    <plugin name="movedown" crop="200|0|40|40" ondown="set(vlookat_moveforce,+1);" ondowncrop="200|80|40|40" onhover="setmenutext(leftmenutxt, Bas);" onovercrop="200|40|40|40" onup="set(vlookat_moveforce,0);" style="leftstyle" x="190"/>
+    <plugin name="soundON" visible="false" crop="280|0|40|40" onclick="playorstopsounds();" ondowncrop="280|80|40|40" onhover="setmenutext(rightmenutxt, Arrêter le Son);" onovercrop="280|40|40|40" style="rightstyle" x="153"/>
+    <plugin name="soundOFF" visible="false" crop="560|0|40|40" onclick="playorstopsounds();" ondowncrop="560|80|40|40" onhover="setmenutext(rightmenutxt, Démarrer le Son);" onovercrop="560|40|40|40" style="rightstyle" x="153"/>
+    <plugin name="home" crop="600|0|40|40" onclick="goHome();" ondowncrop="600|80|40|40" onhover="setmenutext(rightmenutxt, Vue initiale);" onovercrop="600|40|40|40" style="rightstyle" x="153"/>
+    <plugin name="rotationmenuON" crop="240|0|40|40" onclick="playorstoprotation();" ondowncrop="240|80|40|40" onhover="setmenutext(rightmenutxt, Démarrer Rotation);" onovercrop="240|40|40|40" style="rightstyle" x="116"/>
+    <plugin name="rotationmenuOFF" visible="false" crop="480|0|40|40" onclick="playorstoprotation();" ondowncrop="480|80|40|40" onhover="setmenutext(rightmenutxt, Arrêter Rotation);" onovercrop="480|40|40|40" style="rightstyle" x="116"/>
+    <plugin name="dragmode" crop="320|0|40|40" onclick="changemousetype();" ondowncrop="320|80|40|40" onhover="setmenutext(rightmenutxt, Changer le Mode de Navigation);" onovercrop="320|40|40|40" style="rightstyle" x="79"/>
+    <plugin name="showhelp" crop="360|0|40|40" onclick="displayHelp();" ondowncrop="360|80|40|40" onhover="setmenutext(rightmenutxt, Aide);" onovercrop="360|40|40|40" style="rightstyle" x="42"/>
+    <plugin name="fullscreenmenuON" crop="400|0|40|40" onclick="switch(fullscreen);" ondowncrop="400|80|40|40" onhover="setmenutext(rightmenutxt, Entrer en Plein Ecran);" onovercrop="400|40|40|40" style="rightstyle" x="5"/>
+    <plugin name="fullscreenmenuOFF" visible="false" crop="520|0|40|40" onclick="switch(fullscreen);" ondowncrop="520|80|40|40" onhover="setmenutext(rightmenutxt, Sortir du Plein Ecran);" onovercrop="520|40|40|40" style="rightstyle" x="5"/>
+    <action name="playorstoprotation">
+      switch(autorotate.enabled);
+      changerotationmenu();
+    </action>
+    <action name="playorstopsounds">
+      switch(plugin[menudata].playsounds);
+      if (plugin[menudata].playsounds,
+        playsoundaction();
+        set(plugin[soundON].visible, false);
+        set(plugin[soundOFF].visible, true);
+      ,
+        stopsoundaction();
+        set(plugin[soundON].visible, true);
+        set(plugin[soundOFF].visible, false);
+      );
+    </action>
+    <action name="goHome">
+      lookto(get(panoview.h),get(panoview.v),get(panoview.fov),smooth(100,20,50));
+    </action>
+    <action name="menu_slide_in">
+        set(plugin[slidemenu].onclick, menu_slide_out);
+        set(plugin[slidemenu].crop, 40|0|40|25);
+        tween(plugin[menuBackground].y, 0, -40, easeOutQuint);
+        tween(plugin[banner].y, 0, -40, easeOutQuint);
+        set(progress.showload, bar(midbottom, 100%, 2, 0, 55, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0));
+        set(plugin[slidemenu].onhover, setmenutext(centermenutxt, Masquer le menu););
+        set(plugin[leftmenutxt].y, 50);
+        set(plugin[rightmenutxt].y, 50);
+        set(plugin[centermenutxt].y, 50);
+    </action>
+    <action name="menu_slide_out">
+        set(plugin[slidemenu].onclick,menu_slide_in);
+        set(plugin[slidemenu].crop,0|0|40|25);
+        tween(plugin[menuBackground].y, -40, 0, easeOutQuint);
+        tween(plugin[banner].y, -40, 0, easeOutQuint);
+        set(progress.showload, bar(midbottom, 100%, 2, 0, 15, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0));
+        set(plugin[slidemenu].onhover, setmenutext(centermenutxt, Afficher le menu););
+        set(plugin[leftmenutxt].y, 10);
+        set(plugin[rightmenutxt].y, 10);
+        set(plugin[centermenutxt].y, 10);
+    </action>
+    <action name="changemousetype">
+       if (plugin[menudata].mousetype == moveto,
+          set(plugin[menudata].mousetype, drag2d);
+          ,
+          set(plugin[menudata].mousetype, moveto);
+       );
+       setMouseType(get(plugin[menudata].mousetype));
+    </action>
+    <action name="setMouseType">
+      set(control.mousetype, %1);
+      if (%1 == moveto, setarrowcursors();, sethandcursors(););
+    </action>
+    <action name="setarrowcursors">
+      set(cursors.url     , %SKINDIR%/graphics/infocus-steelblue/arrowcursors.png);
+      set(cursors.type    ,        8way);
+      set(cursors.move    ,   0|0|20|20);
+      set(cursors.drag    ,   0|0|20|20);
+      set(cursors.arrow_l ,  20|0|20|20);
+      set(cursors.arrow_lu,  40|0|20|20);
+      set(cursors.arrow_u ,  60|0|20|20);
+      set(cursors.arrow_ru,  80|0|20|20);
+      set(cursors.arrow_r , 100|0|20|20);
+      set(cursors.arrow_rd, 120|0|20|20);
+      set(cursors.arrow_d , 140|0|20|20);
+      set(cursors.arrow_ld, 160|0|20|20);
+    </action>
+    <action name="sethandcursors">
+      set(cursors.url , %SKINDIR%/graphics/infocus-steelblue/handcursors.png);
+      set(cursors.type, 2way);
+      set(cursors.move, 0|0|32|32);
+      set(cursors.drag, 32|0|32|32);
+    </action>
+    <plugin name="helpScreen" align="center" customColor="true" keep="true" onclick="closeHelp();" url="%SKINDIR%/graphics/infocus-steelblue/help_fr.png" visible="false"/>
+    <action name="displayHelp">
+        set(plugin[helpScreen].visible,true);
+        set(plugin[showhelp].onclick,closeHelp();)
+    </action>
+    <action name="closeHelp">
+        set(plugin[helpScreen].visible, false);
+        set(plugin[showhelp].onclick, displayHelp();)
+    </action>
+    <!-- Raise sequence stopper and wait sequence time to break the delayed calls -->
+    <action name="interruptAnimation">
+		ifnot (stopSequence === undefined,
+			set(stopSequence, true);
+			wait(0);
+		);
+	</action>
+        
+
+
+    <!--************** Pile de miniatures *********************************************************-->
+    <!-- actione effectuée quand la souris passe au dessus d'une miniature -->
+    <action name="magnifystackthumb">
+		tween(plugin[%1].alpha,  1.0, 0.3, easeInQuad);
+		tween(plugin[%1].scale, 1.05, 0.3, easeInQuad);
+		set(plugin[%1].effect, glow(0xffffff,1,2,10000));
+		set(plugin[%1].jsborder,'2px solid #ffffff');
+	</action>
+    <!-- actione effectuée quand la souris sort d'une miniature -->
+    <action name="liestackthumb">
+		tween(plugin[%1].alpha, 0.8, 0.3, easeInQuad);
+		tween(plugin[%1].scale, 1.0, 0.3, easeInQuad);
+		set(plugin[%1].effect, glow(0xffffff,1,2,10000));
+		set(plugin[%1].jsborder,'2px solid #ffffff');
+	</action>
+    <!-- action appelée au démarrage pour construire la pile -->
+    <action name="buildstackthumbs">
+		if(%1 LE %2,
+		<!--copy(thumb, stackthumb[get(thumbdescr)].thumburl); -->
+                copy(thumb, get(scene[%1].defaultthumburl));
+		txtadd(thumbname,'thumb_',%1);
+		addplugin(get(thumbname));
+		set(plugin[get(thumbname)].url   , get(scene[%1].defaultthumburl));
+		set(plugin[get(thumbname)].keep  , true);
+		set(plugin[get(thumbname)].align , right);
+		set(plugin[get(thumbname)].edge  , center);
+		set(plugin[get(thumbname)].width , 60);
+		set(plugin[get(thumbname)].height, 30);
+		set(plugin[get(thumbname)].alpha , 0.8);
+		if (%1 GE 4, set(reali, 4), set(reali, %1));
+		mul(plugin[get(thumbname)].x, reali,3);
+		mul(plugin[get(thumbname)].y, reali,3);
+		add(plugin[get(thumbname)].x, 35);
+		add(plugin[get(thumbname)].y, 30);
+		copy(plugin[get(thumbname)].xsmall, plugin[get(thumbname)].x);
+		copy(plugin[get(thumbname)].ysmall, plugin[get(thumbname)].y);
+		add(plugin[get(thumbname)].zorder, 100, %1);
+		set(plugin[get(thumbname)].effect, glow(0xffffff,1,2,10000));
+		set(plugin[get(thumbname)].jsborder,'2px solid #ffffff');
+		set(plugin[get(thumbname)].title,get(scene[%1].title));
+		set(plugin[get(thumbname)].thumbpos, %1);
+		set(plugin[get(thumbname)].linkedpano, get(scene[%1].name) );
+		set(plugin[get(thumbname)].onclick, openstackthumbs(0,%2) );
+		set(i, %1);
+		inc(i);
+		delayedcall(0,buildstackthumbs(get(i),%2));
+		);
+	</action>
+    <action name="openstackthumb">
+		if(%2 != NEXT,
+		set(pos,0);
+		copy(curpos, plugin[%1].thumbpos);
+		set(xdst, 0);
+		set(ydst, 0);
+		);
+		if(pos LT curpos,
+		inc(pos);
+		inc(ydst, 50);
+		if (ishtml5 == true,
+		sub(ymax, stageheight, 60);
+		,
+		sub(ymax, area.pixelheight, 60);
+		);
+		if(ydst GT ymax, inc(xdst,90);set(ydst,0); );
+		openstackthumb(%1,NEXT);
+		,
+		add(xdst, 50);
+		add(ydst, 30);
+		tween(plugin[%1].x, get(xdst) );
+		tween(plugin[%1].y, get(ydst) );
+		tween(plugin[%1].width , 80);
+		tween(plugin[%1].height, 40);
+		);
+	</action>
+    <action name="closestackthumb">
+                
+		tween(plugin[%1].x, get(plugin[%1].xsmall));
+		tween(plugin[%1].y, get(plugin[%1].ysmall));
+		tween(plugin[%1].width , 60);
+		tween(plugin[%1].height, 30);
+	</action>
+    <action name="openstackthumbs">
+                
+		if(%1 LE %2,
+		txtadd(thumbname,'thumb_',%1);
+		openstackthumb(get(thumbname));
+		set(plugin[get(thumbname)].onover , magnifystackthumb(get(name)); );
+		set(plugin[get(thumbname)].onout  , liestackthumb(get(name)); );
+		set(plugin[get(thumbname)].onhover, showtext(get(title),infobulleTitle); );
+		set(plugin[get(thumbname)].onclick, liestackthumb(get(name)); closestackthumbs(0,%2); changescene(get(linkedpano)); );
+		set(i,%1);
+		inc(i);
+		delayedcall(0,openstackthumbs(get(i),%2));
+		);
+	</action>
+    <action name="closestackthumbs">
+                
+		if(%1 LE %2,
+		txtadd(thumbname,'thumb_',%1);
+		closestackthumb(get(thumbname));
+		set(plugin[get(thumbname)].alpha  , 0.8  );
+		set(plugin[get(thumbname)].onover , NULL );
+		set(plugin[get(thumbname)].onout  , NULL );
+		set(plugin[get(thumbname)].onhover, NULL );
+		set(plugin[get(thumbname)].onclick, openstackthumbs(0,%2) );
+		set(i,%1);
+		inc(i);
+		closestackthumbs(get(i),%2);
+		);
+	</action>
+
+
+
+        
+    <!--************** Miniatures *****************************************************************-->
+    <events name="thumbnailsResizeEvent" onresize="thumbsResizeEventHandler();"/>
+    <!-- actione effectuée quand la souris passe au dessus d'une miniature -->
+    <action name="magnify">
+		tween(plugin[%1].alpha,  1.0, 0.3, easeInQuad);
+		tween(plugin[%1].scale, 1.05, 0.3, easeInQuad);
+		set(plugin[%1].effect, glow(0xff36a5,1,2,10000));
+		set(plugin[%1].jsborder,'2px solid #ff36a5');
+	</action>
+    <!-- actione effectuée quand la souris sort d'une miniature -->
+    <action name="lie">
+		tween(plugin[%1].alpha, 0.8, 0.3, easeInQuad);
+		tween(plugin[%1].scale, 1.0, 0.3, easeInQuad);
+		set(plugin[%1].effect, glow(0xffffff,1,2,10000));
+		set(plugin[%1].jsborder,'2px solid #ffffff');
+	</action>
+    <!-- ouverture des miniatures -->
+    <action name="slide_action_in">
+		set(plugin[slide].onclick,slide_action_out);
+		set(plugin[strap].onclick,slide_action_out);
+		set(plugin[strapArrow].rotate,180);
+		tween(plugin[thumbArray].x, 10%, 1, easeOutQuint);
+		tween(plugin[thumbMovePrev].x, 5%,1, easeOutQuint);
+		tween(plugin[thumbMoveNext].x, 5%, 1, easeOutQuint);
+		thumbsResizeEventHandler();
+	</action>
+    <!-- fermeture  des miniatures -->
+    <action name="slide_action_out">
+		set(plugin[slide].onclick,slide_action_in);
+		set(plugin[strap].onclick,slide_action_in);
+		set(plugin[strapArrow].rotate,0);
+		tween(plugin[thumbArray].x, 0, 1, easeOutQuint);
+		tween(plugin[thumbMovePrev].x, 0, 1, easeOutQuint);
+		tween(plugin[thumbMoveNext].x, 0, 1, easeOutQuint);
+		set(plugin[thumbMovePrev].visible,false);
+		set(plugin[thumbMoveNext].visible,false);
+	</action>
+    <action name="moveThumbsPrev">
+		plugin[thumbArray].updatepos();
+		copy(truethumbsheight, plugin[thumbArray].pixelheight);
+		if (area.pixelheight GT truethumbsheight,
+                    set(plugin[thumbBgLayout].y, 0);
+                ,
+                    set(leftborder, get(area.pixelheight));
+                    sub(leftborder, truethumbsheight);
+                    div(leftborder, 2);
+                    mul(leftborder, -1);
+                    if (plugin[thumbBgLayout].y LT leftborder, inc(plugin[thumbBgLayout].y, %1););
+                    if (plugin[thumbBgLayout].y GT leftborder, set(plugin[thumbBgLayout].y, get(leftborder)););
+		);
+	</action>
+    <action name="moveThumbsNext">
+		plugin[thumbArray].updatepos();
+		copy(truethumbsheight, plugin[thumbArray].pixelheight);
+		if (area.pixelheight GT truethumbsheight,
+                    set(plugin[thumbBgLayout].y, 0);
+                ,
+                    set(rightborder, get(area.pixelheight));
+                    sub(rightborder, truethumbsheight);
+                    div(rightborder, 2);
+                    if (plugin[thumbBgLayout].y GT rightborder, dec(plugin[thumbBgLayout].y, %1););
+                    if (plugin[thumbBgLayout].y LT rightborder, set(plugin[thumbBgLayout].y, get(rightborder)););
+		);
+	</action>
+    <action name="thumbsResizeEventHandler">
+		plugin[thumbArray].updatepos();
+		copy(truethumbsheight, plugin[thumbArray].pixelheight);
+		if (area.pixelheight GT truethumbsheight,
+                    set(plugin[thumbBgLayout].y, 0);
+                    displayThumbsScrolls(false);
+                ,
+                    if (plugin[slide].onclick == slide_action_out, displayThumbsScrolls(true););
+		);
+	</action>
+    <action name="displayThumbsScrolls">
+		set(plugin[thumbMovePrev].visible, %1);
+		set(plugin[thumbMovePrev].enabled, %1);
+		set(plugin[thumbMoveNext].visible, %1);
+		set(plugin[thumbMoveNext].enabled, %1);
+	</action>
+    <action name="adjusthtml5thumbsplugins">
+		if (ishtml5 == true,
+                    set(plugin[thumbMovePrev].height, 5%);
+                    set(plugin[thumbMoveNext].height, 5%);
+		);
+	</action>
+    <plugin name="thumbArray" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" children="true" alpha="0.9" blendmode="normal" smoothing="true" x="0" y="0" scale="1" align="left" edge="right" width="10%" height="prop"/>
+    <plugin name="thumbBgLayout" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" x="0" y="0" align="center" edge="center" width="100%" height="prop" parent="thumbArray"/>
+    <plugin name="thumbMovePrev" keep="true" zorder="3" capture="true" url="%SKINDIR%/graphics/infocus-steelblue/thumb/thumb_scroll.png" alpha="0.8" onover="set(alpha, 1);" onout="set(alpha,0.8);set(scrollspeed,10);" scrollspeed="10" onhover="moveThumbsPrev(get(scrollspeed));if(scrollspeed LT 70, inc(scrollspeed););" onclick="moveThumbsPrev(50);" visible="false" x="0" y="10" align="topleft" edge="top"/>
+    <plugin name="thumbMoveNext" keep="true" zorder="3" capture="true" url="%SKINDIR%/graphics/infocus-steelblue/thumb/thumb_scroll.png" alpha="0.8" onover="set(alpha, 1);" onout="set(alpha,0.8);set(scrollspeed,10);" scrollspeed="10" onhover="moveThumbsNext(get(scrollspeed));if(scrollspeed LT 70, inc(scrollspeed););" onclick="moveThumbsNext(50);" visible="false" x="0" y="10" align="bottomleft" edge="bottom"/>
+    <plugin name="thumbMovePrevArrow" parent="thumbMovePrev" keep="true" zorder="3" capture="false" url="%SKINDIR%/graphics/infocus-steelblue/thumb/arrow.png" x="0" y="0" align="center" edge="center" rotate="-90"/>
+    <plugin name="thumbMoveNextArrow" parent="thumbMoveNext" keep="true" zorder="3" capture="false" url="%SKINDIR%/graphics/infocus-steelblue/thumb/arrow.png" x="0" y="0" align="center" edge="center" rotate="90"/>
+    <plugin name="slide" parent="thumbArray" keep="true" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/slide.png" handcursor="false" capture="false" children="true" alpha="0.9" blendmode="normal" smoothing="true" x="0" y="0" align="right" edge="right" width="100%" height="2000" onclick="slide_action_in"/>
+    <plugin name="strap" keep="true" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/strap.png" parent="thumbArray" alpha="0.9" align="right" edge="left" handcursor="true" onclick="slide_action_in"/>
+    <plugin name="strapArrow" keep="true" parent="strap" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/arrow.png" align="center" edge="center" capture="false" enabled="false" rotate="0"/>
+    <!-- thumbs pictures -->
+    <!-- <plugin name="thumb_build0" keep="true" zorder="2" parent="thumbBgLayout" url="%SKINDIR%/graphics/infocus-steelblue/thumb/build0_thumbnail.jpg" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="26.087%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
+    <plugin name="thumb_build1" keep="true" zorder="2" parent="thumbBgLayout" url="%SKINDIR%/graphics/infocus-steelblue/thumb/build1_thumbnail.jpg" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="73.913%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
+    -->
+    <plugin name="thumbnailsData" keep="true" nbThumbnailsLoaded="0"/>
+    <action name="thumbloaded">
+        trace(%0);
+        inc(plugin[thumbnailsData].nbThumbnailsLoaded, 1);
+        if(plugin[thumbnailsData].nbThumbnailsLoaded GE scene.count,
+            setThumbnailsVisible();
+            adjusthtml5thumbsplugins();
+        );
+        trace("thumbBgLayout.pixelheight:",plugin[thumbBgLayout].pixelheight);
+    </action>
+    <action name="setThumbnailsVisible">
+        trace(%0);
+        for(set(indexThumbnail,0), indexThumbnail LT scene.count, inc(indexThumbnail), 
+            txtadd(thumbname,'thumblist_',get(indexThumbnail));
+            set(plugin[get(thumbname)].visible, true);
+        );
+        <!--
+        set(plugin[thumb_build0].visible, true);
+        set(plugin[thumb_build1].visible, true);
+        -->
+    </action>
+    
+    <action name="initThumbList">
+        <!--Loop on Scene-->
+        for(set(indexThumb,0), indexThumb LT scene.count, inc(indexThumb), 
+            trace('scene[',indexThumb,'].name=',scene[get(indexThumb)].name);
+            txtadd(thumblistname,'thumblist_',get(indexThumb));
+            trace('thumblistname',get(thumblistname));
+            addplugin(get(thumblistname));
+            <!-- Config Thumb Plugin-->
+            set(plugin[get(thumblistname)].url   , get(scene[get(indexThumb)].customthumburl));
+            set(plugin[get(thumblistname)].linkedpano, get(scene[get(indexThumb)].name) );
+            set(plugin[get(thumblistname)].keep  , true);
+            set(plugin[get(thumblistname)].zorder  , 2);
+            set(plugin[get(thumblistname)].parent  , thumbBgLayout);
+            set(plugin[get(thumblistname)].align , topleft);
+            set(plugin[get(thumblistname)].edge  , center);
+            set(plugin[get(thumblistname)].width , 83.3333%);
+            set(plugin[get(thumblistname)].height, prop);
+            set(plugin[get(thumblistname)].x,      50%);
+            mul(diviseur,scene.count,2);
+            div(space,100,get(diviseur));
+            trace('spacee:',space);
+            mul(coeff,get(indexThumb),2);
+            add(coeff,1);
+            mul(y_new,space,get(coeff));
+            txtadd(y_new,'%');
+            trace(y_new);
+            set(plugin[get(thumblistname)].y,      get(y_new));    
+            set(plugin[get(thumblistname)].alpha , 0.8);
+            set(plugin[get(thumblistname)].visible, false);
+            
+            set(plugin[get(thumblistname)].title,  get(scene[get(indexThumb)].title));
+            
+            set(plugin[get(thumblistname)].onclick ,    changescene(get(linkedpano)););
+            set(plugin[get(thumblistname)].onover,      magnify(get(name)););
+            set(plugin[get(thumblistname)].onhover,     showtext(get(title),infobulleTitle););
+            set(plugin[get(thumblistname)].onout ,      lie(get(name)););
+            set(plugin[get(thumblistname)].onloaded ,   thumbloaded(););
+            
+        );  
+    </action>
+        
+      
+  
+        
+        
+</krpano>

@@ -143,22 +143,22 @@ $action_filepath = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=publish
             <th align="left"><?php _e('Shortcode','nggpano') ?></th>
             <td>
                 <select style="margin: 0pt; padding: 0pt;" id="shortcode" name="shortcode">
-                    <option selected="selected" value="singlepano"><?php _e('Panoramic','nggpano') ?> [singlepano]</option>
-                    <option value="singlepanowithmap"><?php _e('Panoramic with map','nggpano') ?> [singlepanowithmap]</option>
+                    <option selected="selected" value="panoramic"><?php _e('Panoramic','nggpano') ?> [panoramic]</option>
+                    <option value="panoramicwithmap"><?php _e('Panoramic with map','nggpano') ?> [panoramicwithmap]</option>
                     <option value="singlepicwithmap"><?php _e('Picture with map','nggpano') ?> [singlepicwithmap]</option>
                     <option value="singlepicwithlinks"><?php _e('Picture with links','nggpano') ?> [singlepicwithlinks]</option>
                     <option value="singlemap"><?php _e('Map with infowindow','nggpano') ?> [singlemap]</option>
                 </select>
             </td>
         </tr>
-        <tr valign="top" class="shortcode_options singlepanowithmap singlepicwithmap singlemap">
+        <tr valign="top" class="shortcode_options panoramicwithmap singlepicwithmap singlemap">
             <th align="left"><?php _e('Map Width x height (in pixel)','nggpano') ?></th>
             <td>
                 <input type="text" size="5" maxlength="5" name="mapw" value="" /> x <input type="text" size="5" maxlength="5" name="maph" value="" />
                 <br /><small><?php _e('Size of the map','nggpano') ?></small>
             </td>
         </tr>
-        <tr valign="top" class="shortcode_options singlepanowithmap singlepicwithmap singlepicwithlinks singlemap" id="mapzoom">
+        <tr valign="top" class="shortcode_options panoramicwithmap singlepicwithmap singlepicwithlinks singlemap" id="mapzoom">
             <th align="left"><?php _e('Map Zoom','nggpano') ?></th>
             <td>
                 <select style="margin: 0pt; padding: 0pt;" id="mapz" name="mapz">
@@ -170,7 +170,7 @@ $action_filepath = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=publish
                 </select>
             </td>
         </tr>
-        <tr valign="top" class="shortcode_options singlepanowithmap singlepicwithmap singlepicwithlinks singlemap">
+        <tr valign="top" class="shortcode_options panoramicwithmap singlepicwithmap singlepicwithlinks singlemap">
             <th align="left"><?php _e('Map Type','nggpano') ?></th>
             <td>
                 <input type="radio" value="hybrid" <?php checked('hybrid', $default_maptype); ?> id="maptype-hybrid" name="maptype"/>
@@ -270,7 +270,7 @@ function checkPublishForm(publish) {
     
     if (jQuery.trim(post_title) == ""){
         
-        errormessage = '<?php _e('Article title is required','nggpano') ?>';
+        errormessage = '<?php esc_js('Article title is required','nggpano') ?>';
         jQuery('#form-publish-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
         return false                                       
     }
@@ -305,12 +305,12 @@ jQuery('#form-publish-pano').submit(function(e) {
     jQuery.ajax({
                     url: url,
                     data: jQuery(this).serialize(),
-                    dataType : 'json',
+                    dataType : 'html',
                     type: 'POST',
                     success: function(data, textStatus, XMLHttpRequest) {
                         //{"error":false,"message":"GPS datas successfully saved","gps_data":{"latitude":48.27710215,"longitude":-4.59594487998,"altitude":7,"timestamp":"9:44:45"}}
                             if(data) {
-                                return true;
+                                container.html(data);
                             }
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {

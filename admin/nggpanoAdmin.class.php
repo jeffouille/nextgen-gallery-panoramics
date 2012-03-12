@@ -153,8 +153,26 @@ class nggpanoAdmin{
                 
                 //URL to replace original image with a redim preview
                 $url_makepreview = NGGPANOGALLERY_URLPATH . 'admin/resize-preview-pano.php?id=' . $pid. '&h=200&w=800';
+                if(isset($image_values)) {
+                $post_id = $image_values->post_id;
+                if($post_id <> 0) {
+                    $the_post = get_post($post_id);
+                    $post_title = $the_post->post_title;
+                    $url_edit_post = get_admin_url().'post.php?post='.$post_id.'&action=edit';
+                    
+                    $url_delete_post = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-post&post_id=' . $post_id . '&pid=' . $pid;
+                    
+                }
+                } else {
+                    $post_id = 0;
+                }
                 
+                //echo $post_id;
                 ?>
+                <?php if($post_id <> 0) { ?>
+                    <a href="<?php echo $url_edit_post ?>" title="<?php echo esc_attr(sprintf(__('Edit post "%s" ?' , 'nggpano'), $post_title)) ?>"><?php _e('Edit Article', 'nggpano') ?></a>      
+                <?php } ?>
+                
                 <div class="admin-pano-thumb">
                 <?php if($pano_exist) : ?>
                 <a href="<?php echo $url_show; ?>" class="nggpano-dialog" title="<?php echo esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) ?>">
@@ -173,10 +191,17 @@ class nggpanoAdmin{
                         $actions['edit']  = '<a class="nggpano-dialog" href="' . $url_edit . '" title="' . __('Edit the panoramic datas for this image','nggpano') . '">' . __('Edit', 'nggpano') . '</a>';
                         $actions['delete']      = '<a class="submitdelete delete-pano" href="' . $url_delete. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show', 'nggpano') . '</a>';
-                        if ( current_user_can( 'publish_posts' ) )
-                            $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_publish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
-                        if( current_user_can('publish_posts') && get_current_theme() == 'inFocus')
-                            $actions['quick-publish'] = '<a class="nggpano-dialog" href="' . $url_quickpublish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Create Article', 'nggpano') . '</a>';
+                        if($post_id == 0) {
+                            if ( current_user_can( 'publish_posts' ) )
+                                $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_publish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
+                            if( current_user_can('publish_posts') && get_current_theme() == 'inFocus')
+                                $actions['quick-publish'] = '<a class="nggpano-dialog" href="' . $url_quickpublish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Create Article', 'nggpano') . '</a>';
+                        } else {
+                            $actions['edit-post']     = '<a href="' . $url_edit_post .'" title="' . esc_attr(sprintf(__('Edit post "%s" ?' , 'nggpano'), $post_title)) . '">' . __('Edit Article', 'nggpano') . '</a>';
+                            $actions['delete-post']      = '<a class="submitdelete delete-pano" href="' . $url_delete_post. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete Arcticle "%s" ?' , 'nggpano'), $post_title)). '\');if(check==false) return false;">' . __('Delete Article' , 'nggpano') . '</a>';
+                        
+                            
+                        }
                         $actions['makepreview'] = '<a class="nggpano-dialog" href="' . $url_makepreview .'" title="' . esc_attr(sprintf(__('Resize image for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Resize Preview', 'nggpano') . '</a>';  
                     }
                     $action_count = count($actions);
@@ -342,7 +367,7 @@ class nggpanoAdmin{
 
 
             // Create a WP page
-            global $user_ID, $ngg;
+            global $user_ID, $ngg, $wpdb;
 
             $ngg->options['publish_width']  = (int) $_POST['width'];
             $ngg->options['publish_height'] = (int) $_POST['height'];
@@ -392,8 +417,8 @@ class nggpanoAdmin{
             //get shortcode
             $post_content_shortcode = "";
             switch ($_POST['shortcode']) {
-                case 'singlepanowithmap':
-                    $post_content_shortcode = '[singlepanowithmap id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' '.$captiontype_attr.' '.$mapw_attr.' '.$maph_attr.' '.$mapz_attr.' '.$maptype_attr.']';
+                case 'panoramicwithmap':
+                    $post_content_shortcode = '[panoramicwithmap id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' '.$captiontype_attr.' '.$mapw_attr.' '.$maph_attr.' '.$mapz_attr.' '.$maptype_attr.']';
                     break;
                 
                 case 'singlepicwithmap':
@@ -408,9 +433,9 @@ class nggpanoAdmin{
                     $post_content_shortcode = '[singlemap id=' . intval($_POST['pid']) . ' ' . $align . ' '.$singlemapw_attr.' '.$singlemaph_attr.' '.$singlemapz_attr.' '.$maptype_attr.' '.$links_attr.' '. $mainlink_attr.' '.$captiontype_attr.' '. $thumbw_attr . ' '.$thumbh_attr.']';
                     break;
                 
-                case 'singlepano':
+                case 'panoramic':
                 default:
-                    $post_content_shortcode = '[singlepano id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' ' . $captiontype_attr.']';
+                    $post_content_shortcode = '[panoramic id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ' ' . $captiontype_attr.']';
                     
                     break;
             }
@@ -455,14 +480,34 @@ class nggpanoAdmin{
             
             $post_id = wp_insert_post ($post);
             
-            // Add featured image
-            $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
-            if ($featured) {
-                add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
+            if ($post_id != 0) {
+                // Add featured image
+                $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
+                if ($featured) {
+                    add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
+                }
+                //Add post_id in panoramic table
+                $message = '';
+                            
+                $gid = $picture->galleryid;
+            
+                if(nggpano_getImagePanoramicOptions($_POST['pid'])) {
+                        if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET post_id = '".$wpdb->escape($post_id)."' WHERE pid = '".$wpdb->escape($_POST['pid'])."'") !== false) {
+                            $message = __('New Post published','nggpano');
+                        } else {
+                            $message = ' <strong>' . $image->filename . ' (Error : Error with database)</strong>';
+                        };
+                    }else{
+                        if($wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_panoramic (id, pid, gid, post_id) VALUES (null, '".$wpdb->escape($_POST['pid'])."', '".$wpdb->escape($gid)."', '".$wpdb->escape($post_id)."')") !== false) {
+                            $message = __('New Post published','nggpano');
+                        } else {
+                            $message = ' <strong>' . $image->filename . ' (Error : Error with database)</strong>';
+                        };
+                    }
+                //nggGallery::show_message( __('Published a new post','nggallery') );
             }
-
-            if ($post_id != 0)
-        nggGallery::show_message( __('Published a new post','nggallery') );
+            
+            echo nggpanoAdmin::krpano_image_form($_POST['pid'], $message);
 
     }  
 
@@ -480,16 +525,20 @@ class nggpanoAdmin{
 
 
             // Create a WP page
-            global $user_ID, $ngg;
+            global $user_ID, $ngg, $wpdb;
 
             $post['post_type']    = 'post';
-            $post['post_content'] = $_POST['post_content'];
+            
+            //content with shortcode for link
+            $post_content = '[singlepicwithlinks id=' . intval($_POST['pid']) .' float=center w=200 h=100 template=withoutthumb mapz=14 maptype=HYBRID links=all mainlink=picture caption=description /]';
+            $post['post_content'] = $post_content. "\r\n". $_POST['post_content'];
             $post['post_author']  = $user_ID;
             $post['post_status']  = isset ( $_POST['publish_state'] ) && $_POST['publish_state'] == 'true' ? 'publish' : 'draft';
             $post['post_title']   = $_POST['post_title'];
             
             // let's get the image data
             $picture = nggdb::find_image($_POST['pid']);
+
             if($picture) {
                 //tags
                 $with_tags = (isset ($_POST['with_tags']) && $_POST['with_tags'] == '1') ? true : false;
@@ -525,39 +574,60 @@ class nggpanoAdmin{
             
             $post_id = wp_insert_post ($post);
             
-            //Add infocus theme option
-            $post_intro_panoramic_html = '[singlepano id=' . intval($_POST['pid']) .']';
+            if ($post_id != 0) {
+                //Add infocus theme option
+                $post_intro_panoramic_html = '[panoramic template=fullwidth id=' . intval($_POST['pid']) .']';
+
+                $mysite_infocus_options_array = array(
+                        '_intro_panoramic_html' => $post_intro_panoramic_html,
+                        '_intro_text'           => 'panoramic',
+                        '_disable_post_image'   => array('true'),
+                        '_disable_breadcrumbs'  => array('true'),
+                        '_layout'               => 'full_width'
+
+                );
+
+                # save the meta boxes
+                foreach ( $mysite_infocus_options_array as $key => $value ) {
+
+                        $old = get_post_meta( $post_id, $key, true );
+
+                        if ( $value && $value != $old ) {
+                                update_post_meta( $post_id, $key, $value );
+                        } elseif ('' == $value && $old) {
+                                delete_post_meta( $post_id, $key, $old );
+                        }
+                }
+
+                // Add featured image
+                $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
+                if ($featured) {
+                    add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
+                }
+                
+                //Add post_id in panoramic table
+                $message = '';
+                            
+                $gid = $picture->galleryid;
             
-            $mysite_infocus_options_array = array(
-                    '_intro_panoramic_html' => $post_intro_panoramic_html,
-                    '_intro_text'           => 'panoramic',
-                    '_disable_post_image'   => array('true'),
-                    '_disable_breadcrumbs'  => array('true'),
-                    '_layout'               => 'full_width'
-          
-            );
-
-            # save the meta boxes
-            foreach ( $mysite_infocus_options_array as $key => $value ) {
-
-                    $old = get_post_meta( $post_id, $key, true );
-
-                    if ( $value && $value != $old ) {
-                            update_post_meta( $post_id, $key, $value );
-                    } elseif ('' == $value && $old) {
-                            delete_post_meta( $post_id, $key, $old );
+                if(nggpano_getImagePanoramicOptions($_POST['pid'])) {
+                        if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET post_id = '".$wpdb->escape($post_id)."' WHERE pid = '".$wpdb->escape($_POST['pid'])."'") !== false) {
+                            $message =  __('New Post published','nggpano');
+                        } else {
+                            $message = ' <strong>' . $image->filename . ' (Error : Error with database)</strong>';
+                        };
+                    }else{
+                        if($wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_panoramic (id, pid, gid, post_id) VALUES (null, '".$wpdb->escape($_POST['pid'])."', '".$wpdb->escape($gid)."', '".$wpdb->escape($post_id)."')") !== false) {
+                            $message =  __('New Post published','nggpano');
+                        } else {
+                            $message = ' <strong>' . $image->filename . ' (Error : Error with database)</strong>';
+                        };
                     }
+                
+                //nggGallery::show_message( __('Published a new post','nggallery'). $message );
             }
             
-            // Add featured image
-            $featured = (isset ($_POST['featured_image']) && $_POST['featured_image'] == '1') ? true : false;
-            if ($featured) {
-                add_post_meta($post_id, '_thumbnail_id', 'ngg-'.$_POST['pid']);
-            }
-            
-            
-            if ($post_id != 0)
-        nggGallery::show_message( __('Published a new post','nggallery') );
+            echo nggpanoAdmin::krpano_image_form($_POST['pid'], $message);
 
     }  
     

@@ -170,6 +170,12 @@ if (isset ( $_GET['mode']) ) {
                 nggpanoAdmin::publish_pano_infocus();
             
             break;
+        case 'delete-post':
+            if (isset ( $_GET['post_id'])) {
+                nggpano_delete_article($_GET['post_id'],$_GET['pid']);
+            }
+            break;
+            
         default:
             break;
     }
@@ -262,6 +268,53 @@ function nggpano_delete_pano($pid, $gid) {
     
     
 }
+
+
+/**
+ * Delete post
+ * @param string $post_id the post id
+ * @return void
+ */
+function nggpano_delete_article($post_id,$pid) {
+        
+    global $wpdb;
+
+        $result = array();
+        $message = '';
+        $error = true;
+        
+        if(wp_delete_post($post_id, true)) {
+            $result['error']= true;
+            $result['message']=__('Article successfully deleted','nggpano');
+            $result['pid'] = $pid;
+            if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET post_id = NULL WHERE pid = '".$wpdb->escape($pid)."'") !== false) {
+                $error = false; 
+                $message = __('Post successfully deleted','nggpano');
+            } else {
+                $message = 'Error with database';
+            };
+               
+        } else {
+            $result['error']= false;
+            $result['message']=__('Article not deleted successfully','nggpano');
+            $result['pid'] = $pid;
+        };
+
+//        $result['error']= false;
+//        $result['message']=__('Panoramic successfully deleted','nggpano');
+//        $result['pid'] = $pid;
+//        
+        
+        //echo json_encode($result);
+        
+             echo nggpanoAdmin::krpano_image_form($pid, $result['message']);
+    
+    
+}
+
+
+
+
 
 /**
  * Extract foc data from picture

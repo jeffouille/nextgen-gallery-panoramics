@@ -72,13 +72,15 @@ function nggpano_admin_overview() {
             $nggpano_options['krpanoFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano/";
             $nggpano_options['skinFolder']          = "wp-content/plugins/".NGGPANOFOLDER . "/krpano_skins/";
             $nggpano_options['pluginFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano_plugins/";
+             * 
+            heightThumbVirtualTour
 
             */
         ?></p>
         <div id="poststuff">
             <form id="" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
                 <?php wp_nonce_field('nggpano_settings') ?>
-                <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect,colorboxCSSfile" />	
+                <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect,colorboxCSSfile,heightThumbVirtualTour,widthThumbVirtualTour" />	
     <!--            <input type="hidden" name="force" value="1" />  this will just force _POST['nggpano'] even if all checkboxes are unchecked -->
                 <div class="postbox">
                     <h3><?php _e('Preview Options', 'nggpano'); ?></h3>
@@ -231,6 +233,14 @@ function nggpano_admin_overview() {
                             <th align="left"><?php _e('Folder for krpano plugins','nggpano'); ?></th>
                             <td>
                                 <input type="text" size="60" name="pluginFolder" value="<?php echo $nggpano->options['pluginFolder']; ?>" />
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th align="left"><?php _e('Thumbnail Size for VirtualTour','nggpano'); ?></th>
+                            <td>
+                                <input type="text" size="5" name="widthThumbVirtualTour" value="<?php echo $nggpano->options['widthThumbVirtualTour']; ?>" />
+                                x <input type="text" size="5" name="heightThumbVirtualTour" value="<?php echo $nggpano->options['heightThumbVirtualTour']; ?>" />
+                                <span class="setting-description"><?php _e('Max Width and Height in Pixel for the thumbnail','nggpano') ?></span>
                             </td>
                         </tr>
                     </table>

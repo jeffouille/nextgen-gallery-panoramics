@@ -80,6 +80,7 @@ function nggpano_install () {
                 hfov DECIMAL(8,2) NULL,
                 vfov DECIMAL(8,2) NULL,
                 voffset DECIMAL(8,2) NULL,
+                post_id BIGINT NOT NULL,       
 		PRIMARY KEY id (id),
 		KEY pid (pid)
 		) $charset_collate;";
@@ -95,7 +96,7 @@ function nggpano_install () {
 		return;
 	}
 	//TODO Remove this delete line after test
-        delete_option( 'nggpano_options' );
+        //delete_option( 'nggpano_options' );
 	$options = get_option('nggpano_options');
 	// set the default settings, if we didn't upgrade
 	if ( empty( $options ) )	
@@ -134,6 +135,10 @@ function nggpano_default_options() {
         $nggpano_options['krpanoFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano/";
         $nggpano_options['skinFolder']          = "wp-content/plugins/".NGGPANOFOLDER . "/krpano_skins/";
         $nggpano_options['pluginFolder']	= "wp-content/plugins/".NGGPANOFOLDER . "/krpano_plugins/";
+        
+        // Size for thumbnail in virtual tour
+	$nggpano_options['widthThumbVirtualTour']   =	'200';	// max width size for thumbnail
+	$nggpano_options['heightThumbVirtualTour']  =	'200';	// max height size for thumbnail
         
         
         // Directory and prefix for pano creation
@@ -211,7 +216,7 @@ function nggpano_uninstall() {
 //	ngg_remove_capability("NextGEN Upload images");
 	ngg_remove_capability("NGG Panoramics Manage gallery");
 //	ngg_remove_capability("NextGEN Edit album");
-//	ngg_remove_capability("NextGEN Change style");
+	ngg_remove_capability("NGG Panoramics Change style");
 //	ngg_remove_capability("NextGEN Change options");
 }
 

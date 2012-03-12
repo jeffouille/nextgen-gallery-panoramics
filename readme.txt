@@ -40,8 +40,11 @@ DONE publish a pano with featured image
 DONE checkbox exif date in article
 DONE checkbox featured image in article published
 DONE category in publish pano
+DONE Put getSkinXML() and getPanoConfig() out of PanoClass but in lib/function.php and rename it
+DONE Change BASEDIR when build scene
+DONE save post_id in ngpano_picture
 
-shortcode for photo gallery
+shortcode for gallery
 
 map default options in admin (mapw, maph, map zoom, map_type, picto marker
 
@@ -55,9 +58,11 @@ add krpanoplugin configuration in plugin options and in gallery option
 
 check memory limit (gd vs imagemagik)
 
-save post_id in ngpano_picture
+Combox to choose article in krpano form
 
-delete post_id when publish article
+
+
+
 
 
 
@@ -80,6 +85,20 @@ line 465 remove esc_url() function
 <a href="<?php echo  ( add_query_arg('i', mt_rand(), $picture->imageURL) ); ?>" class="shutter" title="<?php echo $picture->filename ?>">
             <img class="thumb" src="<?php echo  ( add_query_arg('i', mt_rand(), $picture->thumbURL) ); ?>" id="thumb<?php echo $pid ?>" />
     </a>
+
+in /admin/tinymce/window.php
+line 16 :
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui.core.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui.widget.js"></script>
+        <script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui.position.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/jquery.ui.autocomplete.min.js"></script>
+<!--	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui/jquery.ui.core.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui/jquery.ui.widget.min.js"></script>
+        <script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui/jquery.ui.position.min.js"></script>
+	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/ui/jquery.ui.autocomplete.min.js"></script>-->
+
+
 
 memory limit error
     @ini_set('memory_limit', '128M');

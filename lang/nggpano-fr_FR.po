@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: NextGEN Gallery Panoramic\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-02-23 16:26+0100\n"
-"PO-Revision-Date: 2012-02-23 16:27+0100\n"
+"PO-Revision-Date: 2012-02-24 07:20+0100\n"
 "Last-Translator: Geoffroy Deleury <jeff.deleury@gmail.com>\n"
 "Language-Team: Geoffroy DELEURY\n"
 "MIME-Version: 1.0\n"
@@ -19,95 +19,95 @@ msgstr ""
 
 #: ../ngg-pano.php:186
 msgid "Sorry, NextGEN Gallery Panoramic works only with a Memory Limit of 16 MB or higher"
-msgstr ""
+msgstr "Désolé, NextGEN Gallery Panoramic fonctionne uniquement avec une Memory Limit de 16 MB ou plus"
 
 #: ../ngg-pano.php:206
 msgid "Please update the database of NextGEN Gallery Panoramics."
-msgstr ""
+msgstr "Veuillez mettre à jour la base de données de NextGEN Gallery Panoramics."
 
 #: ../ngg-pano.php:206
 msgid "Click here to proceed."
-msgstr ""
+msgstr "Cliquer ici pour lancer."
 
 #: ../ngg-pano.php:356
 msgid "The requested content cannot be loaded.<br/>Please try again later."
-msgstr ""
+msgstr "Le contenu demandé ne peut pas être chargé.<br/>Veuillez réessayer ultérieurement"
 
 #: ../ngg-pano.php:357
 msgid "Click to Close"
-msgstr ""
+msgstr "Cliquer pour fermer"
 
 #: ../ngg-pano.php:358
 msgid "Next"
-msgstr ""
+msgstr "Suivant"
 
 #: ../ngg-pano.php:359
 msgid "Previous"
-msgstr ""
+msgstr "Précedent"
 
 #: ../ngg-pano.php:360
 msgid "Start Slideshow"
-msgstr ""
+msgstr "Démarrer le diaporama"
 
 #: ../ngg-pano.php:361
 msgid "Pause Slideshow"
-msgstr ""
+msgstr "Stopper le diaporama"
 
 #: ../ngg-pano.php:362
 msgid "Toggle Size"
-msgstr ""
+msgstr "Inverser la taille"
 
 #: ../nggpanofunctions.php:51
 msgid "[panoramic not found]"
-msgstr ""
+msgstr "[panoramic non trouvé]"
 
 #: ../nggpanofunctions.php:60
 msgid "[Pano not build]"
-msgstr ""
+msgstr "[Pano non construit]"
 
 #: ../nggpanofunctions.php:68
 msgid "[Pano not found in database]"
-msgstr ""
+msgstr "[Pano non trouvé en base]"
 
 #: ../nggpanofunctions.php:208
 #: ../nggpanofunctions.php:374
 #: ../nggpanofunctions.php:649
 msgid "[SinglePic not found]"
-msgstr ""
+msgstr "[SinglePic non trouvé]"
 
 #: ../nggpanofunctions.php:937
 msgid "The <a href=\"http://www.macromedia.com/go/getflashplayer\">Flash Player</a> and <a href=\"http://www.mozilla.com/firefox/\">a browser with Javascript support</a> are needed."
-msgstr ""
+msgstr "Le <a href=\"http://www.macromedia.com/go/getflashplayer\">Player Flash</a> and <a href=\"http://www.mozilla.com/firefox/\">un navigateur supportant le Javascript</a> sont nécessaires."
 
 #: ../nggpanofunctions.php:1059
 #: ../nggpanofunctions.php:1537
 msgid "[Gallery not found]"
-msgstr ""
+msgstr "[Gallery non trouvé]"
 
 #: ../nggpanofunctions.php:1345
 msgid "[Album not found]"
-msgstr ""
+msgstr "[Album non trouvé]"
 
 #: ../nggpanofunctions.php:1705
 msgid "Related images for"
-msgstr ""
+msgstr "Images relatives à "
 
 #: ../nggpanofunctions.php:1740
 #: ../admin/admin.php:35
 msgid "Overview"
-msgstr ""
+msgstr "Vue générale"
 
 #: ../nggpanoshow.php:35
 msgid "Loading Panoramic"
-msgstr ""
+msgstr "Chargement du Panoramique"
 
 #: ../admin/admin.php:42
 msgid "Viewer Templates"
-msgstr ""
+msgstr "Modèles pour le Viewer"
 
 #: ../admin/admin.php:44
 msgid "Building Templates"
-msgstr ""
+msgstr "Modèle pour le Builder"
 
 #: ../admin/ajax-actions.php:207
 #: ../admin/ajax-actions.php:216
@@ -116,15 +116,15 @@ msgstr ""
 #: ../admin/ajax-actions.php:405
 #: ../admin/ajax-actions.php:414
 msgid "GPS datas successfully saved"
-msgstr ""
+msgstr "Données GPS sauvegardées avec succès"
 
 #: ../admin/ajax-actions.php:228
 msgid "No GPS datas in picture"
-msgstr ""
+msgstr "Aucune Donnée GPS dans l'image"
 
 #: ../admin/ajax-actions.php:261
 msgid "Panoramic successfully deleted"
-msgstr ""
+msgstr "Panor"
 
 #: ../admin/ajax-actions.php:333
 msgid "No GPS datas in paramater"
@@ -148,17 +148,17 @@ msgstr ""
 #: ../admin/build-pano.php:54
 #: ../admin/edit-pano.php:47
 msgid "Horizontal FOV x Vertical FOV (in degrees)"
-msgstr ""
+msgstr "Horizontal FOV x Vertical FOV (en degrés)"
 
 #: ../admin/build-pano.php:57
 #: ../admin/edit-pano.php:50
 msgid "Panoramic Field of View (fov)"
-msgstr ""
+msgstr "Champ angulaire du Panoramique (fov)"
 
 #: ../admin/build-pano.php:61
 #: ../admin/edit-pano.php:54
 msgid "Vertical Offset (in degrees)"
-msgstr ""
+msgstr "Décalage vertical (en degrés)"
 
 #: ../admin/build-pano.php:64
 #: ../admin/edit-pano.php:57
@@ -180,12 +180,12 @@ msgstr ""
 #: ../admin/build-pano.php:83
 #: ../admin/nggpanoAdmin.class.php:169
 msgid "Build"
-msgstr ""
+msgstr "Construire"
 
 #: ../admin/build-pano.php:104
 #: ../admin/edit-pano.php:106
 msgid "Horizontal FOV is required"
-msgstr ""
+msgstr "Champ angulaire Horizontal est requis"
 
 #: ../admin/build-pano.php:111
 #: ../admin/edit-pano.php:112
@@ -195,7 +195,7 @@ msgstr ""
 #: ../admin/build-pano.php:116
 #, php-format
 msgid "Build panoramic for %s ?"
-msgstr ""
+msgstr "Construire le panoramique pour %s ?"
 
 #: ../admin/build-pano.php:169
 msgid "Problem in Panoramic creation, please try again in a few moments."
@@ -252,50 +252,50 @@ msgstr ""
 
 #: ../admin/ngg-extend.php:34
 msgid "Gallery Panoramic Options"
-msgstr ""
+msgstr "Options de Gallery Panoramique"
 
 #: ../admin/ngg-extend.php:43
 msgid "Skin file"
-msgstr ""
+msgstr "Fichier Skin"
 
 #: ../admin/ngg-extend.php:69
 msgid "Map Region"
-msgstr ""
+msgstr "Région de la Carte"
 
 #: ../admin/ngg-extend.php:74
 msgid "Pick GPS Region on map"
-msgstr ""
+msgstr "Choisir la région GPS sur une carte"
 
 #: ../admin/ngg-extend.php:76
 #: ../admin/nggpanoAdmin.class.php:173
 #: ../admin/overview.php:163
 #: ../admin/overview.php:207
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: ../admin/ngg-extend.php:82
 msgid "Bulk actions"
-msgstr ""
+msgstr "Actions générales"
 
 #: ../admin/ngg-extend.php:88
 msgid "--Select a Bulk actions--"
-msgstr ""
+msgstr "--Choisir une Action générale--"
 
 #: ../admin/ngg-extend.php:89
 msgid "Extract GPS Data"
-msgstr ""
+msgstr "Extraire les données GPS"
 
 #: ../admin/ngg-extend.php:93
 msgid "Apply"
-msgstr ""
+msgstr "Appliquer"
 
 #: ../admin/ngg-extend.php:123
 msgid "No images selected"
-msgstr ""
+msgstr "Aucune image sélectionnée"
 
 #: ../admin/ngg-extend.php:135
 msgid "Extract GPS Data..."
-msgstr ""
+msgstr "Extraire les données GPS"
 
 #: ../admin/ngg-extend.php:143
 #, php-format
@@ -311,11 +311,11 @@ msgstr ""
 
 #: ../admin/ngg-extend.php:320
 msgid "GPS"
-msgstr ""
+msgstr "GPS"
 
 #: ../admin/ngg-extend.php:321
 msgid "Panoramic"
-msgstr ""
+msgstr "Panoramique"
 
 #: ../admin/nggpanoAdmin.class.php:32
 #: ../admin/nggpanoAdmin.class.php:248
@@ -326,18 +326,18 @@ msgstr ""
 #: ../admin/pick-gps-region.php:86
 #: ../admin/pick-gps.php:78
 msgid "Latitude"
-msgstr ""
+msgstr "Latitude"
 
 #: ../admin/nggpanoAdmin.class.php:87
 #: ../admin/pick-gps-region.php:87
 #: ../admin/pick-gps.php:85
 msgid "Longitude"
-msgstr ""
+msgstr "Longitude"
 
 #: ../admin/nggpanoAdmin.class.php:91
 #: ../admin/pick-gps.php:92
 msgid "Altitude"
-msgstr ""
+msgstr "Altitude"
 
 #: ../admin/nggpanoAdmin.class.php:99
 #, php-format
@@ -377,15 +377,15 @@ msgstr ""
 #: ../admin/nggpanoAdmin.class.php:174
 #, php-format
 msgid "Delete panoramas files for \"%s\" ?"
-msgstr ""
+msgstr "Supprimer les fichiers du panorama pour \"%s\" ?"
 
 #: ../admin/nggpanoAdmin.class.php:174
 msgid "Delete Pano"
-msgstr ""
+msgstr "Supprimer"
 
 #: ../admin/nggpanoAdmin.class.php:175
 msgid "Show"
-msgstr ""
+msgstr "Afficher"
 
 #: ../admin/nggpanoAdmin.class.php:177
 #: ../admin/nggpanoAdmin.class.php:179
@@ -396,11 +396,11 @@ msgstr ""
 #: ../admin/nggpanoAdmin.class.php:177
 #: ../admin/publish-pano-infocus.php:118
 msgid "Publish"
-msgstr ""
+msgstr "Publier"
 
 #: ../admin/nggpanoAdmin.class.php:179
 msgid "Create Article"
-msgstr ""
+msgstr "Créer l'article"
 
 #: ../admin/nggpanoAdmin.class.php:180
 #, php-format
@@ -643,7 +643,7 @@ msgstr ""
 
 #: ../admin/publish-pano-infocus.php:66
 msgid "Category"
-msgstr ""
+msgstr "Catégorie"
 
 #: ../admin/publish-pano-infocus.php:94
 msgid "Use EXIF date"
@@ -667,20 +667,20 @@ msgstr ""
 
 #: ../admin/publish-pano-infocus.php:120
 msgid "Draft"
-msgstr ""
+msgstr "Brouillon"
 
 #: ../admin/publish-pano-infocus.php:141
 msgid "Article title is required"
-msgstr ""
+msgstr "Le titre de l'article est requis"
 
 #: ../admin/publish-pano-infocus.php:146
 #, php-format
 msgid "Publish the article for panoramic %s ?"
-msgstr ""
+msgstr "Publier l'article pour le panoramique %s ?"
 
 #: ../admin/publish-pano.php:109
 msgid "Width x height (in pixel)"
-msgstr ""
+msgstr "Largeur x Hauteur (en pixel)"
 
 #: ../admin/publish-pano.php:112
 msgid "Size of the image, the map or the panoramic"
@@ -699,129 +699,129 @@ msgstr ""
 
 #: ../admin/publish-pano.php:121
 msgid "Left"
-msgstr ""
+msgstr "Gauche"
 
 #: ../admin/publish-pano.php:123
 msgid "Center"
-msgstr ""
+msgstr "Centre"
 
 #: ../admin/publish-pano.php:125
 msgid "Right"
-msgstr ""
+msgstr "Droite"
 
 #: ../admin/publish-pano.php:129
 msgid "Caption Mode"
-msgstr ""
+msgstr "Mode de légende"
 
 #: ../admin/publish-pano.php:134
 msgid "Full"
-msgstr ""
+msgstr "Complet"
 
 #: ../admin/publish-pano.php:136
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: ../admin/publish-pano.php:138
 #: ../admin/style.php:140
 #: ../admin/tool-config-file.php:121
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../admin/publish-pano.php:139
 msgid "Caption to show under the item"
-msgstr ""
+msgstr "Légende à afficher en dessous"
 
 #: ../admin/publish-pano.php:143
 msgid "Shortcode"
-msgstr ""
+msgstr "Shortcode"
 
 #: ../admin/publish-pano.php:147
 msgid "Panoramic with map"
-msgstr ""
+msgstr "Panoramique avec Carte"
 
 #: ../admin/publish-pano.php:148
 msgid "Picture with map"
-msgstr ""
+msgstr "Photo avec Carte"
 
 #: ../admin/publish-pano.php:149
 msgid "Picture with links"
-msgstr ""
+msgstr "Photo avec Liens"
 
 #: ../admin/publish-pano.php:150
 msgid "Map with infowindow"
-msgstr ""
+msgstr "Carte avec une infobulle"
 
 #: ../admin/publish-pano.php:155
 msgid "Map Width x height (in pixel)"
-msgstr ""
+msgstr "Largeur x Hauteur (en pixel) de la carte"
 
 #: ../admin/publish-pano.php:158
 msgid "Size of the map"
-msgstr ""
+msgstr "Taille de la carte"
 
 #: ../admin/publish-pano.php:162
 msgid "Map Zoom"
-msgstr ""
+msgstr "Zoom de la carte"
 
 #: ../admin/publish-pano.php:174
 msgid "Map Type"
-msgstr ""
+msgstr "Type de carte"
 
 #: ../admin/publish-pano.php:177
 msgid "Hybrid"
-msgstr ""
+msgstr "Hybrid"
 
 #: ../admin/publish-pano.php:179
 msgid "Roadmap"
-msgstr ""
+msgstr "Plan"
 
 #: ../admin/publish-pano.php:181
 msgid "Satellite"
-msgstr ""
+msgstr "Satellite"
 
 #: ../admin/publish-pano.php:183
 msgid "Terrain"
-msgstr ""
+msgstr "Terrain"
 
 #: ../admin/publish-pano.php:187
 msgid "Links to show"
-msgstr ""
+msgstr "Liens à afficher"
 
 #: ../admin/publish-pano.php:192
 msgid "All links"
-msgstr ""
+msgstr "Tous les liens"
 
 #: ../admin/publish-pano.php:194
 msgid "Selected links"
-msgstr ""
+msgstr "Liens sélectionnés"
 
 #: ../admin/publish-pano.php:198
 #: ../admin/publish-pano.php:213
 msgid "Picture"
-msgstr ""
+msgstr "Photographie"
 
 #: ../admin/publish-pano.php:200
 #: ../admin/publish-pano.php:215
 #: ../view/singlemap.php:53
 #: ../view/singlepicwithlinks.php:47
 msgid "Map"
-msgstr ""
+msgstr "Carte"
 
 #: ../admin/publish-pano.php:204
 msgid "Links to show under the item"
-msgstr ""
+msgstr "Liens à afficher en dessous"
 
 #: ../admin/publish-pano.php:208
 msgid "Main Link"
-msgstr ""
+msgstr "Lien principal"
 
 #: ../admin/publish-pano.php:218
 msgid "Link when click on the item"
-msgstr ""
+msgstr "Lien au clic sur l'objet"
 
 #: ../admin/resize-preview-pano.php:33
 msgid "Resize flat preview to"
-msgstr ""
+msgstr "Redimensionner la miniature en"
 
 #: ../admin/resize-preview-pano.php:37
 msgid "Width x height (in pixel). NextGEN Gallery Pano will keep ratio size"
@@ -829,7 +829,7 @@ msgstr ""
 
 #: ../admin/resize-preview-pano.php:41
 msgid "Make backup"
-msgstr ""
+msgstr "Sauvegarder"
 
 #: ../admin/resize-preview-pano.php:43
 msgid "If not checked, initial image will be destroy"
@@ -837,25 +837,25 @@ msgstr ""
 
 #: ../admin/resize-preview-pano.php:51
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../admin/resize-preview-pano.php:71
 msgid "Width is required"
-msgstr ""
+msgstr "La largeur est requise"
 
 #: ../admin/resize-preview-pano.php:78
 msgid "Number are required ex. 2000"
-msgstr ""
+msgstr "Nombre est requis ex. 2000"
 
 #: ../admin/resize-preview-pano.php:83
 #, php-format
 msgid "make preview for %s ?"
-msgstr ""
+msgstr "construire la miniature pour %s ?"
 
 #: ../admin/resize-preview-pano.php:111
 #: ../admin/resize-preview-pano.php:115
 msgid "pixel"
-msgstr ""
+msgstr "pixel"
 
 #: ../admin/resize-preview-pano.php:135
 msgid "Problem in Preview creation, please try again in a few moments."
@@ -930,12 +930,12 @@ msgstr ""
 #: ../admin/style.php:148
 #, php-format
 msgid "&#37;PLUGINDIR&#37; will be replaced with : <strong>%s</strong>"
-msgstr ""
+msgstr "&#37;PLUGINDIR&#37; sera remplacé par : <strong>%s</strong>"
 
 #: ../admin/style.php:149
 #, php-format
 msgid "&#37;SKINDIR&#37; will be replaced with : <strong>%s</strong>"
-msgstr ""
+msgstr "&#37;SKINDIR&#37; sera remplacé par : <strong>%s</strong>"
 
 #: ../admin/style.php:165
 #: ../admin/tool-config-file.php:139
@@ -1016,10 +1016,10 @@ msgstr ""
 #: ../view/singlemap.php:49
 #: ../view/singlepicwithlinks.php:43
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: ../view/singlemap.php:51
 #: ../view/singlepicwithlinks.php:45
 msgid "Panoramic view of "
-msgstr ""
+msgstr "Vue Panoramique de "
 

@@ -38,9 +38,9 @@ class nggpanoAdminPanel{
 //        add_submenu_page( NGGFOLDER , _n( 'Album', 'Albums', 1, 'nggallery' ), _n( 'Album', 'Albums', 1, 'nggallery' ), 'NextGEN Edit album', 'nggallery-manage-album', array (&$this, 'show_menu'));
 //        add_submenu_page( NGGFOLDER , __('Tags', 'nggallery'), __('Tags', 'nggallery'), 'NextGEN Manage tags', 'nggallery-tags', array (&$this, 'show_menu'));
 //        add_submenu_page( NGGFOLDER , __('Options', 'nggallery'), __('Options', 'nggallery'), 'NextGEN Change options', 'nggallery-options', array (&$this, 'show_menu'));
-        if ( wpmu_enable_function('wpmuStyle') )
+        //if ( wpmu_enable_function('wpmuStyle') )
                     add_submenu_page( NGGPANOFOLDER , __('Viewer Templates', 'nggpano'), __('Viewer Templates', 'nggpano'), 'NGG Panoramics Change style', 'nggpano-style', array (&$this, 'show_menu'));
-        if ( wpmu_enable_function('wpmuStyle') )
+        //if ( wpmu_enable_function('wpmuStyle') )
                     add_submenu_page( NGGPANOFOLDER , __('Building Templates', 'nggpano'), __('Building Templates', 'nggpano'), 'NGG Panoramics Change style', 'nggpano-tool-config', array (&$this, 'show_menu'));
 //        if ( wpmu_enable_function('wpmuRoles') || wpmu_site_admin() )
 //                    add_submenu_page( NGGFOLDER , __('Roles', 'nggallery'), __('Roles', 'nggallery'), 'activate_plugins', 'nggallery-roles', array (&$this, 'show_menu'));

@@ -45,8 +45,10 @@ class nggpanoPano{
         var $xmlKrpanoPath		=	'';		// Server Path to the xml
         
         
-	var $thumbURL                   =	'';			// URL Path to the thumbnail
+	var $thumbURL                   =	'';			// URL Path to the thumbnail (with default dimension)
 	var $thumbPath                  =	'';			// Server Path to the thumbnail
+        
+        var $ImageCustomURL             =       '';                     //URL Path to the thumbnail (with specifix dimension)
 
 	var $galleryFolder		=	'';			// Gallery Folder
         var $imageInputPath             =       '';                     // Original Image Path
@@ -93,6 +95,10 @@ class nggpanoPano{
         var $toolConfigFilePath     =       '';     //Complete Path to the kmultires config file (ABS PATH)
         //Temp Folder
         var $krpanoToolsTempFolder    = '';
+        
+        //title and description from image
+        var $title                  = "";
+        var $description            = "";
 
        
 //	var $href			=	'';			// A href link code
@@ -131,7 +137,11 @@ class nggpanoPano{
         
     function nggpanoPano($pid, $gid = "", $hfov = "", $vfov = "", $voffset = "") {
         
-        global $ngg;
+        global $ngg, $nggpano_options;
+        
+        //Get default options of the plugin
+        if(!$nggpano_options)
+            $nggpano_options = get_option('nggpano_options');
         
     	//initialize variables
         $this->pid                  = $pid;
@@ -152,6 +162,13 @@ class nggpanoPano{
             $this->galleryFolder                 = $Image->path;
             $this->imageInputPath                = $Image->imagePath;
             
+            $this->title = html_entity_decode( stripslashes(nggPanoramic::i18n($Image->alttext, 'pano_' . $Image->pid . '_alttext')) );
+            $this->description = html_entity_decode( stripslashes(nggPanoramic::i18n($Image->description, 'pano_' . $Image->pid . '_description')) );
+            
+            $this->thumbURL = $Image->thumbURL;
+            
+            $this->ImageCustomURL = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid='.$this->pid;	
+
             //Gallery id
             $this->gid  = $Image->galleryid;
             
@@ -316,6 +333,7 @@ class nggpanoPano{
                 //Store config in database
                 $this->is_partial = ($this->hfov == 360) ? 0 : 1;     // Check pano is partial - force assuming that the input is a partial sphere   (hfov setting needed!)
                 $this->xml_configuration = file_get_contents($this->xmlKrpanoPath);
+                $this->xml_configuration = str_replace('url="', 'url="'.$this->panoFolder.'/', $this->xml_configuration);
                 if($removeXML)
                     unlink($this->xmlKrpanoPath);
 
@@ -537,8 +555,10 @@ class nggpanoPano{
     */
     public function loadConfig()
     {
+        global $nggpano_options;
         //Get default options of the plugin
-        $nggpano_options = get_option('nggpano_options');
+        if(!$nggpano_options)
+            $nggpano_options = get_option('nggpano_options');
         
         //TOOLS
         //Krpano Tool Config File
@@ -723,7 +743,6 @@ class nggpanoPano{
         $cmd .= '"-tilepath='. $tilepath . '" ';
         $cmd .= '"-previewpath='. $previewpath . '" ';
         $cmd .= '"'.$this->imageInputPath.'" "' . $this->toolConfigFilePath . '"';
-
         return $cmd;
     } 
     
@@ -772,6 +791,12 @@ class nggpanoPano{
    */
   public function getXML($URLsearchstring = null, $URLreplacestring = null, $debug = false)
   {
+    global $ngg, $nggpano_options;
+    
+    //Get default options of the plugin
+    if(!$nggpano_options)
+        $nggpano_options = get_option('nggpano_options');
+        
     if (isset($this->xml_configuration)) {
         $this->loadFromDB();   
     }
@@ -782,15 +807,29 @@ class nggpanoPano{
         $xmlConfiguration = str_replace('url="'.$URLsearchstring, 'url="'.$URLreplacestring, $xmlConfiguration);
     //}
     
-    $basedir =  'basedir="'. $this->panoFolderURL . '/"';
-    
-    $xmlreturn  = '<krpano version="1.0.8.14" '. $partial . ' ' . $basedir . '>';
-    $xmlreturn .= $xmlConfiguration;
-    $xmlreturn .= $this->getSkinXML();
-    if($debug) {
-        $xmlreturn  .= '<plugin name="options" url="'.$this->pluginFolderURL.'options.swf" />';
-    }
-    $xmlreturn .= '</krpano>';
+    //$basedir =  'basedir="'. $this->panoFolderURL . '/"';
+//    $basedir =  'basedir="'. site_url() . '/"';
+//    
+//    $xmlreturn  = '<krpano version="1.0.8.14" '. $partial . ' ' . $basedir . '>';
+
+    //GET Thumbs URL
+    //$img_src = trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $image->pid . '&amp;width=' . $width . '&amp;height=' . $height . '&amp;mode=crop';
+    $nextgen_thumb  = $this->thumbURL;
+    $square_thumb   = $this->ImageCustomURL . '&amp;width='.$nggpano_options['widthThumbVirtualTour'].'&amp;height='.$nggpano_options['heightThumbVirtualTour'].'&amp;mode=crop';
+    $custom_thumb   = $this->ImageCustomURL . '&amp;width='.$nggpano_options['widthThumbVirtualTour'].'&amp;height='.$nggpano_options['heightThumbVirtualTour'].'';
+                
+		
+    //Add scene node
+    $xmlreturn  = '<!-- SCENE  -->';
+    $xmlreturn  .= '<scene name="scene-'.$this->pid.'" title="'.$this->title.'" defaultthumburl="'.$nextgen_thumb.'" squarethumburl="'.$square_thumb.'" customthumburl="'.$custom_thumb.'" onstart="room_create_gallery_59();">';
+    $xmlreturn  .= $xmlConfiguration;
+    //$xmlreturn  .= '<progress showload="bar(midbottom, 100%, 2, 0, 55, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0)" showreloads="true" showwait="true"/>';
+
+    $xmlreturn  .= '</scene>';
+//    if($debug) {
+//        $xmlreturn  .= '<plugin name="options" url="'.$this->pluginFolderURL.'options.swf" />';
+//    }
+    //$xmlreturn .= '</krpano>';
 
     return $xmlreturn;
 

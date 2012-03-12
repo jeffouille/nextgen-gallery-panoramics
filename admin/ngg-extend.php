@@ -178,7 +178,7 @@ jQuery(document).ready(function(){
             }
         }
     }
-    <?php if ($act_gallery_region <> "" && (isset($gps_region_array['sw']['lat']) && $gps_region_array['sw']['lat'] <> '')) : ?>,
+    <?php if ($act_gallery_region <> "" && (isset($act_gallery_region['sw']['lat']) && $act_gallery_region['sw']['lat'] <> '')) : ?>,
     {
         action: 'addRectangle',
         rectangle:{
@@ -201,7 +201,7 @@ jQuery(document).ready(function(){
     <?php endif; ?>
 
     );
-    <?php if ($act_gallery_region <> "" && (isset($gps_region_array['sw']['lat']) && $gps_region_array['sw']['lat'] <> '')) : ?>
+    <?php if ($act_gallery_region <> "" && (isset($act_gallery_region['sw']['lat']) && $act_gallery_region['sw']['lat'] <> '')) : ?>
     var map = jQuery("#map_gps_region").gmap3('get');
     var bounds= new google.maps.LatLngBounds(
                     new google.maps.LatLng(<?php echo $act_gallery_region['sw']['lat'] ?>, <?php echo $act_gallery_region['sw']['lng'] ?>),
@@ -358,12 +358,12 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
 
 
                         $skinfile   = $wpdb->escape($post["nggpano_gallery"]["skin_file"]);
-                        $gps_region = $wpdb->escape($post["nggpano_gallery"]["gps_region"]);
+                        //$gps_region = $wpdb->escape($post["nggpano_gallery"]["gps_region"]);
 
                         if(nggpano_getGalleryOptions($galleryId)) {
-                                $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET skin = '".$skinfile."', gps_region = '".$gps_region."' WHERE gid = '".$wpdb->escape($galleryId)."'");
+                                $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET skin = '".$skinfile."' WHERE gid = '".$wpdb->escape($galleryId)."'");
                         }else{
-                                $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, skin, gps_region) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."', '".$gps_region."')");
+                                $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, skin) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."')");
                         }
                 }
 		

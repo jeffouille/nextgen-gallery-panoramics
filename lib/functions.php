@@ -27,6 +27,73 @@ if(preg_match("#".basename(__FILE__)."#", $_SERVER["PHP_SELF"])) {die("You are n
                 return array();
             }
     }
+    
+    /**
+    * nggpano_getPanoConfig() - Get all panoramic options
+    * 
+    * @access public 
+    * @param int $gallery_id, id of the gallery
+
+    * @return array array with all option
+    */
+
+    function nggpano_getPanoConfig($gallery_id) {
+
+        global $nggpano_options;
+            //****get folder for  krpano files ****/
+        //Get option from Gallery pano config
+        $gallery_viewertemplate = '';
+        if(is_numeric($gallery_id)) {
+            $gallery_pano_options = nggpano_getGalleryOptions($gallery_id);
+            $gallery_viewertemplate = (isset($gallery_pano_options->skin) && $gallery_pano_options->skin <> '') ? $gallery_pano_options->skin : '';
+        }
+        // get the ngg Panoramic plugin options
+        if(!isset($nggpano_options))
+            $nggpano_options = get_option('nggpano_options');
+
+        $return_array = array();
+
+        //Krpano Viewer Folder
+        $return_array['krpanoFolder']       =   trailingslashit($nggpano_options['krpanoFolder']);              //	= plugin_dir_path("nextgen-gallery-panoramics")."/krpano/";
+        $return_array['krpanoFolderURL']    = trailingslashit(site_url()) . $return_array['krpanoFolder'];//site_url() . NGGPANO_PLUGIN_DIR . $krpanoFolder; 
+        $return_array['krpanoFolderPath']   = ABSPATH . $return_array['krpanoFolder'];
+        //Krpano Viewer Plugin Folder
+        $return_array['pluginFolder']       =   trailingslashit($nggpano_options['pluginFolder']);              //	= plugin_dir_path("nextgen-gallery-panoramics")."/krpano_plugins/";
+        $return_array['pluginFolderURL']    = trailingslashit(site_url()) . $return_array['pluginFolder']; 
+        $return_array['pluginFolderPath']   = ABSPATH . $return_array['pluginFolder'];    
+        //Krpano Skin Folder
+        $return_array['skinFolder']        =   trailingslashit($nggpano_options['skinFolder']);     // append related images //    = plugin_dir_path("nextgen-gallery-panoramics")."/krpano_skins/";
+        $return_array['skinFolderURL']      = trailingslashit(site_url()) . $return_array['skinFolder']; 
+        $return_array['skinFolderPath']     = ABSPATH . $return_array['skinFolder'];
+        //Skin File
+        $return_array['defaultSkinFile']    =   $nggpano_options['defaultSkinFile'];     // set default skin for krpano.swf 
+        $return_array['viewerTemplate']     = ($gallery_viewertemplate == '') ? $return_array['defaultSkinFile'] : $gallery_viewertemplate ;     //Complete Path to the kmultires config file
+        $return_array['viewerTemplateURL']  = $return_array['skinFolderURL'] .$return_array['viewerTemplate']; 
+        $return_array['viewerTemplatePath'] = $return_array['skinFolderPath'] .$return_array['viewerTemplate'];
+
+
+
+        return $return_array;
+    }
+    
+    /**
+    * Get skin xml node
+    *
+    * @return XML
+    */
+    function nggpano_getSkinXML($gallery_id = 'several')
+    {
+
+        $panoconfig = nggpano_getPanoConfig($gallery_id);
+        
+        $xml_skin = file_get_contents($panoconfig['viewerTemplatePath']);
+        $xml_skin = str_replace('%PLUGINDIR%', $panoconfig['pluginFolderURL'], $xml_skin);
+        $xml_skin = str_replace('%SKINDIR%',$panoconfig['skinFolderURL'], $xml_skin);
+
+        return $xml_skin;
+
+    }
+
 
     /**
      * Reset all galleries with a specific skin file
@@ -78,8 +145,6 @@ if(preg_match("#".basename(__FILE__)."#", $_SERVER["PHP_SELF"])) {die("You are n
 
         return;
     } 
-
-    
     
 
 // ### Code from wordpress plugin import

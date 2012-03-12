@@ -14,7 +14,12 @@ Modify it when your theme struggle with it, it's only a template design
  -->
 <!-- for xml compliance -->
 <krpano version="1.0.8.14">
-
+        <action name="changescene">
+            loadscene(%1,null,MERGE);
+        </action>
+        <action name="initialize">
+            loadscene(%1,null,MERGE);
+        </action>
 	<!-- no progress bar -->
 	<progress showload="none" showwait="none" />
 

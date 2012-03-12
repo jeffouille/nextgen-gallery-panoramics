@@ -19,25 +19,26 @@ class NGPano_shortcodes {
         // add_filter('the_excerpt', array(&$this, 'convert_shortcode'));
         // add_filter('the_excerpt', 'do_shortcode', 11);
         
-        add_shortcode( 'singlepano', array(&$this, 'show_singlepano' ) );
-        add_shortcode( 'singlepanowithmap', array(&$this, 'show_panowithmap' ) );
+        add_shortcode( 'panoramic', array(&$this, 'show_panoramic' ) );
+        add_shortcode( 'panoramicwithmap', array(&$this, 'show_panoramic_withmap' ) );
         add_shortcode( 'singlepicwithmap', array(&$this, 'show_singlepicwithmap') );
         add_shortcode( 'singlepicwithlinks', array(&$this, 'show_singlepicwithlinks' ) );
         add_shortcode( 'singlemap', array(&$this, 'show_map' ) );
-        add_shortcode( 'nggtags', array(&$this, 'show_tags' ) );
-        add_shortcode( 'thumb', array(&$this, 'show_thumbs' ) );
-        add_shortcode( 'random', array(&$this, 'show_random' ) );
-        add_shortcode( 'recent', array(&$this, 'show_recent' ) );
-        add_shortcode( 'tagcloud', array(&$this, 'show_tagcloud' ) );
+        //add_shortcode( 'panoramicgallery', array(&$this, 'show_panoramic_gallery' ) );
+//        add_shortcode( 'nggtags', array(&$this, 'show_tags' ) );
+//        add_shortcode( 'thumb', array(&$this, 'show_thumbs' ) );
+//        add_shortcode( 'random', array(&$this, 'show_random' ) );
+//        add_shortcode( 'recent', array(&$this, 'show_recent' ) );
+//        add_shortcode( 'tagcloud', array(&$this, 'show_tagcloud' ) );
     }
 
     /**
-     * Function to show a single panorama:
+     * Function to show panorama:
      * 
-     *     [singlepano id="10" float="none|left|right" w="" h="" link="url" "template="filename" mode="none|caption" /]
+     *     [panoramic id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="none|caption" /]
      *
      * where
-     *  - id is one picture id
+     *  - id="1,2,4,5," ... id is one or several picture id
      *  - float is the CSS float property to apply to the thumbnail
      *  - width is width of the single picture you want to show (original width if this parameter is missing)
      *  - height is height of the single picture you want to show (original height if this parameter is missing)
@@ -46,7 +47,7 @@ class NGPano_shortcodes {
      *  - caption display or not the caption full|none|title|description
      * 
      * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
-     *      [singlepano id="10"]This is an additional caption[/singlepano]
+     *      [panoramic id="10"]This is an additional caption[/panoramic]
      * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
      * and the additional caption specified in the tag. 
      * 
@@ -54,7 +55,7 @@ class NGPano_shortcodes {
      * @param string $caption text
      * @return the content
      */
-    function show_singlepano( $atts, $content = '' ) {
+    function show_panoramic( $atts, $content = '' ) {
     
         extract(shortcode_atts(array(
             'id'        => 0,
@@ -65,7 +66,23 @@ class NGPano_shortcodes {
             'link'      => '',
             'template'  => ''
         ), $atts ));
-        $out = nggpanoSinglePano($id, $w, $h, $caption, $float, $template, $content, $link );
+        $out = nggpanoPanoramic($id, $w, $h, $float, $template, $content, $link , $caption );
+            
+        return $out;
+    }
+
+    function show_panoramic_gallery( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '100%',
+            'h'         => '100%',
+            'caption'   => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => ''
+        ), $atts ));
+        $out = nggpanoPanoramic($id, $w, $h, $float, $template, $content, $link , $caption );
             
         return $out;
     }
@@ -73,7 +90,7 @@ class NGPano_shortcodes {
     /**
      * Function to show a single panorama with map under :
      * 
-     *     [singlepanowithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *     [panoramicwithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *
      * where
      *  - id is one picture id
@@ -87,7 +104,7 @@ class NGPano_shortcodes {
      *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
      * 
      * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
-     *      [singlepanowithmap id="10"]This is an additional caption[/singlepanowithmap]
+     *      [panoramicwithmap id="10"]This is an additional caption[/panoramicwithmap]
      * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
      * and the additional caption specified in the tag. 
      * 
@@ -95,7 +112,7 @@ class NGPano_shortcodes {
      * @param string $caption text
      * @return the content
      */
-    function show_panowithmap( $atts, $content = '' ) {
+    function show_panoramic_withmap( $atts, $content = '' ) {
     
         extract(shortcode_atts(array(
             'id'        => 0,
@@ -110,7 +127,7 @@ class NGPano_shortcodes {
             'maptype'   => 'HYBRID',
             'caption'   => ''
         ), $atts ));
-        $out = nggpanoSinglePano($id, $w, $h, $float, $template, $content, $link, $mapw, $maph, $mapz, $maptype , $caption);
+        $out = nggpanoPanoramic($id, $w, $h, $float, $template, $content, $link, $caption, $mapw, $maph, $mapz, $maptype);
             
         return $out;
     }
@@ -166,7 +183,7 @@ class NGPano_shortcodes {
     /**
      * Function to show a single pic with links:
      *
-     *     [singlepicwithlinks id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" "template="filename" mapz="" maptype="HYBRID|ROADMAP|SATELLITE|TERRAIN" links="all|picture|map|pano" mainlink="picture|map|pano|none" captionmode="full|none|title|description" /]
+     *     [singlepicwithlinks id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" "template="filename" mapz="" maptype="HYBRID|ROADMAP|SATELLITE|TERRAIN" links="all|picture|map|pano" mainlink="picture|map|pano|none" caption="full|none|title|description" /]
      *
      * where
      *  - id is one picture id

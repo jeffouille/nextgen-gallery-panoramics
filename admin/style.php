@@ -130,6 +130,12 @@ if (!$error && filesize($real_file) > 0) {
 		}
 		?>
 	</div>
+        <br style="clear: both;"/>
+        <div class="tablenav">
+            <?php echo '<big>' . __('<strong>IMPORTANT</strong> : Panoramic Plugin use <scene> nodes of krpano','nggpano') . '</big><br/>'; ?>
+            <?php echo '<big>' . __('When panoramic is loaded; the initialize action is launched, so your template must include it with scene name in argument','nggpano') . '</big><br/>'; ?>
+            <?php echo '<big>' . __('When a scene is loaded; the changescene action is launched, so your template must include it with scene name in argument','nggpano') . '</big>'; ?>
+	</div> 
 	<br style="clear: both;"/>
 	
 	<div id="templateside">

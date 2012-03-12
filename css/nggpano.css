@@ -8,12 +8,16 @@ Version: 1
 */
 
 /* ----------- Single Pano -------------*/
-.nggpano-singlepano {
+.nggpano-panoramic {
 	background-color:#FFFFFF;
 	display:block;  
 	padding:4px;
         clear: both;
         margin: 5px;
+}
+
+.swf-fullwidth {
+
 }
 
 .nggpano-left {
