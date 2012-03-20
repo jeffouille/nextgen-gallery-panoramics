@@ -43,11 +43,7 @@ Modify it when your theme struggle with it, it's only a template design
             );
         );
     </action>
-    
-    <action name="mainloadpano">
-		closepanoobjects();
-		ifnot(stopSequence === undefined,interruptAnimation(););
-    </action>
+
     <!-- Actions à exécuter au chargement -->
     <events onresize="slide_action_out();" onxmlcomplete="onxmlcompleteaction();"/>
     <action name="onxmlcompleteaction">
@@ -58,8 +54,6 @@ Modify it when your theme struggle with it, it's only a template design
 	</action>
     <action name="stoppanosounds">
 		stopbackgroundsound();
-	</action>
-    <action name="closepanoobjects">
 	</action>
     <!--************** Hotspots et reflets ********************************************************-->
     <action name="hidepanospotsaction">
@@ -361,29 +355,29 @@ Modify it when your theme struggle with it, it's only a template design
 	</action>
     <action name="openstackthumbs">
 		if(%1 LE %2,
-		txtadd(thumbname,'thumb_',%1);
-		openstackthumb(get(thumbname));
-		set(plugin[get(thumbname)].onover , magnifystackthumb(get(name)); );
-		set(plugin[get(thumbname)].onout  , liestackthumb(get(name)); );
-		set(plugin[get(thumbname)].onhover, showtext(get(title)); );
-		set(plugin[get(thumbname)].onclick, liestackthumb(get(name)); closestackthumbs(0,%2); mainloadpano(get(linkedpano)); );
-		set(i,%1);
-		inc(i);
-		delayedcall(0,openstackthumbs(get(i),%2));
+                    txtadd(thumbname,'thumb_',%1);
+                    openstackthumb(get(thumbname));
+                    set(plugin[get(thumbname)].onover , magnifystackthumb(get(name)); );
+                    set(plugin[get(thumbname)].onout  , liestackthumb(get(name)); );
+                    set(plugin[get(thumbname)].onhover, showtext(get(title)); );
+                    set(plugin[get(thumbname)].onclick, liestackthumb(get(name)); closestackthumbs(0,%2); changescene(get(linkedpano)); );
+                    set(i,%1);
+                    inc(i);
+                    delayedcall(0,openstackthumbs(get(i),%2));
 		);
 	</action>
     <action name="closestackthumbs">
 		if(%1 LE %2,
-		txtadd(thumbname,'thumb_',%1);
-		closestackthumb(get(thumbname));
-		set(plugin[get(thumbname)].alpha  , 0.8  );
-		set(plugin[get(thumbname)].onover , NULL );
-		set(plugin[get(thumbname)].onout  , NULL );
-		set(plugin[get(thumbname)].onhover, NULL );
-		set(plugin[get(thumbname)].onclick, openstackthumbs(0,%2) );
-		set(i,%1);
-		inc(i);
-		closestackthumbs(get(i),%2);
+                    txtadd(thumbname,'thumb_',%1);
+                    closestackthumb(get(thumbname));
+                    set(plugin[get(thumbname)].alpha  , 0.8  );
+                    set(plugin[get(thumbname)].onover , NULL );
+                    set(plugin[get(thumbname)].onout  , NULL );
+                    set(plugin[get(thumbname)].onhover, NULL );
+                    set(plugin[get(thumbname)].onclick, openstackthumbs(0,%2) );
+                    set(i,%1);
+                    inc(i);
+                    closestackthumbs(get(i),%2);
 		);
 	</action>
 
@@ -484,13 +478,7 @@ Modify it when your theme struggle with it, it's only a template design
     <plugin name="slide" parent="thumbArray" keep="true" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/slide.png" handcursor="false" capture="false" children="true" alpha="0.9" blendmode="normal" smoothing="true" x="0" y="0" align="right" edge="right" width="100%" height="2000" onclick="slide_action_in"/>
     <plugin name="strap" keep="true" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/strap.png" parent="thumbArray" alpha="0.9" align="right" edge="left" handcursor="true" onclick="slide_action_in"/>
     <plugin name="strapArrow" keep="true" parent="strap" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/arrow.png" align="center" edge="center" capture="false" enabled="false" rotate="0"/>
-    <!-- thumbs pictures -->
-    <!--
-    <plugin name="thumb_build0" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=245&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="12.5%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
-    <plugin name="thumb_build1" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=246&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="37.5%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
-    <plugin name="thumb_build2" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=227&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="62.5%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
-    <plugin name="thumb_build3" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=250&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="87.5%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
-    -->
+
     <plugin name="thumbnailsData" keep="true" nbThumbnailsLoaded="0" thumbsListHeight="0"/>
     <action name="thumbloaded">
         plugin[thumbArray].updatepos();

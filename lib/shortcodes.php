@@ -24,16 +24,13 @@ class NGPano_shortcodes {
         add_shortcode( 'singlepicwithmap', array(&$this, 'show_singlepicwithmap') );
         add_shortcode( 'singlepicwithlinks', array(&$this, 'show_singlepicwithlinks' ) );
         add_shortcode( 'singlemap', array(&$this, 'show_map' ) );
-        //add_shortcode( 'panoramicgallery', array(&$this, 'show_panoramic_gallery' ) );
-//        add_shortcode( 'nggtags', array(&$this, 'show_tags' ) );
-//        add_shortcode( 'thumb', array(&$this, 'show_thumbs' ) );
-//        add_shortcode( 'random', array(&$this, 'show_random' ) );
-//        add_shortcode( 'recent', array(&$this, 'show_recent' ) );
-//        add_shortcode( 'tagcloud', array(&$this, 'show_tagcloud' ) );
+        add_shortcode( 'panoramicgallery', array(&$this, 'show_panoramic_gallery' ) );
+        add_shortcode( 'panoramicgallerywithmap', array(&$this, 'show_panoramic_gallery_withmap' ) );
+
     }
 
     /**
-     * Function to show panorama:
+     * Function to show panorama(s):
      * 
      *     [panoramic id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="none|caption" /]
      *
@@ -71,6 +68,30 @@ class NGPano_shortcodes {
         return $out;
     }
 
+    
+    /**
+     * Function to show gallery of panorama:
+     * 
+     *     [panoramicgallery id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="none|caption" /]
+     *
+     * where
+     *  - id="10" ... id of the gallery
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - caption display or not the caption full|none|title|description
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [panoramicgallery id="10"]This is an additional caption[/panoramicgallery]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
     function show_panoramic_gallery( $atts, $content = '' ) {
     
         extract(shortcode_atts(array(
@@ -82,18 +103,19 @@ class NGPano_shortcodes {
             'link'      => '',
             'template'  => ''
         ), $atts ));
-        $out = nggpanoPanoramic($id, $w, $h, $float, $template, $content, $link , $caption );
+
+        $out = nggpanoGallery($id, $w, $h, $float, $template, $content, $link , $caption );
             
         return $out;
     }
     
     /**
-     * Function to show a single panorama with map under :
+     * Function to show panorama(s) with map under :
      * 
      *     [panoramicwithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *
      * where
-     *  - id is one picture id
+     *  - id="1,2,4,5," ... id is one or several picture id
      *  - float is the CSS float property to apply to the thumbnail
      *  - width is width of the single picture you want to show (original width if this parameter is missing)
      *  - height is height of the single picture you want to show (original height if this parameter is missing)
@@ -131,6 +153,52 @@ class NGPano_shortcodes {
             
         return $out;
     }
+    
+    /**
+     * Function to show panorama(s) with map under :
+     * 
+     *     [panoramicgallerywithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *
+     * where
+     *  - id="10" ... id of the gallery
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - caption display or not the caption full|none|title|description
+     *  - mapw, maph and mapz are width, height and zoom level for the map
+     *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [panoramicwithmap id="10"]This is an additional caption[/panoramicwithmap]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_panoramic_gallery_withmap( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '',
+            'h'         => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => 'withmap',
+            'mapw'      => '250',
+            'maph'      => '250',
+            'mapz'      => '13',
+            'maptype'   => 'HYBRID',
+            'caption'   => ''
+        ), $atts ));
+        $out = nggpanoGallery($id, $w, $h, $float, $template, $content, $link, $caption, $mapw, $maph, $mapz, $maptype);
+            
+        return $out;
+    }
+    
     
     /**
      * Function to show a single picture:
@@ -271,162 +339,7 @@ class NGPano_shortcodes {
         return $out;
     }
     
-    
-    /**
-     * Function to show a collection of galleries:
-     * 
-     * [album id="1,2,4,5,..." template="filename" gallery="filename" /]
-     * where 
-     * - id of a album
-     * - template is a name for a album template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
-     * - template is a name for a gallery template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
-     * 
-     * @param array $atts
-     * @return the_content
-     */
-    function show_album( $atts ) {
-    
-        extract(shortcode_atts(array(
-            'id'        => 0,
-            'template'  => 'extend',
-            'gallery'   => ''  
-        ), $atts ));
-        
-        $out = nggShowAlbum($id, $template, $gallery);
-            
-        return $out;
-    }
-    /**
-     * Function to show a thumbnail or a set of thumbnails with shortcode of type:
-     * 
-     * [gallery id="1,2,4,5,..." template="filename" images="number of images per page" /]
-     * where 
-     * - id of a gallery
-     * - images is the number of images per page (optional), 0 will show all images
-     * - template is a name for a gallery template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
-     * 
-     * @param array $atts
-     * @return the_content
-     */
-    function show_gallery( $atts ) {
-        
-        global $wpdb;
-        
-        extract(shortcode_atts(array(
-            'id'        => 0,
-            'template'  => '',  
-            'images'    => false
-        ), $atts ));
-        
-        // backward compat for user which uses the name instead, still deprecated
-        if( !is_numeric($id) )
-            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' ", $id) );
-            
-        $out = nggShowGallery( $id, $template, $images );
-            
-        return $out;
-    }
-
-    function show_imagebrowser( $atts ) {
-        
-        global $wpdb;
-    
-        extract(shortcode_atts(array(
-            'id'        => 0,
-            'template'  => ''   
-        ), $atts ));
-
-        $out = nggShowImageBrowser($id, $template);
-            
-        return $out;
-    }
-    
-    function show_slideshow( $atts ) {
-        
-        global $wpdb;
-    
-        extract(shortcode_atts(array(
-            'id'        => 0,
-            'w'         => '',
-            'h'         => ''
-        ), $atts ));
-        
-        if( !is_numeric($id) )
-            $id = $wpdb->get_var( $wpdb->prepare ("SELECT gid FROM $wpdb->nggallery WHERE name = '%s' ", $id) );
-
-        if( !empty( $id ) )
-            $out = nggShowSlideshow($id, $w, $h);
-        else 
-            $out = __('[Gallery not found]','nggallery');
-            
-        return $out;
-    }
-    
-    function show_tags( $atts ) {
-    
-        extract(shortcode_atts(array(
-            'gallery'       => '',
-            'album'         => ''
-        ), $atts ));
-        
-        if ( !empty($album) )
-            $out = nggShowAlbumTags($album);
-        else
-            $out = nggShowGalleryTags($gallery);
-        
-        return $out;
-    }
-
-    /**
-     * Function to show a thumbnail or a set of thumbnails with shortcode of type:
-     * 
-     * [thumb id="1,2,4,5,..." template="filename" /]
-     * where 
-     * - id is one or more picture ids
-     * - template is a name for a gallery template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
-     * 
-     * @param array $atts
-     * @return the_content
-     */
-    function show_thumbs( $atts ) {
-    
-        extract(shortcode_atts(array(
-            'id'        => '',
-            'template'  => ''
-        ), $atts));
-        
-        // make an array out of the ids
-        $pids = explode( ',', $id );
-        
-        // Some error checks
-        if ( count($pids) == 0 )
-            return __('[Pictures not found]','nggallery');
-        
-        $picturelist = nggdb::find_images_in_list( $pids );
-        
-        // show gallery
-        if ( is_array($picturelist) )
-            $out = nggCreateGallery($picturelist, false, $template);
-        
-        return $out;
-    }
-
-    /**
-     * Function to show a gallery of random or the most recent images with shortcode of type:
-     * 
-     * [random max="7" template="filename" id="2" /]
-     * [recent max="7" template="filename" id="3" mode="date" /]
-     * where 
-     * - max is the maximum number of random or recent images to show
-     * - template is a name for a gallery template, which is located in themefolder/nggallery or plugins/nextgen-gallery/view
-     * - id is the gallery id, if the recent/random pictures shall be taken from a specific gallery only
-     * - mode is either "id" (which takes the latest additions to the databse, default) 
-     *               or "date" (which takes the latest pictures by EXIF date) 
-     *               or "sort" (which takes the pictures by user sort order)
-     * 
-     * @param array $atts
-     * @return the_content
-     */
+ 
     function show_random( $atts ) {
     
         extract(shortcode_atts(array(
