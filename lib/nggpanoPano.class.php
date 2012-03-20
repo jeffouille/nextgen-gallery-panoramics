@@ -821,7 +821,7 @@ class nggpanoPano{
 		
     //Add scene node
     $xmlreturn  = '<!-- SCENE  -->';
-    $xmlreturn  .= '<scene name="scene-'.$this->pid.'" title="'.$this->title.'" defaultthumburl="'.$nextgen_thumb.'" squarethumburl="'.$square_thumb.'" customthumburl="'.$custom_thumb.'" onstart="room_create_gallery_59();">';
+    $xmlreturn  .= '<scene name="scene-'.$this->pid.'" title="'.$this->title.'" defaultthumburl="'.$nextgen_thumb.'" squarethumburl="'.$square_thumb.'" customthumburl="'.$custom_thumb.'" >';
     $xmlreturn  .= $xmlConfiguration;
     //$xmlreturn  .= '<progress showload="bar(midbottom, 100%, 2, 0, 55, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0)" showreloads="true" showwait="true"/>';
 

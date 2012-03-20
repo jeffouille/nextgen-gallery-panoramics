@@ -68,7 +68,7 @@ class nggpanoKrpanoXML {
         $this->panorequest  = isset($_GET['pano']) ? strtolower( $_GET['pano'] ) : false; 
         if($this->panorequest) {
             if (strpos($this->panorequest, '_')) {
-                $splitpano = split('_', $this->panorequest);
+                $splitpano = explode('_', $this->panorequest);
                 // Read the parameter on init
                 $this->method 	= isset($splitpano[0]) ? strtolower( $splitpano[0] ) : false;
                 $this->id 	= isset($splitpano[1]) ? strtolower( $splitpano[1] ) : false;
@@ -116,7 +116,7 @@ class nggpanoKrpanoXML {
                 $this->panoconfig = nggpano_getPanoConfig('several');
                 
                 //get id
-                $list_id = split('-',$this->id);
+                $list_id = explode('-',$this->id);
                 $this->firstpano_to_load = 'scene-'.$list_id[0];
                 
                 $xmlpanochoice  = '<!--************** Liste des panoramas ********************************************************-->';

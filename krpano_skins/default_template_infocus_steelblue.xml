@@ -16,13 +16,19 @@ Modify it when your theme struggle with it, it's only a template design
     <action name="initialize">
         <!--firstloadcompleteaction();-->
         changescene(%1);
-        <!--Gestion Pile Miniature -->
-        set(laststackthumbindex, get(scene.count));
-	dec(laststackthumbindex);
-	buildstackthumbs(0, get(laststackthumbindex));
-        <!--Gestion Liste Miniature -->
-        initThumbList();
-        thumbsResizeEventHandler();
+        if(scene.count GT 1,
+            <!--Gestion Pile Miniature -->
+            set(laststackthumbindex, get(scene.count));
+            dec(laststackthumbindex);
+            buildstackthumbs(0, get(laststackthumbindex));
+            <!--Gestion Liste Miniature -->
+            <!--
+            initThumbList();
+            thumbsResizeEventHandler();
+            -->
+        ,
+            set(plugin[thumbArray].visible, false);
+        );
     </action>
     <action name="changescene">
         <!--loadscene(%1,null,KEEPDISPLAY|KEEPCONTROL|KEEPPLUGINS|KEEPPROGRESS);-->
@@ -43,7 +49,7 @@ Modify it when your theme struggle with it, it's only a template design
 		ifnot(stopSequence === undefined,interruptAnimation(););
     </action>
     <!-- Actions à exécuter au chargement -->
-    <events onxmlcomplete="onxmlcompleteaction();"/>
+    <events onresize="slide_action_out();" onxmlcomplete="onxmlcompleteaction();"/>
     <action name="onxmlcompleteaction">
 		changerotationmenu();;
 	</action>
@@ -297,7 +303,7 @@ Modify it when your theme struggle with it, it's only a template design
 		addplugin(get(thumbname));
 		set(plugin[get(thumbname)].url   , get(scene[%1].defaultthumburl));
 		set(plugin[get(thumbname)].keep  , true);
-		set(plugin[get(thumbname)].align , right);
+		set(plugin[get(thumbname)].align , lefttop);
 		set(plugin[get(thumbname)].edge  , center);
 		set(plugin[get(thumbname)].width , 60);
 		set(plugin[get(thumbname)].height, 30);
@@ -330,13 +336,13 @@ Modify it when your theme struggle with it, it's only a template design
 		);
 		if(pos LT curpos,
 		inc(pos);
-		inc(ydst, 50);
+		inc(xdst, 90);
 		if (ishtml5 == true,
-		sub(ymax, stageheight, 60);
+		sub(xmax, stagewidth, 100);
 		,
-		sub(ymax, area.pixelheight, 60);
+		sub(xmax, area.pixelwidth, 100);
 		);
-		if(ydst GT ymax, inc(xdst,90);set(ydst,0); );
+		if(xdst GT xmax, inc(ydst,50);set(xdst,0); );
 		openstackthumb(%1,NEXT);
 		,
 		add(xdst, 50);
@@ -346,30 +352,27 @@ Modify it when your theme struggle with it, it's only a template design
 		tween(plugin[%1].width , 80);
 		tween(plugin[%1].height, 40);
 		);
-	</action>
+	</action>  
     <action name="closestackthumb">
-                
 		tween(plugin[%1].x, get(plugin[%1].xsmall));
 		tween(plugin[%1].y, get(plugin[%1].ysmall));
 		tween(plugin[%1].width , 60);
 		tween(plugin[%1].height, 30);
 	</action>
     <action name="openstackthumbs">
-                
 		if(%1 LE %2,
 		txtadd(thumbname,'thumb_',%1);
 		openstackthumb(get(thumbname));
 		set(plugin[get(thumbname)].onover , magnifystackthumb(get(name)); );
 		set(plugin[get(thumbname)].onout  , liestackthumb(get(name)); );
-		set(plugin[get(thumbname)].onhover, showtext(get(title),infobulleTitle); );
-		set(plugin[get(thumbname)].onclick, liestackthumb(get(name)); closestackthumbs(0,%2); changescene(get(linkedpano)); );
+		set(plugin[get(thumbname)].onhover, showtext(get(title)); );
+		set(plugin[get(thumbname)].onclick, liestackthumb(get(name)); closestackthumbs(0,%2); mainloadpano(get(linkedpano)); );
 		set(i,%1);
 		inc(i);
 		delayedcall(0,openstackthumbs(get(i),%2));
 		);
 	</action>
     <action name="closestackthumbs">
-                
 		if(%1 LE %2,
 		txtadd(thumbname,'thumb_',%1);
 		closestackthumb(get(thumbname));
@@ -384,8 +387,6 @@ Modify it when your theme struggle with it, it's only a template design
 		);
 	</action>
 
-
-
         
     <!--************** Miniatures *****************************************************************-->
     <events name="thumbnailsResizeEvent" onresize="thumbsResizeEventHandler();"/>
@@ -393,8 +394,8 @@ Modify it when your theme struggle with it, it's only a template design
     <action name="magnify">
 		tween(plugin[%1].alpha,  1.0, 0.3, easeInQuad);
 		tween(plugin[%1].scale, 1.05, 0.3, easeInQuad);
-		set(plugin[%1].effect, glow(0xff36a5,1,2,10000));
-		set(plugin[%1].jsborder,'2px solid #ff36a5');
+		set(plugin[%1].effect, glow(0x788794,1,2,10000));
+		set(plugin[%1].jsborder,'2px solid #788794');
 	</action>
     <!-- actione effectuée quand la souris sort d'une miniature -->
     <action name="lie">
@@ -452,6 +453,7 @@ Modify it when your theme struggle with it, it's only a template design
 		);
 	</action>
     <action name="thumbsResizeEventHandler">
+                resizethumbs();
 		plugin[thumbArray].updatepos();
 		copy(truethumbsheight, plugin[thumbArray].pixelheight);
 		if (area.pixelheight GT truethumbsheight,
@@ -473,7 +475,7 @@ Modify it when your theme struggle with it, it's only a template design
                     set(plugin[thumbMoveNext].height, 5%);
 		);
 	</action>
-    <plugin name="thumbArray" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" children="true" alpha="0.9" blendmode="normal" smoothing="true" x="0" y="0" scale="1" align="left" edge="right" width="10%" height="prop"/>
+    <plugin name="thumbArray" visible="false" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" children="true" alpha="0.9" blendmode="normal" smoothing="true" x="0" y="0" scale="1" align="left" edge="right" width="10%" height="prop"/>
     <plugin name="thumbBgLayout" keep="true" zorder="1" url="%SKINDIR%/graphics/infocus-steelblue/transparent.png" handcursor="false" capture="false" x="0" y="0" align="center" edge="center" width="100%" height="prop" parent="thumbArray"/>
     <plugin name="thumbMovePrev" keep="true" zorder="3" capture="true" url="%SKINDIR%/graphics/infocus-steelblue/thumb/thumb_scroll.png" alpha="0.8" onover="set(alpha, 1);" onout="set(alpha,0.8);set(scrollspeed,10);" scrollspeed="10" onhover="moveThumbsPrev(get(scrollspeed));if(scrollspeed LT 70, inc(scrollspeed););" onclick="moveThumbsPrev(50);" visible="false" x="0" y="10" align="topleft" edge="top"/>
     <plugin name="thumbMoveNext" keep="true" zorder="3" capture="true" url="%SKINDIR%/graphics/infocus-steelblue/thumb/thumb_scroll.png" alpha="0.8" onover="set(alpha, 1);" onout="set(alpha,0.8);set(scrollspeed,10);" scrollspeed="10" onhover="moveThumbsNext(get(scrollspeed));if(scrollspeed LT 70, inc(scrollspeed););" onclick="moveThumbsNext(50);" visible="false" x="0" y="10" align="bottomleft" edge="bottom"/>
@@ -483,37 +485,51 @@ Modify it when your theme struggle with it, it's only a template design
     <plugin name="strap" keep="true" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/strap.png" parent="thumbArray" alpha="0.9" align="right" edge="left" handcursor="true" onclick="slide_action_in"/>
     <plugin name="strapArrow" keep="true" parent="strap" zorder="0" url="%SKINDIR%/graphics/infocus-steelblue/thumb/arrow.png" align="center" edge="center" capture="false" enabled="false" rotate="0"/>
     <!-- thumbs pictures -->
-    <!-- <plugin name="thumb_build0" keep="true" zorder="2" parent="thumbBgLayout" url="%SKINDIR%/graphics/infocus-steelblue/thumb/build0_thumbnail.jpg" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="26.087%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
-    <plugin name="thumb_build1" keep="true" zorder="2" parent="thumbBgLayout" url="%SKINDIR%/graphics/infocus-steelblue/thumb/build1_thumbnail.jpg" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="73.913%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
+    <!--
+    <plugin name="thumb_build0" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=245&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="12.5%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
+    <plugin name="thumb_build1" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=246&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="37.5%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
+    <plugin name="thumb_build2" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=227&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="62.5%" alpha="0.8" onclick="mainloadpano(build0.xml);" onover="magnify('thumb_build0'); " onhover="showtext('Chambre-8000x4000');" onout="lie('thumb_build0');" visible="false" onloaded="thumbloaded();"/>
+    <plugin name="thumb_build3" keep="true" zorder="2" parent="thumbBgLayout" url="http://local.geoffroydeleuryphotography-wp.com/index.php?callback=image&pid=250&width=500&height=500" width="83.3333%" height="prop" align="topleft" edge="center" x="50%" y="87.5%" alpha="0.8" onclick="mainloadpano(build1.xml);" onover="magnify('thumb_build1'); " onhover="showtext('Cuisine-8000x4000');" onout="lie('thumb_build1');" visible="false" onloaded="thumbloaded();"/>
     -->
-    <plugin name="thumbnailsData" keep="true" nbThumbnailsLoaded="0"/>
+    <plugin name="thumbnailsData" keep="true" nbThumbnailsLoaded="0" thumbsListHeight="0"/>
     <action name="thumbloaded">
-        trace(%0);
+        plugin[thumbArray].updatepos();
+        plugin[thumbBgLayout].updatepos();
         inc(plugin[thumbnailsData].nbThumbnailsLoaded, 1);
         if(plugin[thumbnailsData].nbThumbnailsLoaded GE scene.count,
             setThumbnailsVisible();
             adjusthtml5thumbsplugins();
+            thumbsResizeEventHandler();
         );
-        trace("thumbBgLayout.pixelheight:",plugin[thumbBgLayout].pixelheight);
     </action>
     <action name="setThumbnailsVisible">
-        trace(%0);
         for(set(indexThumbnail,0), indexThumbnail LT scene.count, inc(indexThumbnail), 
             txtadd(thumbname,'thumblist_',get(indexThumbnail));
             set(plugin[get(thumbname)].visible, true);
+            plugin[get(thumbname)].updatepos();
+            add(thumbsListHeight,plugin[get(thumbname)].pixelheight);
         );
-        <!--
-        set(plugin[thumb_build0].visible, true);
-        set(plugin[thumb_build1].visible, true);
-        -->
+        mul(thumbsListHeight,2);
+        set(plugin[thumbBgLayout].height,get(thumbsListHeight));
+        set(plugin[thumbArray].height,get(thumbsListHeight));
+
+    </action>
+    <action name="resizethumbs">
+
+        set(thumbsListHeight,0);
+        for(set(indexThumbnail,0), indexThumbnail LT scene.count, inc(indexThumbnail), 
+            plugin[get(thumbname)].updatepos();
+            add(thumbsListHeight,plugin[get(thumbname)].pixelheight);
+        );
+        mul(thumbsListHeight,2);
+        set(plugin[thumbBgLayout].height,get(thumbsListHeight));
+        set(plugin[thumbArray].height,get(thumbsListHeight));
     </action>
     
     <action name="initThumbList">
         <!--Loop on Scene-->
         for(set(indexThumb,0), indexThumb LT scene.count, inc(indexThumb), 
-            trace('scene[',indexThumb,'].name=',scene[get(indexThumb)].name);
             txtadd(thumblistname,'thumblist_',get(indexThumb));
-            trace('thumblistname',get(thumblistname));
             addplugin(get(thumblistname));
             <!-- Config Thumb Plugin-->
             set(plugin[get(thumblistname)].url   , get(scene[get(indexThumb)].customthumburl));
@@ -528,29 +544,23 @@ Modify it when your theme struggle with it, it's only a template design
             set(plugin[get(thumblistname)].x,      50%);
             mul(diviseur,scene.count,2);
             div(space,100,get(diviseur));
-            trace('spacee:',space);
             mul(coeff,get(indexThumb),2);
             add(coeff,1);
             mul(y_new,space,get(coeff));
             txtadd(y_new,'%');
-            trace(y_new);
             set(plugin[get(thumblistname)].y,      get(y_new));    
             set(plugin[get(thumblistname)].alpha , 0.8);
-            set(plugin[get(thumblistname)].visible, false);
-            
+            set(plugin[get(thumblistname)].visible, true);
+
             set(plugin[get(thumblistname)].title,  get(scene[get(indexThumb)].title));
             
             set(plugin[get(thumblistname)].onclick ,    changescene(get(linkedpano)););
             set(plugin[get(thumblistname)].onover,      magnify(get(name)););
             set(plugin[get(thumblistname)].onhover,     showtext(get(title),infobulleTitle););
             set(plugin[get(thumblistname)].onout ,      lie(get(name)););
-            set(plugin[get(thumblistname)].onloaded ,   thumbloaded(););
-            
-        );  
-    </action>
-        
-      
-  
-        
+            set(plugin[get(thumblistname)].onloaded ,   thumbloaded(get(name)););
+        );
+        set(plugin[thumbArray].visible, true);
+    </action> 
         
 </krpano>
