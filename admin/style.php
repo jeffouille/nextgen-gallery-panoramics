@@ -86,7 +86,7 @@ if (!$error && filesize($real_file) > 0) {
 <div class="wrap">
 
 	<div class="bordertitle">
-        <?php screen_icon( 'nextgen-gallery' ); ?>
+        <?php screen_icon( 'nextgen-gallery-panoramics' ); ?>
 		<h2><?php _e('Skin Editor','nggpano') ?></h2>
 		<?php if (!$skin_xml_exists) : ?>
 		<form id="themeselector" name="cssfiles" method="post">

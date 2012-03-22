@@ -55,6 +55,7 @@ function nggpano_admin_overview() {
     
     ?>
     <div class="wrap">
+        <?php screen_icon( 'nextgen-gallery-panoramics' ); ?>
         <h2><?php _e('Welcome to NextGEN Gallery Panoramics', 'nggpano'); ?></h2>
         <p><?php _e('This plugin adds the ability to create panoramics viewer using krpano (www.krpano.com) from NextGen Images', 'nggpano'); ?>
     <?php

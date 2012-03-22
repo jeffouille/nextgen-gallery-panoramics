@@ -1004,5 +1004,223 @@ function nggpanoSingleMap($imageID, $mapwidth = 250, $mapheight = 250, $mapzoom 
 }
 
 
+/**
+ * nggpanoPanoramic() - show several pano based on the id list
+ * 
+ * @access public 
+ * @param int $listIDs, list db-ID of the pano to display ex. : 1,2,5
+ * @param int (optional) $width, width of the pano
+ * @param int (optional) $height, height of the pano
+ * @param string $float (optional) could be none, left, right
+ * @param string $template (optional) name for a template file, look for panoramic-$template
+ * @param string $caption (optional) additional caption text
+ * @param string $link (optional) link to a other url instead the full image
+ * $param string (optional) $captionmode, display or not the caption, could be full, none, title, description. Default none
+ * @param int (optional) $mapwidth, width of the map
+ * @param int (optional) $mapheight, height of the map
+ * @param int (optional) $mapzoom, zoom level of the map
+ * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
+ * @return the content
+ */
+function nggpanoSingleMap_new($listIDs, $mapwidth = 250, $mapheight = 250, $mapzoom = 10, $maptype = 'HYBRID', $float = '', $template = '', $caption = '', $thumbw = 200, $thumbh = 200, $links = 'ALL', $mainlink = '', $captionmode = '' ) {
+
+//function nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
+    global $post;
+    
+    require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
+    //$ngg_options = get_option('ngg_options');
+    //get the next Gen Gallery Options
+    //$ngg_options = nggGallery::get_option('ngg_options');
+    
+    
+    // get the ngg Panoramic plugin options
+    $nggpano_options = get_option('nggpano_options');
+    
+    //get panolist
+    $pano_array = explode(',',$listIDs);
+    
+    //remove doublon
+    $pano_array = array_unique($pano_array);
+    
+    //to store the first gallery id of pictures list
+    $gallery_id = 0;
+    
+    $pano_list = array();
+    $pano_id_list = array();
+    $map_list = array();
+    $gallery_list = array();
+    $map_datas_available = false;
+    
+    //filter $pano_array to have only id with existing pano and existing image
+    foreach ($pano_array as $pano_id) {
+        // get picturedata
+        $picture = nggdb::find_image($pano_id);
+        // if we didn't get some data, exit now
+        if (!($picture == null)) {
+            //Get galleryid
+            //$pano_list[] = $pano_id;
+            $gid = $picture->galleryid;
+            $gallery_list[] = $gid;
+            //new pano from pictureid
+            $pano = new nggpanoPano($pano_id, $gid);
+            // if we didn't get pano, exit now
+            if ($pano->exists()) {
+                //get all infos from DB
+                $pano = $pano->getObjectFromDB();
+                if ($pano) {
+                    // add more variables for render output
+//                    $pano->title = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->alttext, 'pano_' . $picture->pid . '_alttext')) );
+//                    $pano->description = html_entity_decode( stripslashes(nggPanoramic::i18n($picture->description, 'pano_' . $picture->pid . '_description')) );   
+                    
+                    $pano_list[$pano->pid] = $pano;
+                    $pano_id_list[] = $pano->pid;
+                    
+                    //GPS infos
+                    //Get GPS values for the current image
+                    $image_values = nggpano_getImagePanoramicOptions($pano_id);
+                    $lat = isset($image_values->gps_lat) ? $image_values->gps_lat : '';
+                    $lng = isset($image_values->gps_lng) ? $image_values->gps_lng : '';
+                    $alt = isset($image_values->gps_alt) ? $image_values->gps_alt : '';
+                    if(isset($image_values->gps_lat) && isset($image_values->gps_lng))
+                        $map_datas_available = true;
+                    $gps = array(
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'alt' => $alt
+                    );
+                    
+                    $map_list[$pano->pid] = $gps;
+
+                }
+            }
+        }
+    }
+    unset($pano_id);
+    
+    
+    $gallery_id = (sizeof($gallery_list) > 1) ? 'several' : $gallery_list[0]; 
+
+//    
+//    $out = $listIDs.'<hr/>';
+//    $out .= 'pano_array : ';
+//    $out .= var_export($pano_array, true);
+//    $out .= '<hr/>';
+//    $out .= 'pano_id_list : ';
+//    $out .= var_export($pano_id_list, true);
+//    $out .= '<hr/>';
+//    $out .= 'pano_list : ';
+//    $out .= var_export($pano_list, true);
+    
+    
+    if(sizeof($pano_id_list)  == 0)
+        return __('[No Panoramic available]','nggpano');
+    //return $out;
+    
+    // add float to pano
+    switch ($float) {
+        
+        case 'left': 
+            $floatpano =' nggpano-left';
+        break;
+        
+        case 'right': 
+            $floatpano =' nggpano-right';
+        break;
+
+        case 'center': 
+            $floatpano =' nggpano-center';
+        break;
+        
+        default: 
+            $floatpano ='';
+        break;
+    }
+    
+    // clean captionmode if needed 
+    $captionmode = ( preg_match('/(full|title|description)/i', $captionmode) ) ? $captionmode : '';
+    
+    $pano_config = nggpano_getPanoConfig($gallery_id);
+    
+    //url to get xml for krpano
+    $url_xml = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=';
+    $url_xml .= (sizeof($pano_id_list) > 1) ? 'multiple_'.implode('-', $pano_id_list) : 'single_'.implode('-', $pano_id_list);
+
+    //Height and Width for pano div
+    //get width and size
+    $widthpano = getSizeForPano($width);
+    $heightpano = getSizeForPano($height);
+    
+    // build panodiv array
+    $panodiv = array(
+        'classname'     => 'nggpano-panoramic'. $floatpano,
+        //random id for pano div
+        'contentdiv'    => 'panocontent_' . rand(),
+        'swfid'         => 'krpanoSWFObject_' . rand(),
+        'krpano_path'   => trailingslashit($pano_config['krpanoFolderURL']) . 'krpano.swf',
+        'krpano_xml'    => $url_xml,
+        'size'          => array('width' => $widthpano, 'height' => $heightpano)
+    );
+// 
+//    $out .= '<hr/>';
+//    $out .= 'panodiv : ';
+//    $out .= var_export($panodiv, true);
+//    
+//    
+    /* MAP */
+    
+    // add float to map
+    switch ($float) {    
+        case 'left': 
+            $floatmap =' nggpano-map-left';
+        break; 
+        case 'right': 
+            $floatmap =' nggpano-map-right';
+        break;
+        case 'center': 
+            $floatmap =' nggpano-map-center';
+        break;
+        default: 
+            $floatmap ='';
+        break;
+    }
+    // clean maptype if needed 
+    $maptype = ( preg_match('/(HYBRID|ROADMAP|SATELLITE|TERRAIN)/i', strtoupper($maptype)) ) ? strtoupper($maptype) : '';
+    //Get Map infos
+    $mapdiv = array(
+        'available'             => $map_datas_available,
+        'width'                 => getSizeForPano($mapwidth),
+        'height'                => getSizeForPano($mapheight),
+        'zoom'                  => $mapzoom,
+        'classname'             => 'nggpano-map'. $floatmap,
+        'maptype'               => $maptype,
+        'div_id'                => 'map_pic_' . rand(),
+        'thumbinfowindowurl'    => trailingslashit( home_url() ) . 'index.php?callback=image&amp;width=200&amp;pid=',
+        'map_list'              => $map_list
+    );
+    
+//    $out .= '<hr/>';
+//    $out .= 'mapdiv : ';
+//    $out .= var_export($mapdiv, true);
+    
+    //Caption in shortcode
+    $caption = nggPanoramic::i18n($caption);
+    
+    // look for panoramic-$template.php or pure panoramic.php
+    $filename = ( empty($template) ) ? 'panoramic' : 'panoramic-' . $template;
+
+    // create the output
+    $out = nggPanoramic::capture ( $filename, array (
+                                               'panodiv'       => $panodiv,
+                                               'pano_list'     => $pano_list,
+                                               'captionmode'   => $captionmode,
+                                               'mapdiv'        => $mapdiv,
+                                               'float'         => $floatpano,
+                                               'caption'       => $caption)
+                                );
+
+    //$out = apply_filters('nggpano_show_panoramic_content', $out, $picture );
+    
+    return $out;
+}
 
 ?>

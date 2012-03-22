@@ -25,7 +25,7 @@ function nggpano_install () {
 	}
 	
 	$role->add_cap('NGG Panoramics overview');
-//	$role->add_cap('NextGEN Use TinyMCE');
+	$role->add_cap('NGG Panoramics Use TinyMCE');
 //	$role->add_cap('NextGEN Upload images');
 	$role->add_cap('NGG Panoramics Manage gallery');
 //	$role->add_cap('NextGEN Manage tags');
@@ -212,7 +212,7 @@ function nggpano_uninstall() {
 
 	// now remove the capability
 	ngg_remove_capability("NGG Panoramics overview");
-//	ngg_remove_capability("NextGEN Use TinyMCE");
+	ngg_remove_capability("NGG Panoramics Use TinyMCE");
 //	ngg_remove_capability("NextGEN Upload images");
 	ngg_remove_capability("NGG Panoramics Manage gallery");
 //	ngg_remove_capability("NextGEN Edit album");

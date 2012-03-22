@@ -1,0 +1,14 @@
+#adminmenu #toplevel_page_nextgen-gallery-panoramics div.wp-menu-image,
+#oam_toplevel_page_ngg-pano div.wp-menu-image {
+	background: transparent url('../images/iconeNGGPano_16.png') no-repeat scroll 6px 6px;
+}
+#adminmenu #toplevel_page_nextgen-gallery-panoramics:hover div.wp-menu-image,
+#adminmenu #toplevel_page_nextgen-gallery-panoramics.wp-has-current-submenu div.wp-menu-image,
+#adminmenu #toplevel_page_nextgen-gallery-panoramics.current div.wp-menu-image,
+#oam_toplevel_page_nextgen-gallery-panoramics:hover div.wp-menu-image {
+	background: transparent url('../images/iconeNGGPano_16.png') no-repeat scroll 6px 6px;
+}
+
+#icon-nextgen-gallery-panoramics  {
+    background:url("../images/iconeNGGPano_32.png") no-repeat scroll 1px 1px transparent;
+}

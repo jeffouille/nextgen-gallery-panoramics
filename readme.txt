@@ -43,8 +43,10 @@ DONE category in publish pano
 DONE Put getSkinXML() and getPanoConfig() out of PanoClass but in lib/function.php and rename it
 DONE Change BASEDIR when build scene
 DONE save post_id in ngpano_picture
+DONE shortcode for gallery
 
-shortcode for gallery
+
+Redone singlemap to have several marker in map
 
 map default options in admin (mapw, maph, map zoom, map_type, picto marker
 

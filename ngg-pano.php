@@ -105,7 +105,8 @@ class nggPanoLoader {
 //				add_action('wp_head', array('nggMediaRss', 'add_piclens_javascript'));
 //                
             // Look for XML request, before page is render
-            //add_action('parse_request',  array(&$this, 'check_request') );    
+                        add_action('parse_request',  array(&$this, 'check_request'));
+                        add_filter("query_vars",     array(&$this, "add_queryvars"));
 				
 			// Add the script and style files
 			add_action('template_redirect', array(&$this, 'load_scripts') );
@@ -115,32 +116,27 @@ class nggPanoLoader {
 	}
 
     function check_request( $wp ) {
-    	
-    	if ( !array_key_exists('callback', $wp->query_vars) )
-    		return;
-        
-        if ( $wp->query_vars['callback'] == 'imagerotator') {
-            require_once (dirname (__FILE__) . '/xml/imagerotator.php');
-            exit();
-        }
 
-        if ( $wp->query_vars['callback'] == 'json') {
+    	if ( !array_key_exists('nggpano_callback', $wp->query_vars) )
+    		return;
+
+        if ( $wp->query_vars['nggpano_callback'] == 'json') {
             require_once (dirname (__FILE__) . '/xml/json.php');
             exit();
         }
 
-        if ( $wp->query_vars['callback'] == 'image') {
-            require_once (dirname (__FILE__) . '/nggshow.php');
-            exit();
-        }
-        
-		//TODO:see trac #12400 could be an option for WP3.0 
-        if ( $wp->query_vars['callback'] == 'ngg-ajax') {
-            require_once (dirname (__FILE__) . '/xml/ajax.php');
-            exit();
-        }
         
     }
+    
+/**
+	* add some more vars to the big wp_query
+	*/
+	function add_queryvars( $query_vars ){
+
+            $query_vars[] = 'nggpano_callback';
+
+		return $query_vars;
+	}
 	
 	function required_version() {
 		
@@ -281,12 +277,12 @@ class nggPanoLoader {
 
             // We didn't need all stuff during a AJAX operation
             if ( defined('DOING_AJAX') ) {
-                //require_once (dirname (__FILE__) . '/admin/ajax.php');
+                require_once (dirname (__FILE__) . '/admin/ajax.php');
             } else {
                 //require_once (dirname (__FILE__) . '/lib/meta.php');				// 131.856
                 //require_once (dirname (__FILE__) . '/lib/media-rss.php');			//  82.768
                 //require_once (dirname (__FILE__) . '/lib/rewrite.php');				//  71.936
-                //include_once (dirname (__FILE__) . '/admin/tinymce/tinymce.php'); 	//  22.408
+                include_once (dirname (__FILE__) . '/admin/tinymce/tinymce.php'); 	//  22.408
 
                 // Load backend libraries
                 if ( is_admin() ) {	

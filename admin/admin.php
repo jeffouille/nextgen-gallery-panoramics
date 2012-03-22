@@ -31,7 +31,7 @@ class nggpanoAdminPanel{
     // integrate the menu	
     function add_menu()  {
 
-        add_menu_page( 'Panoramics', 'Panoramics', 'NGG Panoramics overview', NGGPANOFOLDER, array (&$this, 'show_menu') );
+        add_menu_page( 'Panoramics', 'Panoramics', 'NGG Panoramics overview', NGGPANOFOLDER, array (&$this, 'show_menu'), 'div' );
         add_submenu_page( NGGPANOFOLDER , __('Overview', 'nggpano'), __('Overview', 'nggpano'), 'NGG Panoramics overview', NGGPANOFOLDER, array (&$this, 'show_menu'));
 //        add_submenu_page( NGGFOLDER , __('Add Gallery / Images', 'nggallery'), __('Add Gallery / Images', 'nggallery'), 'NextGEN Upload images', 'nggallery-add-gallery', array (&$this, 'show_menu'));
 //        add_submenu_page( NGGFOLDER , __('Manage Gallery', 'nggallery'), __('Manage Gallery', 'nggallery'), 'NGG Panoramics Manage gallery', 'nggallery-manage-gallery', array (&$this, 'show_menu'));
@@ -168,7 +168,7 @@ class nggpanoAdminPanel{
 	
 	function load_styles() {
         // load the icon for the navigation menu
-        //wp_enqueue_style( 'nggmenu', NGGPANOGALLERY_URLPATH .'admin/css/menu.css', array() );
+                wp_enqueue_style( 'nggpanomenu', NGGPANOGALLERY_URLPATH .'admin/css/menu.css', array() );
 		wp_register_style( 'nggpanoadmin', NGGPANOGALLERY_URLPATH .'admin/css/nggpanoadmin.css', false, '1.0.0', 'screen' );
                 wp_register_style( 'jquery-autocomplete', NGGPANOGALLERY_URLPATH .'admin/css/jquery-autocomplete.css', false, '1.0.0', 'screen' );
 		//wp_register_style( 'ngg-jqueryui', NGGPANOGALLERY_URLPATH .'admin/css/jquery.ui.css', false, '1.8.5', 'screen' );
