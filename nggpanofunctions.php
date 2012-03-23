@@ -32,16 +32,11 @@ function getSizeForPano($size = '100%') {
  * @return the content
  */
 function nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
-    global $post;
-    
+
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');
     //get the next Gen Gallery Options
     //$ngg_options = nggGallery::get_option('ngg_options');
-    
-    
-    // get the ngg Panoramic plugin options
-    $nggpano_options = get_option('nggpano_options');
     
     //get panolist
     $pano_array = explode(',',$listIDs);
@@ -249,19 +244,12 @@ function nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = 
  * @return the content
  */
 function nggpanoGallery($gid, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
-    global $post;
-    
+   
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');
     //get the next Gen Gallery Options
-    //$ngg_options = nggGallery::get_option('ngg_options');
-    
-    
-    // get the ngg Panoramic plugin options
-    $nggpano_options = get_option('nggpano_options');
-    // get the ngggallery options
     $ngg_options = nggGallery::get_option('ngg_options');
-    
+
     //Set sort order value, if not used (upgrade issue)
     $ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
     $ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
@@ -282,6 +270,76 @@ function nggpanoGallery($gid, $width = '100%', $height = '100%', $float = '' , $
 
     return nggpanoPanoramic($listIDs, $width , $height , $float , $template , $caption , $link , $captionmode , $mapwidth , $mapheight , $mapzoom , $maptype );
 
+}
+
+/**
+ * nggpanoAlbum() - show album of panoramic
+ * 
+ * @access public 
+ * @param int $albid, album id
+ * @param int (optional) $width, width of the pano
+ * @param int (optional) $height, height of the pano
+ * @param string $float (optional) could be none, left, right
+ * @param string $template (optional) name for a template file, look for panoramic-$template
+ * @param string $caption (optional) additional caption text
+ * @param string $link (optional) link to a other url instead the full image
+ * $param string (optional) $captionmode, display or not the caption, could be full, none, title, description. Default none
+ * @param int (optional) $mapwidth, width of the map
+ * @param int (optional) $mapheight, height of the map
+ * @param int (optional) $mapzoom, zoom level of the map
+ * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
+ * @return the content
+ */
+function nggpanoAlbum($albumID, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
+    
+    require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
+    //$ngg_options = get_option('ngg_options');
+    
+    
+     // lookup in the database
+    $album = nggdb::find_album( $albumID );
+
+    // still no success ? , die !
+    if( !$album ) 
+        return __('[Album not found]','nggallery');
+    
+    if( !isset($album->gallery_ids) ) 
+        return __('[Album is empty]','nggpano');
+
+    //get the next Gen Gallery Options
+    $ngg_options = nggGallery::get_option('ngg_options');
+
+    
+    //Set sort order value, if not used (upgrade issue)
+    $ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
+    $ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
+    
+    $albumpicturelist = array();
+    //get all galleries of the album
+    if ( is_array($album->gallery_ids) ) {
+        //return var_export($album->gallery_ids, true);
+        foreach ($album->gallery_ids as $key => $gallery_id) {
+            // get albums values
+            $gallerypicturelist = nggdb::get_gallery($gallery_id, $ngg_options['galSort'], $ngg_options['galSortDir']);
+
+            if ( !$gallerypicturelist ) {
+                return __('[Gallery not found]','nggallery');
+            } else {
+                $albumpicturelist = $albumpicturelist + $gallerypicturelist;
+            }
+        }
+        
+        //return var_export($gallerypicturelist, true);
+        $pano_array = array();
+        foreach ($albumpicturelist as $key => $Image) {
+            $pano_array[] = $key;
+        }
+        $listIDs = implode(',', $pano_array);
+
+        return nggpanoPanoramic($listIDs, $width , $height , $float , $template , $caption , $link , $captionmode , $mapwidth , $mapheight , $mapzoom , $maptype );
+    } else {
+        return __('[Album is empty]','nggpano');
+    }
 }
 
 /**

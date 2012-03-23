@@ -88,6 +88,13 @@ line 465 remove esc_url() function
             <img class="thumb" src="<?php echo  ( add_query_arg('i', mt_rand(), $picture->thumbURL) ); ?>" id="thumb<?php echo $pid ?>" />
     </a>
 
+in /admin/album.php
+line 515 and line 539 remove esc_url() function
+<?php //Jeff Remove esc_url() ?> 
+$preview_image = ( !is_null($image->thumbURL) )  ? '<div class="inlinepicture"><img src="' . esc_url( $image->thumbURL ). '" /></div>' : '';
+$preview_image = isset($image->thumbURL) ? '<div class="inlinepicture"><img src="' . esc_url( $image->thumbURL ) . '" /></div>' : '';
+
+
 in /admin/tinymce/window.php
 line 16 :
 	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/jquery/jquery.js"></script>

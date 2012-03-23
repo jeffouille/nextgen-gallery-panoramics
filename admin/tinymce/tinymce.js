@@ -25,13 +25,15 @@ function insertNGGPANOLink() {
 	var tagtext;
 	
 	var galleryPanel = jQuery('#gallery_panel');
-	//var album = document.getElementById('album_panel');
+	var albumPanel = jQuery('#album_panel');
 	var panoramicPanel = jQuery('#panoramic_panel');
         
-        var panoCallback = jQuery('#panoCallback'); 
+        var panoCallback = jQuery('#panoCallback');
+        var albumCallback = jQuery('#albumCallback'); 
         var galleryCallback = jQuery('#galleryCallback');
 	
 	// who is active ?
+        //Gallery Panel
 	if (galleryPanel.hasClass('current')) {
                 //get values
                 var galleryid = jQuery('#galleries').val();
@@ -52,7 +54,7 @@ function insertNGGPANOLink() {
                 var galleryWidth_attr = '';
                 var galleryHeight_attr = '';
                 var galleryMapZ_attr = '';
-                if(galleryShortcodetype == 'singlemap') {
+                if(galleryShortcodetype == 'gallerymap') {
                     galleryWidth_attr = (galleryMapW == '') ? '' : ' w=' + galleryMapW;
                     galleryHeight_attr = (galleryMapH == '') ? '' : ' h=' + galleryMapH;
                     galleryMapZ_attr = (galleryMapZ == '' ) ? '' : ' zoom=' + galleryMapZ;
@@ -82,10 +84,7 @@ function insertNGGPANOLink() {
                     break;
                 }
                 var galleryMainLink_attr = (galleryMainLink == '' ) ? '' : ' mainlink=' + galleryMainLink;
-                //ggpanoSinglePictureWithMap($imageID, $width = 250, $height = 250, $mode = '', $float = '' , $template = '', $caption = '', $link = '', $mapwidth = 250, $mapheight = 250, $mapzoom = 10, $maptype = 'HYBRID', $captionmode = '') {
-                //nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
-                // [panoramicwithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
-                //[singlemap id="10" float="none|left|right" w="" h="" zoom="" maptype="HYBRID|ROADMAP|SATELLITE|TERRAIN" "template="filename" links="all|picture|map|pano" mainlink="picture|map|pano|none" caption="full|none|title|description" thumbw="" thumbh="" /]
+                galleryMainLink_attr = (galleryLinks_attr == '') ? '' : galleryMainLink_attr;
 
 		if (galleryid != null ) {
                     
@@ -96,8 +95,11 @@ function insertNGGPANOLink() {
                             tagtext += '';
                         break;
                         case 'panoramicgallerywithmap':
+                            tagtext +=  galleryMapW_attr + galleryMapH_attr + galleryMapZ_attr + galleryMaptype_attr;
+                        break;
+                        case 'gallerymap':
                             tagtext +=  galleryMapW_attr + galleryMapH_attr + galleryMapZ_attr + galleryMaptype_attr + galleryLinks_attr + galleryMainLink_attr;
-                        break;        
+                        break;
                     }
                     tagtext += "]";
                     galleryCallback.addClass('hidden').removeClass('error').removeClass('message');
@@ -114,16 +116,90 @@ function insertNGGPANOLink() {
                     //tinyMCEPopup.close();
 		}
 	}
-/*
-	if (album.className.indexOf('current') != -1) {
-		var albumid = document.getElementById('albumtag').value;
-		var showtype = getCheckedValue(document.getElementsByName('albumtype'));
-		if (albumid != 0 )
-			tagtext = "[album id=" + albumid + " template=" + showtype + "]";
-		else
-			tinyMCEPopup.close();
+	// Album Panel
+	if (albumPanel.hasClass('current')) {
+                //get values
+                var albumid = jQuery('#albums').val();
+                var albumShortcodetype = jQuery("input[name='albumShortcodetype']:checked").val();
+		var albumWidth = jQuery('#albumWidth').val();
+		var albumHeight = jQuery('#albumHeight').val();
+                var albumAlign = jQuery("input[name='albumAlign']:checked").val();
+                var albumMapW = jQuery('#albumMapW').val();
+		var albumMapH = jQuery('#albumMapH').val();
+                var albumMapZ = jQuery('#albumMapZ').val();
+                var albumMaptype = jQuery("input[name='albumMaptype']:checked").val();
+                var albumLinks = jQuery("input[name='albumLinks']:checked").val();
+                var albumLinksChoice = jQuery('.albumLinksChoice:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var albumMainLink = jQuery("input[name='albumMainlink']:checked").val();
+                //formated value
+                var albumWidth_attr = '';
+                var albumHeight_attr = '';
+                var albumMapZ_attr = '';
+                if(albumShortcodetype == 'albummap') {
+                    albumWidth_attr = (albumMapW == '') ? '' : ' w=' + albumMapW;
+                    albumHeight_attr = (albumMapH == '') ? '' : ' h=' + albumMapH;
+                    albumMapZ_attr = (albumMapZ == '' ) ? '' : ' zoom=' + albumMapZ;
+                } else {
+                    albumWidth_attr = (albumWidth == '') ? '' : ' w=' + albumWidth;
+                    albumHeight_attr = (albumHeight == '') ? '' : ' h=' + albumHeight;
+                    albumMapZ_attr = (albumMapZ == '' ) ? '' : ' mapz=' + albumMapZ;
+                }
+                var albumAlign_attr = (albumAlign == 'none' || albumAlign == '') ? '' : ' float=' + albumAlign;
+                var albumMapW_attr = (albumMapW == '' ) ? '' : ' mapw=' + albumMapW;
+                var albumMapH_attr = (albumMapH == '' ) ? '' : ' maph=' + albumMapH;
+                var albumMaptype_attr = (albumMaptype == '' ) ? '' : ' maptype=' + albumMaptype;
+                var albumLinks_attr = '';
+                switch(albumLinks) {
+                    case 'none':
+                        albumLinks_attr = '';
+                    break;
+                    case 'all':
+                        albumLinks_attr = ' links=all';
+                    break;
+                    case 'select':
+                        if(albumLinksChoice.length >0) {
+                            albumLinks_attr = ' links='+albumLinksChoice.join("-");
+                        } else {
+                            albumLinks_attr = '';
+                        }
+                    break;
+                }
+                var albumMainLink_attr = (albumMainLink == '' ) ? '' : ' mainlink=' + albumMainLink;
+                albumMainLink_attr = (albumLinks_attr == '') ? '' : albumMainLink_attr;
+                
+		if (albumid != null ) {
+                    
+                    tagtext = "[" + albumShortcodetype + " id=" + albumid + albumWidth_attr + albumHeight_attr + albumAlign_attr;
+                    
+                    switch(albumShortcodetype) {
+                        case 'panoramicalbum':
+                            tagtext += '';
+                        break;
+                        case 'panoramicalbumwithmap':
+                            tagtext +=  albumMapW_attr + albumMapH_attr + albumMapZ_attr + albumMaptype_attr;
+                        break;
+                        case 'albummap':
+                            tagtext +=  albumMapW_attr + albumMapH_attr + albumMapZ_attr + albumMaptype_attr + albumLinks_attr + albumMainLink_attr;
+                        break;
+                    }
+                    tagtext += "]";
+                    albumCallback.addClass('hidden').removeClass('error').removeClass('message');
+                    
+//                    albumCallback.removeClass('hidden').addClass('error').addClass('message');
+//                    albumCallback.text(tagtext);
+//                    return;
+                    
+                } else {
+                    //panoCallback.text(NGGPANOTinyoptions.pleaseSelectText);
+                    albumCallback.removeClass('hidden').addClass('error').addClass('message');
+                    albumCallback.text(tinyMCEPopup.getLang('NGGPano.pleaseSelectAlbumText'));
+                    return;
+                    //tinyMCEPopup.close();
+		}
 	}
-*/
+        //Panoramic Panel
 	if (panoramicPanel.hasClass('current')) {
                 //get values
                 var panolist = jQuery('#panoramics').val() || [];
@@ -179,11 +255,8 @@ function insertNGGPANOLink() {
                     break;
                 }
                 var panoMainLink_attr = (panoMainLink == '' ) ? '' : ' mainlink=' + panoMainLink;
-                //ggpanoSinglePictureWithMap($imageID, $width = 250, $height = 250, $mode = '', $float = '' , $template = '', $caption = '', $link = '', $mapwidth = 250, $mapheight = 250, $mapzoom = 10, $maptype = 'HYBRID', $captionmode = '') {
-                //nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
-                // [panoramicwithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
-                //[singlemap id="10" float="none|left|right" w="" h="" zoom="" maptype="HYBRID|ROADMAP|SATELLITE|TERRAIN" "template="filename" links="all|picture|map|pano" mainlink="picture|map|pano|none" caption="full|none|title|description" thumbw="" thumbh="" /]
-
+                panoMainLink_attr = (panoLinks_attr == '') ? '' : panoMainLink_attr;
+                
 		if (panolist.length != 0 ) {
                     
                     tagtext = "[" + panoShortcodetype + " id=" + panolistformat + panoWidth_attr + panoHeight_attr + panoAlign_attr + panoCaptiontype_attr;

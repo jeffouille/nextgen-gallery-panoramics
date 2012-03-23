@@ -3,6 +3,7 @@
 tinyMCE.addI18n({fr:{
 NGGPano:{	
 desc : 'Ajouter NGG Panoramics',
-pleaseSelectText: 'Merci de sélectionner au moins un panoramique',
-pleaseSelectGalleryText: 'Merci de sélectionner au moins une gallerie'
+pleaseSelectText: 'Merci de sélectionner au moins un Panoramique',
+pleaseSelectGalleryText: 'Merci de sélectionner une Galerie',
+pleaseSelectAlbumText: 'Merci de sélectionner un Album'
 }}});

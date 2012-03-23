@@ -26,6 +26,8 @@ class NGPano_shortcodes {
         add_shortcode( 'singlemap', array(&$this, 'show_map' ) );
         add_shortcode( 'panoramicgallery', array(&$this, 'show_panoramic_gallery' ) );
         add_shortcode( 'panoramicgallerywithmap', array(&$this, 'show_panoramic_gallery_withmap' ) );
+        add_shortcode( 'panoramicalbum', array(&$this, 'show_panoramic_album' ) );
+        add_shortcode( 'panoramicalbumwithmap', array(&$this, 'show_panoramic_album_withmap' ) );
 
     }
 
@@ -108,6 +110,47 @@ class NGPano_shortcodes {
             
         return $out;
     }
+
+    /**
+     * Function to show gallery of panorama:
+     * 
+     *     [panoramicalbum id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="none|caption" /]
+     *
+     * where
+     *  - id="10" ... id of the album
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - caption display or not the caption full|none|title|description
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [panoramicgallery id="10"]This is an additional caption[/panoramicgallery]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_panoramic_album( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '100%',
+            'h'         => '100%',
+            'caption'   => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => ''
+        ), $atts ));
+
+        $out = nggpanoAlbum($id, $w, $h, $float, $template, $content, $link , $caption );
+            
+        return $out;
+    }
+    
     
     /**
      * Function to show panorama(s) with map under :
@@ -155,7 +198,7 @@ class NGPano_shortcodes {
     }
     
     /**
-     * Function to show panorama(s) with map under :
+     * Function to show gallery panorama(s) with map under :
      * 
      *     [panoramicgallerywithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *
@@ -199,9 +242,54 @@ class NGPano_shortcodes {
         return $out;
     }
     
-    
     /**
-     * Function to show a single picture:
+     * Function to show album panorama(s) with map under :
+     * 
+     *     [panoramicalbumwithmap id="10" float="none|left|right" w="" h="" link="url" "template="filename" caption="full|none|title|description" mapw="" maph="" mapz="" maptype="HYBRID" /]
+     *
+     * where
+     *  - id="10" ... id of the album
+     *  - float is the CSS float property to apply to the thumbnail
+     *  - width is width of the single picture you want to show (original width if this parameter is missing)
+     *  - height is height of the single picture you want to show (original height if this parameter is missing)
+     *  - link is optional and could link to a other url instead the full image
+     *  - template is a name for a gallery template, which is located in themefolder/nggpano/templates or plugins/nextgen-gallery-panoramics/view
+     *  - caption display or not the caption full|none|title|description
+     *  - mapw, maph and mapz are width, height and zoom level for the map
+     *  - maptype type of googlemap rendering HYBRID|ROADMAP|SATELLITE|TERRAIN
+     * 
+     * If the tag contains some text, this will be inserted as an additional caption to the picture too. Example:
+     *      [panoramicwithmap id="10"]This is an additional caption[/panoramicwithmap]
+     * This tag will show a picture with under it two HTML span elements containing respectively the alttext of the picture 
+     * and the additional caption specified in the tag. 
+     * 
+     * @param array $atts
+     * @param string $caption text
+     * @return the content
+     */
+    function show_panoramic_album_withmap( $atts, $content = '' ) {
+    
+        extract(shortcode_atts(array(
+            'id'        => 0,
+            'w'         => '',
+            'h'         => '',
+            'float'     => '',
+            'link'      => '',
+            'template'  => 'withmap',
+            'mapw'      => '250',
+            'maph'      => '250',
+            'mapz'      => '13',
+            'maptype'   => 'HYBRID',
+            'caption'   => ''
+        ), $atts ));
+        $out = nggpanoAlbum($id, $w, $h, $float, $template, $content, $link, $caption, $mapw, $maph, $mapz, $maptype);
+            
+        return $out;
+    }
+    
+      
+    /**
+     * Function to show a single picture with map under:
      * 
      *     [singlepicwithmap id="10" float="none|left|right" w="" h="" mode="none|watermark|web20" caption="full|none|title|description" link="url" "template="filename" mapw="" maph="" mapz="" maptype="HYBRID" /]
      *

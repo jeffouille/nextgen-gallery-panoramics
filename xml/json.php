@@ -208,7 +208,7 @@ class nggPanoAPI {
                     $list = $nggdb->search_for_albums($this->term, $this->limit); 
                                     
                 if( is_array($list) ) {
-        			foreach($list as $album) {
+                    foreach($list as $album) {
                         // reorder result to array-object            			 
                         $obj = new stdClass();
                         $obj->id = $album->id;
@@ -216,14 +216,14 @@ class nggPanoAPI {
                         $obj->label = $album->id . ' - ' . $album->name;
                         $obj->value = $album->name;
                         $this->result[] = $obj;
-        			}
-        		}
+                    }
+                }
                 return $this->result;
             break;
-			default :
-				$this->result = array ('stat' => 'fail', 'code' => '98', 'message' => 'Type not known.');
-				return false;	
-			break;	
+            default :
+                    $this->result = array ('stat' => 'fail', 'code' => '98', 'message' => 'Type not known.');
+                    return false;	
+            break;	
         }
     }
 

@@ -23,7 +23,7 @@
 					width : 600 + ed.getLang('NGGPano.delta_width', 0),
 					height : 500 + ed.getLang('NGGPano.delta_height', 0),
 					inline : 1
-                                        ,resizable: true
+                                        ,resizable: false
 				}, {
 					plugin_url : url // Plugin absolute URL
 				});

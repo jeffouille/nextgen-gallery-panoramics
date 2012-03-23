@@ -13,7 +13,7 @@ function nggpano_ajax_tinymce() {
     if ( !current_user_can('edit_pages') && !current_user_can('edit_posts') ) 
     	die(__("You are not allowed to be here"));
         	
-   	include_once( dirname( dirname(__FILE__) ) . '/admin/tinymce/window-multiselect-simple.php');
+   	include_once( dirname( dirname(__FILE__) ) . '/admin/tinymce/window.php');
     
     die();	
 }

@@ -4,5 +4,6 @@ tinyMCE.addI18n({en_US:{
 NGGPano:{	
 desc : 'Add NGG Panoramics',
 pleaseSelectText: 'Please select at least one Panoramic',
-pleaseSelectGalleryText: 'Please select at least one Gallery'
+pleaseSelectGalleryText: 'Please select one Gallery',
+pleaseSelectAlbumText: 'Please select one Album'
 }}});
