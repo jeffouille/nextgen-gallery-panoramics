@@ -16,6 +16,37 @@ jQuery(document).ready(function(){
             jQuery('#cboxLoadedContent').zoom({grab: true});
         }
     });
+    
+    jQuery('body').delegate('a.colorbox', 'click' ,function(event){
+
+        jQuery.colorbox({
+            href: this.href,
+            rel:this.rel,
+            title:this.title,
+            width:'95%',
+            onComplete: function(){
+                jQuery('#cboxLoadedContent').zoom({grab: true});
+            }
+        });
+
+        event.preventDefault();
+    });
+
+
+    jQuery('body').delegate('a.colorboxpano', 'click' ,function(event){
+        jQuery.colorbox({
+            href:this.href,
+            rel:this.rel,
+            title:this.title,
+            width:'95%',
+            height:'95%',
+            scrolling : false,
+            onComplete:function(){
+                initializePano();
+            }
+        });
+        event.preventDefault();
+    });
     jQuery('a.colorboxpano').colorbox({
         width:'95%',
         height:'95%',
@@ -28,6 +59,20 @@ jQuery(document).ready(function(){
         height:'600',
         onComplete:function(){ initializeMap(); }
     });
-    //jQuery('a.colorbox').colorbox({ opacity:0.5 , rel:'group1' });
+    jQuery('body').delegate('a.colorboxmap', 'click' ,function(event){
+        jQuery.colorbox({
+            href:this.href,
+            rel:this.rel,
+            title:this.title,
+            width:'600',
+            height:'600',
+            scrolling : false,
+            onComplete:function(){
+                initializeMap();
+            }
+        });
+        event.preventDefault();
+    });
+
 });
 

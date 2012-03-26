@@ -4,6 +4,6 @@ tinyMCE.addI18n({de:{
 NGGPano:{	
 desc : 'NGG Panoramics hinzufuegen',
 pleaseSelectText: 'Bitte wählen Sie mindestens ein Panorama',
-pleaseSelectGalleryText: 'Bitte wählen Sie mindestens ein Galleria',
-pleaseSelectAlbumText: 'Bitte wählen Sie mindestens ein Album'
+pleaseSelectGalleryText: 'Bitte wählen Sie ein Gallerie',
+pleaseSelectAlbumText: 'Bitte wählen Sie ein Album'
 }}});
