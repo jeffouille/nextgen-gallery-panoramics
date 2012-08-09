@@ -247,7 +247,7 @@ class nggPanoLoader {
 		define( 'NGGPANO_SAFE_MODE', ini_get('safe_mode') );
         
         if ( version_compare($wp_version, '3.2.999', '>') )
-            define('IS_WP_3_3', TRUE);
+            define('NGGPANO_IS_WP_3_3', TRUE);
 		
 	}
 	
@@ -290,7 +290,7 @@ class nggPanoLoader {
                     //require_once (dirname (__FILE__) . '/admin/ngg-extend.php');
                     require_once (dirname (__FILE__) . '/admin/ngg-extend.php');
                     //require_once (dirname (__FILE__) . '/admin/media-upload.php');
-                    //if ( defined('IS_WP_3_3') )
+                    //if ( defined('NGGPANO_IS_WP_3_3') )
                         //require_once (dirname (__FILE__) . '/admin/pointer.php');
                     $this->nggpanoAdminPanel = new nggpanoAdminPanel();
                 }	

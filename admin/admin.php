@@ -183,7 +183,7 @@ class nggpanoAdminPanel{
 //			case "nggallery-about" :
 //				wp_enqueue_style( 'nggadmin' );
                 //TODO:Remove after WP 3.3 release
-//                if ( !defined('IS_WP_3_3') )
+//                if ( !defined('NGGPANO_IS_WP_3_3') )
 //                    wp_admin_css( 'css/dashboard' );
 //			break;
 //			case "nggallery-add-gallery" :
