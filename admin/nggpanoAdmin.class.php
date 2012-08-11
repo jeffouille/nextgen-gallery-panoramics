@@ -153,7 +153,7 @@ class nggpanoAdmin{
                 
                 //URL to replace original image with a redim preview
                 $url_makepreview = NGGPANOGALLERY_URLPATH . 'admin/resize-preview-pano.php?id=' . $pid. '&h=200&w=800';
-                if(isset($image_values)) {
+                if(isset($image_values) && is_object($image_values)) {
                 $post_id = $image_values->post_id;
                 if($post_id <> 0) {
                     $the_post = get_post($post_id);
