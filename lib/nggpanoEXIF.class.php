@@ -98,7 +98,7 @@ class nggpanoEXIF{
                     $gps['LongDegree']=$exif["GPSLongitude"][0];
                     $gps['LongMinute']=$exif["GPSLongitude"][1];
                     $gps['LongSeconds']=$exif["GPSLongitude"][2];
-                    $gps['Altitude']=$exif["GPSAltitude"];
+                    $gps['Altitude']=  isset($exif["GPSAltitude"]) ? $exif["GPSAltitude"] : "0";
                     $gps['TimeHour']=$exif["GPSTimeStamp"][0];
                     $gps['TimeMin']=$exif["GPSTimeStamp"][1];
                     $gps['TimeSec']=$exif["GPSTimeStamp"][2];
