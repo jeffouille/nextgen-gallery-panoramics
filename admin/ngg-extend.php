@@ -352,19 +352,21 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
                 global $wpdb;
                 
                 //save gallery
-                if(is_array($post["nggpano_gallery"])) {
-                        $galleryId = $wpdb->escape($post["nggpano_gallery"]["ngg_gallery_id"]);
-                        unset($post["nggpano_gallery"]["ngg_gallery_id"]);
+                if (isset($post["nggpano_gallery"])) {
+                    if(is_array($post["nggpano_gallery"])) {
+                            $galleryId = $wpdb->escape($post["nggpano_gallery"]["ngg_gallery_id"]);
+                            unset($post["nggpano_gallery"]["ngg_gallery_id"]);
 
 
-                        $skinfile   = $wpdb->escape($post["nggpano_gallery"]["skin_file"]);
-                        //$gps_region = $wpdb->escape($post["nggpano_gallery"]["gps_region"]);
+                            $skinfile   = $wpdb->escape($post["nggpano_gallery"]["skin_file"]);
+                            //$gps_region = $wpdb->escape($post["nggpano_gallery"]["gps_region"]);
 
-                        if(nggpano_getGalleryOptions($galleryId)) {
-                                $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET skin = '".$skinfile."' WHERE gid = '".$wpdb->escape($galleryId)."'");
-                        }else{
-                                $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, skin) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."')");
-                        }
+                            if(nggpano_getGalleryOptions($galleryId)) {
+                                    $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET skin = '".$skinfile."' WHERE gid = '".$wpdb->escape($galleryId)."'");
+                            }else{
+                                    $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, skin) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."')");
+                            }
+                    }
                 }
 		
                 //save pictures
