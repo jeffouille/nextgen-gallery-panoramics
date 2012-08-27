@@ -62,6 +62,8 @@ check memory limit (gd vs imagemagik)
 
 Combox to choose article in krpano form
 
+(?<=_xxx_).*
+
 
 
 

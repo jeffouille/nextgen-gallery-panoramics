@@ -103,7 +103,7 @@ class nggpanoKrpanoXML {
                 
                 $this->firstpano_to_load = 'scene-'.$this->id;
                 //$xmlpano = '<scene'
-                $xmlpano = $this->pano->getXML('', '%BASEDIR%/', $debug);
+                $xmlpano = $this->pano->getXML('', '%BASEDIR%/'.$this->pano->panoFolder.'/', $debug);
 
                 $this->result['xmlpanonode']= $xmlpano;
                 $this->result['xmlpanochoice'] = '';
