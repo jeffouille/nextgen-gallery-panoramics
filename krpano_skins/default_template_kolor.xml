@@ -11,7 +11,7 @@ This is a template skin that can be used with NextGEN Gallery Panoramic.
 More info in krpano.com
 Modify it when your theme struggle with it, it's only a template design
  -->
-<krpano version="1.0.8.14" logkey="false">
+<krpano version="1.0.8.15" logkey="false">
     <action name="changescene">
         loadscene(%1,null,MERGE);
     </action>

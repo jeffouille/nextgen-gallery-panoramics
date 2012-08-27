@@ -11,7 +11,7 @@ This is a template skin that can be used with NextGEN Gallery Panoramic.
 More info in krpano.com
 Modify it when your theme struggle with it, it's only a template design
  -->
-<krpano version="1.0.8.14" logkey="true">
+
     <panoview h="0" v="0" fov="90"/>
     <action name="initialize">
         <!--firstloadcompleteaction();-->
@@ -550,5 +550,3 @@ Modify it when your theme struggle with it, it's only a template design
         );
         set(plugin[thumbArray].visible, true);
     </action> 
-        
-</krpano>

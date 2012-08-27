@@ -209,6 +209,11 @@ class nggpanoKrpanoXML {
         $basedir =  'basedir="'. site_url() . '/"';
         
         $on_start_action = 'initialize('.$this->firstpano_to_load.');';
+        //$on_start_action = 'loadscene('.$this->firstpano_to_load.',null,MERGE);';
+        
+        //$on_start_action = 'loadscene(scene[0],null,MERGE);';
+ 
+        
         
         
         header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
@@ -218,13 +223,14 @@ class nggpanoKrpanoXML {
         //$this->output .= '<krpano onstart="loadscene(scene-227);">';
         
     
-        $this->output .= '<krpano version="1.0.8.14" ' . $basedir . ' onstart="'.$on_start_action.'" >';
+        $this->output .= '<krpano version="1.0.8.15" ' . $basedir . ' onstart="'.$on_start_action.'" >';
         $this->output .= $this->result['xmlpanonode'];
         $this->output .= $this->result['xmlpanochoice'];
         
         $this->output .= $this->result['xmlskinnode'];
         if($this->debug) {
-            $this->output .= '<plugin name="options" url="'.$this->panoconfig['pluginFolderURL'].'options.swf" />';
+            $this->output .= '<plugin name="options" url="'.$this->panoconfig['pluginFolderURL'].'options.swf"  keep="true" />';
+            $this->output .= '<plugin name="editor" url="'.$this->panoconfig['pluginFolderURL'].'editor.swf"  keep="true" />';
         }
         $this->output .= "</krpano>";
         

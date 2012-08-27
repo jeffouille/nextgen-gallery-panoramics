@@ -1,4 +1,4 @@
-<view hlookat="0" vlookat="0" maxpixelzoom="1.0" fovmin="60" fovmax="120" fov="90" fovtype="MFOV" [VIEWLIMITS] ></view>
+<view hlookat="0" vlookat="0" maxpixelzoom="1.0" fovmin="60" fovmax="120" fov="90" fovtype="MFOV" [VIEWLIMITS] />
 
 [PREVIEW]
 

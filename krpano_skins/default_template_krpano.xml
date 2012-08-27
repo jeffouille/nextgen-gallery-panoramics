@@ -13,7 +13,7 @@ More info in krpano.com
 Modify it when your theme struggle with it, it's only a template design
  -->
 <!-- for xml compliance -->
-<krpano version="1.0.8.14">
+<krpano version="1.0.8.15">
         <action name="changescene">
             loadscene(%1,null,MERGE);
         </action>

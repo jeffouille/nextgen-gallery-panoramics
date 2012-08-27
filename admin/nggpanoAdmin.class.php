@@ -241,7 +241,7 @@ class nggpanoAdmin{
                 
                 //Create pano
                 $pano = new nggpanoPano($pid, $gid, $hfov, $vfov, $voffset);
-                $pano->createTiles();
+                $pano->createTiles(true);
                 echo nggpanoAdmin::krpano_image_form($pano);
             }
         }

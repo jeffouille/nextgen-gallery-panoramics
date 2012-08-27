@@ -336,8 +336,13 @@ class nggpanoPano{
                 $this->xml_configuration = str_replace('url="', 'url="'.$this->panoFolder.'/', $this->xml_configuration);
                 if($removeXML)
                     unlink($this->xmlKrpanoPath);
-
+                
                 $this->save();
+                
+                //DEBUG
+                //echo $command;
+
+                
             }
         }
     }
@@ -715,10 +720,24 @@ class nggpanoPano{
         //tilepath=%INPUTPATH%/%BASENAME%.tiles/l%Al[_c]_%Av_%Ah.jpg
         //tilepath=%INPUTPATH%/%BASENAME%.tiles/l%Al/[c]/%Av/l%Al[_c]_%Av_%Ah.jpg
         $tilepath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/" . $this->panoPrefix . $this->pid . ".tiles/l%Al/[c]/%Av/l%Al[_c]_%Av_%Ah.jpg";
+        $tilepath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/l%Al/[c]/%Av/l%Al[_c]_%Av_%Ah.jpg";
         
         //Path for preview generation
         //previewpath=%INPUTPATH%/%BASENAME%.tiles/preview.jpg
-        $previewpath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/" . $this->panoPrefix . $this->pid . ".tiles/preview.jpg";
+        $previewpath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/preview.jpg";
+        
+        //Path for thumb generation
+        //thumbpath=%INPUTPATH%/%BASENAME%.tiles/thumb.jpg
+        $thumbpath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/thumb.jpg";
+        
+        //Path for ipad3 image
+        //customimage[ipad3].path=%INPUTPATH%/pano/tiles/ipad3_%s.jpg
+        $customimage_ipad3 ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/ipad3_%s.jpg";
+        
+        //Path for mobile image
+        //customimage[mobile].path=%INPUTPATH%/pano/tiles/mobile_%s.jpg
+        $customimage_mobile ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/mobile_%s.jpg";
+        
         
         
         //make sure krpanotools are here
@@ -742,8 +761,12 @@ class nggpanoPano{
         $cmd .= '"-xmltemplate='. $xmltemplate . '" ';
         $cmd .= '"-tilepath='. $tilepath . '" ';
         $cmd .= '"-previewpath='. $previewpath . '" ';
+        $cmd .= '"-thumbpath='. $thumbpath . '" ';
+        $cmd .= '"-customimage[mobile].path='. $customimage_mobile . '" ';
+        $cmd .= '"-customimage[ipad3].path='. $customimage_ipad3 . '" ';
         $cmd .= '"'.$this->imageInputPath.'" "' . $this->toolConfigFilePath . '"';
         return $cmd;
+
     } 
     
     /**
@@ -891,17 +914,23 @@ class nggpanoPano{
 
             $str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';">...Loading Panoramic...</div>';
             
+//            $str_return .='<script type="text/javascript">';
+//            $str_return .='function initializePano() {';
+//            $str_return .=' var viewer = createPanoViewer({swf:"'.$krpano_path.'", wmode:"opaque"});';
+//            $str_return .=' viewer.addVariable("xml", "'.$krpano_xml.'");';
+//            $str_return .=' viewer.embed("'.$divid.'");';
+//            $str_return .='}';
+//            $str_return .='initializePano()';
+//            $str_return .='</script>';
+//            $str_return .='';
+
             $str_return .='<script type="text/javascript">';
             $str_return .='function initializePano() {';
-            $str_return .=' var viewer = createPanoViewer({swf:"'.$krpano_path.'", wmode:"opaque"});';
-            $str_return .=' viewer.addVariable("xml", "'.$krpano_xml.'");';
-            $str_return .=' viewer.embed("'.$divid.'");';
+            $str_return .='embedpano({swf:"'.$krpano_path.'", xml:"'.$krpano_xml.'", target:"'.$divid.'", html5:"auto", passQueryParameters:true});';
             $str_return .='}';
             $str_return .='initializePano()';
             $str_return .='</script>';
             $str_return .='';
-            
-
 
         } else {
             $str_return .='<h1>ERROR</h1>';

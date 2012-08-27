@@ -77,6 +77,7 @@ Follow variables are useable :
             var viewer = createPanoViewer({swf:"<?php echo $panodiv['krpano_path'] ?>", wmode:"opaque", id:"<?php echo $panodiv['swfid'] ?>"});
             viewer.addVariable("xml", "<?php echo $panodiv['krpano_xml'] ?>");
             viewer.addParam("class", "swf-fullwidth");
+            viewer.useHTML5("auto");
             viewer.embed("<?php echo $panodiv['contentdiv'] ?>");
         </script>
 
