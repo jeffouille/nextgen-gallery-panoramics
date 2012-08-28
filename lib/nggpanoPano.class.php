@@ -720,7 +720,7 @@ class nggpanoPano{
         //tilepath=%INPUTPATH%/%BASENAME%.tiles/l%Al[_c]_%Av_%Ah.jpg
         //tilepath=%INPUTPATH%/%BASENAME%.tiles/l%Al/[c]/%Av/l%Al[_c]_%Av_%Ah.jpg
         $tilepath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/" . $this->panoPrefix . $this->pid . ".tiles/l%Al/[c]/%Av/l%Al[_c]_%Av_%Ah.jpg";
-        $tilepath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/l%Al/mres_[c]/%Av/l%Al[_c]_%Av_%Ah.jpg";
+        $tilepath ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/mres_[c/]l%Al/%Av/l%Al[_c]_%Av_%Ah.jpg";
         //tilepath=%INPUTPATH%/pano_%PANOID%/tiles/[mres_c/]l%Al/%Av/l%Al[_c]_%Av_%Ah.jpg
         //Path for preview generation
         //previewpath=%INPUTPATH%/%BASENAME%.tiles/preview.jpg
