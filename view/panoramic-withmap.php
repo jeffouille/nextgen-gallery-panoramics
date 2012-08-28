@@ -62,7 +62,7 @@ Follow variables are useable :
 
     <?php if (!empty ($panodiv)) : ?>
 
-        <div id="<?php echo $panodiv['contentdiv'] ?>" class="<?php echo $panodiv['classname'] ?>" style="width:<?php echo $panodiv['size']['width'] ?>; height:<?php echo $panodiv['size']['height'] ?>;">...Loading Panoramic...</div>
+        <div id="<?php echo $panodiv['contentdiv'] ?>" class="<?php echo $panodiv['classname'] ?>" style="width:<?php echo $panodiv['size']['width'] ?>; height:<?php echo $panodiv['size']['height'] ?>;"></div>
         <?php if ($captionmode <> '') : ?>
             <?php if(sizeof($pano_list) == 1) : //Caption détail for only one panoramic ?>
                 <?php foreach ($pano_list as $pano_id => $pano) { ?>
