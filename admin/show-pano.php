@@ -40,7 +40,11 @@ $gid = $picture->galleryid;
 
 //new pano from pictureid
 $pano = new nggpanoPano($pid, $gid);
+$html5='';
+if ( isset($_GET['html5']) )
+    $html5=$_GET['html5'];
+//echo "html5=".$_GET['html5'];
 //show the pano in the correct div
-$pano->show("panocontent");
+$pano->show("panocontent",'100%','100%',false,$html5);
 
 ?>

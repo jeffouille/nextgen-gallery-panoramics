@@ -31,7 +31,7 @@ function getSizeForPano($size = '100%') {
  * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
  * @return the content
  */
-function nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
+function nggpanoPanoramic($listIDs, $width = '100%', $height = '500', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
 
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');
@@ -243,7 +243,7 @@ function nggpanoPanoramic($listIDs, $width = '100%', $height = '100%', $float = 
  * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
  * @return the content
  */
-function nggpanoGallery($gid, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
+function nggpanoGallery($gid, $width = '100%', $height = '500', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
    
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');
@@ -290,7 +290,7 @@ function nggpanoGallery($gid, $width = '100%', $height = '100%', $float = '' , $
  * @param string (optional) $maptype, type of the map could be HYBRID, ROADMAP, SATELLITE, TERRAIN
  * @return the content
  */
-function nggpanoAlbum($albumID, $width = '100%', $height = '100%', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
+function nggpanoAlbum($albumID, $width = '100%', $height = '500', $float = '' , $template = '', $caption = '', $link = '', $captionmode = '', $mapwidth = 500, $mapheight = 500, $mapzoom = 10, $maptype = 'HYBRID') {
     
     require_once (dirname (__FILE__) . '/lib/nggpanoPano.class.php');
     //$ngg_options = get_option('ngg_options');

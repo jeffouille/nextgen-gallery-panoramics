@@ -738,6 +738,10 @@ class nggpanoPano{
         //customimage[mobile].path=%INPUTPATH%/pano/tiles/mobile_%s.jpg
         $customimage_mobile ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/mobile_%s.jpg";
         
+        //Path for mobile image
+        //customimage[mobile].path=%INPUTPATH%/pano/tiles/mobile_%s.jpg
+        $customimage_html5 ="%INPUTPATH%" . $this->panoSubFolder . $this->panoPrefix . $this->pid . "/tiles/html5_%s.jpg";
+        
         
         
         //make sure krpanotools are here
@@ -764,6 +768,7 @@ class nggpanoPano{
         $cmd .= '"-thumbpath='. $thumbpath . '" ';
         $cmd .= '"-customimage[mobile].path='. $customimage_mobile . '" ';
         $cmd .= '"-customimage[ipad3].path='. $customimage_ipad3 . '" ';
+        $cmd .= '"-customimage[html5].path='. $customimage_html5 . '" ';
         $cmd .= '"'.$this->imageInputPath.'" "' . $this->toolConfigFilePath . '"';
         return $cmd;
 
@@ -879,7 +884,7 @@ class nggpanoPano{
   }
   
 
-  public function show($divid, $width = '100%', $height = '100%', $no_output = false) {
+  public function show($divid, $width = '100%', $height = '100%', $no_output = false, $html5='auto') {
         $str_return = '';
         //Check all files for generation
         if($this->error == false) {
@@ -912,7 +917,7 @@ class nggpanoPano{
             $krpano_path    = trailingslashit($this->krpanoFolderURL) . $this->krpanoSWF;
             $krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$this->pid;
 
-            $str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';">...Loading Panoramic...</div>';
+            $str_return .='<div id="'.$divid.'" style="width:'.$width.'; height:'.$height.';"></div>';
             
 //            $str_return .='<script type="text/javascript">';
 //            $str_return .='function initializePano() {';
@@ -926,11 +931,10 @@ class nggpanoPano{
 
             $str_return .='<script type="text/javascript">';
             $str_return .='function initializePano() {';
-            $str_return .='embedpano({swf:"'.$krpano_path.'", xml:"'.$krpano_xml.'", target:"'.$divid.'", html5:"auto", passQueryParameters:true});';
+            $str_return .='embedpano({swf:"'.$krpano_path.'", xml:"'.$krpano_xml.'", target:"'.$divid.'", html5:"'.$html5.'", passQueryParameters:"true"});';
             $str_return .='}';
             $str_return .='initializePano()';
             $str_return .='</script>';
-            $str_return .='';
 
         } else {
             $str_return .='<h1>ERROR</h1>';

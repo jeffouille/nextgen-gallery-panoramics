@@ -59,7 +59,7 @@ class NGPano_shortcodes {
         extract(shortcode_atts(array(
             'id'        => 0,
             'w'         => '100%',
-            'h'         => '100%',
+            'h'         => '500',
             'caption'   => '',
             'float'     => '',
             'link'      => '',
@@ -99,7 +99,7 @@ class NGPano_shortcodes {
         extract(shortcode_atts(array(
             'id'        => 0,
             'w'         => '100%',
-            'h'         => '100%',
+            'h'         => '500',
             'caption'   => '',
             'float'     => '',
             'link'      => '',
@@ -139,7 +139,7 @@ class NGPano_shortcodes {
         extract(shortcode_atts(array(
             'id'        => 0,
             'w'         => '100%',
-            'h'         => '100%',
+            'h'         => '500',
             'caption'   => '',
             'float'     => '',
             'link'      => '',
