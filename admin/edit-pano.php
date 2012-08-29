@@ -29,6 +29,7 @@ $pano_infos = nggpano_getImagePanoramicOptions($id);
 
 $action_filepath = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=edit-pano&id=' . $id;
 
+$action_ajax_xmlextract_path = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=extractxml&id=' . $id;
 
 $paged= isset($_GET['paged']) ? (int) $_GET['paged'] : '';
 
@@ -70,6 +71,14 @@ $page_admin = admin_url()."admin.php?page=nggallery-manage-gallery&mode=edit&gid
                 <br /><small><?php _e('Put here all the tiles of your panoramic','nggpano') ?></small>
             </td>
 	</tr>
+        <tr valign="top" align="right">
+            <td colspan="2" valign="center" align="center">
+                <img class="nggpano-xml-loader" id="nggpano-xml-loader" src="<?php echo NGGPANOGALLERY_URLPATH ; ?>admin/images/loading.gif" style="display:none;" />
+                <input class="button-secondary" id="add-fov-limit"  name="add-fov-limit" value="&nbsp;<?php _e('Add FOV Limit in XML', 'nggpano');?>&nbsp;" onclick="if ( !addFOVLimit() ) return false;" />
+                <input class="button-secondary" id="extract-xml-from-file" href="<?php echo $action_ajax_xmlextract_path; ?>" name="extract-xml-from-file" value="&nbsp;<?php _e('Get XML from pano.xml and pano_html5.xml', 'nggpano');?>&nbsp;" onclick="if ( !extractXMLFromFile(false) ) return false;" />
+                <input class="button-secondary" id="extract-xml-from-db" href="<?php echo $action_ajax_xmlextract_path; ?>" name="extract-xml-from-db" value="&nbsp;<?php _e('Get XML from DB', 'nggpano');?>&nbsp;" onclick="if ( !extractXMLFromFile(true) ) return false;" />
+            </td>
+        </tr>
 	<tr valign="top">
             <th colspan="2" align="left"><?php _e('Xml configuration','nggpano') ?></th>
 	</tr>
@@ -124,6 +133,135 @@ function checkEditForm() {
     if(check==false)
         return false;
     
+    return true;
+
+}
+
+// this function check that hfov is here and valid, if vfov and offset are here check validity
+function extractXMLFromFile(fromdb) {
+    
+    var url = jQuery('#extract-xml-from-file').attr('href');
+    if (fromdb) {
+        url += '&fromdb=true';
+    }
+    var errormessage = '';
+    
+    jQuery('#nggpano-xml-loader').show();
+
+    jQuery.ajax({
+                    url: url,
+                    data: '',
+                    dataType : 'json',
+                    success: function(data, textStatus, XMLHttpRequest) {
+                        if(data) {
+                            if (data['error'] === false) {
+                            //update input in gallery form
+                                jQuery('#xml_configuration').val(data['xml_data']);
+
+                            } else {
+                                errormessage = data['message'];
+                                jQuery('#form-build-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000); 
+                            }
+                         
+//                         jQuery('#vfov').val(data['vfov']);
+//                         jQuery('#voffset').val(data['voffset']);
+                        } else {
+                            errormessage = '<?php esc_attr(_e('No xml file','nggpano')) ?>';
+                            jQuery('#form-build-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
+                        }
+                        return true;
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        errormessage = '<?php esc_attr(_e('No fov data in file','nggpano')) ?>';
+                        jQuery('#form-build-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
+                    },
+                    complete: function() {
+                           jQuery('#nggpano-xml-loader').hide();
+                    }
+    });
+    //e.preventDefault();
+    return true;
+}
+
+function addFOVLimit() {
+    
+    var errormessage = '';
+    
+    var hfov = jQuery('#hfov').val();
+    var vfov = jQuery('#vfov').val();
+    var voffset = jQuery('#voffset').val();
+    var xmlconfiguration = jQuery('#xml_configuration').val();
+    
+    //<image voffset="-11.585" hfov="360" vfov="40.17"
+    //<view !flash limitview="range" vlookatmin="-31.67"vlookatmax="+8.5" hlookatmin"+8.5" hlookatmax"+8.5"
+        //remove all limit attributes in image node
+        result = xmlconfiguration.replace(/voffset="(.*?)"|vfov="(.*?)"|hfov="(.*?)"/gi, '');
+        //remove all limit attributes in view node
+        result = result.replace(/vlookatmin="(.*?)"|vlookatmax="(.*?)"|hlookatmin="(.*?)"|hlookatmax="(.*?)"/gi, '');
+        
+        //add image limit
+        var str_replace_with = '';
+        if (hfov != "") {
+            str_replace_with += ' hfov="'+hfov+'"';
+        }
+        if (vfov != "") {
+            str_replace_with += ' vfov="'+vfov+'"';
+        }
+        if (voffset != "") {
+            str_replace_with += ' voffset="'+voffset+'"';
+        }
+ 
+        result = result.replace(/<image/gi, '<image' + str_replace_with);
+        
+        //add view limit
+        var str_replace_view_html5_with = '';
+        if (hfov != "") {
+            var hlookatmin = (parseFloat(hfov)/2)*-1;
+            var hlookatmax = (parseFloat(hfov)/2);
+            str_replace_view_html5_with += ' hlookatmin="'+hlookatmin+'" ' + ' hlookatmax="+'+hlookatmax+'"';
+        }
+        if (vfov != "" && voffset != "") {
+            //=(I4/2)*-1+J4
+            var vlookatmin = (parseFloat(vfov)/2)*-1+parseFloat(voffset);
+            var vlookatmax = (parseFloat(vfov)/2)+parseFloat(voffset);
+            str_replace_view_html5_with += ' vlookatmin="'+vlookatmin+'" ' + ' vlookatmax="'+vlookatmax+'"';
+        }
+        str_replace_view_html5_with += ' limitview="range" ';
+        
+        var noeud_view_html5 = result.match(/<view(.*?)devices="!flash"(.*?)>/gi);
+        var noeud_view_html5_sans_limit = noeud_view_html5[0].replace(/limitview="(.*?)"/gi, '');
+        //var noeud_view_html5_sans_limit = '';
+        result = result.replace(noeud_view_html5, noeud_view_html5_sans_limit.substr(0,noeud_view_html5_sans_limit.length-2) + str_replace_view_html5_with + noeud_view_html5_sans_limit.substr(noeud_view_html5_sans_limit.length-2,2) );
+        
+        //result = result.replace(noeud_view_html5, noeud_view_html5 + str_replace_view_html5_with);
+        
+        
+        jQuery('#xml_configuration').val(result);
+      //console.log(result);   
+    
+//    if (hfov == ""){
+//        
+//        errormessage = '<?php _e('Horizontal FOV is required','nggpano') ?>';
+//        jQuery('#form-edit-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
+//        return false                                       
+//    }
+//    
+//    if(!isNumber(hfov) || (!isNumber(vfov) && vfov != "") || (!isNumber(voffset) && voffset != "")) {
+//        errormessage = '<?php _e('Decimal Number are required ex. 12.56','nggpano') ?>';
+//        jQuery('#form-edit-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
+//        return false  
+//    }
+//    
+//    if (jQuery.trim(xmlconfiguration) == ""){
+//        errormessage = '<?php _e('XML Configuration is required','nggpano') ?>';
+//        jQuery('#form-edit-pano-error').removeClass('success').addClass('error').text(errormessage).show(1000);
+//        return false                                       
+//    }
+//    
+//    var check=confirm( '<?php echo esc_attr(sprintf(__('Save data for %s ?' , 'nggpano'), $picture->filename)); ?>');
+//    if(check==false)
+//        return false;
+//    
     return true;
 
 }

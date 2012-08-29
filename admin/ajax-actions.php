@@ -75,6 +75,12 @@ if (isset ( $_GET['mode']) ) {
             }
 
             break;
+        case 'extractxml':
+            if (isset ( $_GET['id']) ) {
+                nggpano_extractxml($_GET['id'],$_GET['fromdb']);
+            }
+
+            break;
         case 'build-pano':
             check_admin_referer('build-pano');
             if($_POST['pid']) {
@@ -333,6 +339,85 @@ function nggpano_extractfov($pid) {
 //    $voffset    = isset ($fov_data['voffset']) ? $fov_data['voffset'] : '';
     
 }
+
+/**
+ * Extract xml configuration from pnao.xml and pano_html5.xml in panofolder
+ * @param string $pid the image id
+ * @return void
+ */
+function nggpano_extractxml($pid, $fromdb = false) {
+        
+    $result = array();
+    $message = '';
+    $error = false;
+    $pano_infos = nggpano_getImagePanoramicOptions($pid);
+
+    // use defaults the first time
+    //if($pano_infos && isset ($pano_infos->hfov)) {
+    $hfov       = isset ($pano_infos->hfov) ? $pano_infos->hfov : '';
+    $vfov       = isset ($pano_infos->vfov) ? $pano_infos->vfov : '';
+    $voffset    = isset ($pano_infos->voffset) ? $pano_infos->voffset : '';
+    $xml_configuration    = isset ($pano_infos->xml_configuration) ? $pano_infos->xml_configuration : '';
+    if($fromdb) {
+        $str_retour = $xml_configuration;
+    } else {
+    
+    
+        $is_partial    = isset ($pano_infos->is_partial) ? $pano_infos->is_partial : '0';
+        $panoFolder = isset ($pano_infos->pano_directory) ? $pano_infos->pano_directory : '';
+
+        $pano_flash_xml = file_get_contents(NGGPANOWINABSPATH.$panoFolder."/pano.xml");
+        $pano_html5_xml = file_get_contents(NGGPANOWINABSPATH.$panoFolder."/pano_html5.xml");
+
+        if($pano_flash_xml) {
+            $pano_flash_xml = str_replace('devices="flash"', '', $pano_flash_xml);
+            $pano_flash_xml = str_replace('<view', '<view devices="flash"', $pano_flash_xml);
+            $pano_flash_xml = str_replace('<image', '<image devices="flash"', $pano_flash_xml);
+            $pano_flash_xml = str_replace('<preview', '<preview devices="flash"', $pano_flash_xml);
+            $str_retour .= $pano_flash_xml;
+            if($pano_html5_xml) {
+                $pano_html5_xml = str_replace('devices="!flash"', '', $pano_html5_xml);
+                $pano_html5_xml = str_replace('<image', '<image devices="!flash"', $pano_html5_xml);
+                $pano_html5_xml = str_replace('<preview', '<preview devices="!flash"', $pano_html5_xml);
+                $pano_html5_xml = str_replace('<view', '<view devices="!flash"', $pano_html5_xml);
+                $str_retour .= $pano_html5_xml;
+            } else {
+                $error = true;
+                $message = "no pano_html5.xml file in ".$panoFolder;
+            }
+        } else {
+            $error = true;
+            $message = "no pano.xml file in ".$panoFolder;
+        }
+
+    }
+
+    $result['error']    = $error;
+    $result['message']  = $message;
+    $result['xml_data'] = $str_retour;
+            //$pano_flash_xml .= '\n' . $pano_html5_xml;
+
+                //$this->xml_configuration = str_replace('url="', 'url="'.$this->panoFolder.'/', $this->xml_configuration);
+                    
+//                $pano->loadFromDB();
+//                $pano->setHFov($hfov);
+//                $pano->setVFov($vfov);
+//                $pano->setVOffset($voffset);
+//                $pano->setXmlConfiguration($xml_configuration);
+//                $pano->setPanoFolder($panoFolder);
+//                $pano->setIsPartial($is_partial);
+//                
+//                $pano->save();
+    
+    
+    echo json_encode($result);
+
+//    $hfov       = isset ($fov_data['hfov']) ? $fov_data['hfov'] : '';
+//    $vfov       = isset ($fov_data['vfov']) ? $fov_data['vfov'] : '';
+//    $voffset    = isset ($fov_data['voffset']) ? $fov_data['voffset'] : '';
+    
+}
+
 
 
 /**
