@@ -151,6 +151,9 @@ class nggpanoAdmin{
                 //URL to delete pano
                 $url_delete = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-pano&gid=' . $gid . '&id=' . $pid;
                 
+                //URL to delete tiles
+                $url_delete_tiles = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-pano&gid=' . $gid . '&id=' . $pid . '&tiles=true';
+                
                 //URL to edit pano
                 $url_edit = NGGPANOGALLERY_URLPATH . 'admin/edit-pano.php?id=' . $pid . '&h=500';
                 
@@ -193,6 +196,7 @@ class nggpanoAdmin{
                     if($pano_exist) {
                         $actions['edit']  = '<a class="nggpano-dialog" href="' . $url_edit . '" title="' . __('Edit the panoramic datas for this image','nggpano') . '">' . __('Edit', 'nggpano') . '</a>';
                         $actions['delete']      = '<a class="submitdelete delete-pano" href="' . $url_delete. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas files for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Pano' , 'nggpano') . '</a>';
+                        $actions['delete_tiles']      = '<a class="submitdelete delete-pano" href="' . $url_delete_tiles. '" onclick="javascript:check=confirm( \'' . esc_attr(sprintf(__('Delete panoramas tiles for "%s" ?' , 'nggpano'), $picture->filename)). '\');if(check==false) return false;">' . __('Delete Tiles' , 'nggpano') . '</a>'; 
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show Flash', 'nggpano') . '</a>';
                         $actions['showhtml5']   = '<a class="nggpano-dialog" href="' . $url_show_html5 .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show HTML5', 'nggpano') . '</a>';
                         

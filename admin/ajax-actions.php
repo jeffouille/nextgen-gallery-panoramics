@@ -143,7 +143,12 @@ if (isset ( $_GET['mode']) ) {
             break;
         case 'delete-pano':
             if (isset ( $_GET['id']) && isset ( $_GET['gid'])) {
-                nggpano_delete_pano($_GET['id'],$_GET['gid']);
+                if(isset ( $_GET['tiles'])) {
+                    if ($_GET['tiles'] == 'true')
+                        nggpano_delete_tiles($_GET['id'],$_GET['gid']);
+                } else {
+                    nggpano_delete_pano($_GET['id'],$_GET['gid']);
+                }
             }
             break;
         case 'resize-preview-pano':
@@ -262,18 +267,33 @@ function nggpano_delete_pano($pid, $gid) {
         
         $pano = new nggpanoPano($pid, $gid);
         $pano->delete(true);
-        
-//        $result['error']= false;
-//        $result['message']=__('Panoramic successfully deleted','nggpano');
-//        $result['pid'] = $pid;
-//        
-        
-        //echo json_encode($result);
-        
-             echo nggpanoAdmin::krpano_image_form($pid, __('Panoramic successfully deleted','nggpano'));
+
+        echo nggpanoAdmin::krpano_image_form($pid, __('Panoramic successfully deleted','nggpano'));
     
     
 }
+
+/**
+ * Delete all krpano tiles but keep pano information in database
+ * @param string $pid the image id
+ * @param string $pid the gallery id
+ * @return void
+ */
+function nggpano_delete_tiles($pid, $gid) {
+        
+    $result = array();
+    $message = '';
+    $error = true;
+
+    $pano = new nggpanoPano($pid, $gid);
+    $pano->delete(false,true);
+        
+    echo nggpanoAdmin::krpano_image_form($pid, __('Panoramic tiles successfully deleted','nggpano'));
+
+}
+
+
+
 
 
 /**

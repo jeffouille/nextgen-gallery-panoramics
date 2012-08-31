@@ -418,14 +418,14 @@ class nggpanoPano{
    * Delete pano
    *
    */
-    public function delete($emptydatabase = false)
+    public function delete($emptydatabase = false, $keepdirectory = false)
     {
         $nggpanopath = $this->panoFolderPath;
 
         //Check if folder already exist
         if(is_dir($nggpanopath)) {
             //Empty the directory
-            $this->unlinkRecursive($nggpanopath, true);
+            $this->unlinkRecursive($nggpanopath, !$keepdirectory);
         }
         
         //remove in database
