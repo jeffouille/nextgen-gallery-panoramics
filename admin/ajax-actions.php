@@ -106,7 +106,7 @@ if (isset ( $_GET['mode']) ) {
                 //Get paramaters
                 $hfov       = isset ($_POST['hfov']) ? $_POST['hfov'] : '';
                 $vfov       = isset ($_POST['vfov']) ? $_POST['vfov'] : '';
-                $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '';
+                $voffset    = isset ($_POST['voffset']) ? $_POST['voffset'] : '0';
                 $xml_configuration = isset ($_POST['xml_configuration']) ? $_POST['xml_configuration'] : '';
                 $is_partial = isset ($_POST['is_partial']) ? $_POST['is_partial'] : '0';
                 $panoFolder = isset ($_POST['panoFolder']) ? $_POST['panoFolder'] : '';
@@ -371,6 +371,8 @@ function nggpano_extractxml($pid, $fromdb = false) {
     $message = '';
     $error = false;
     $pano_infos = nggpano_getImagePanoramicOptions($pid);
+    $error_xml = false;
+    $error_html5 = false;
 
     // use defaults the first time
     //if($pano_infos && isset ($pano_infos->hfov)) {
@@ -395,19 +397,30 @@ function nggpano_extractxml($pid, $fromdb = false) {
             $pano_flash_xml = str_replace('<image', '<image devices="flash"', $pano_flash_xml);
             $pano_flash_xml = str_replace('<preview', '<preview devices="flash"', $pano_flash_xml);
             $str_retour .= $pano_flash_xml;
-            if($pano_html5_xml) {
+        } else {
+            $error_xml = true;
+            $message = "no pano.xml file in ".$panoFolder;
+        }
+        
+        if($pano_html5_xml) {
+            if($hfov=="360.00" && $vfov=="180.00") {
+                $pano_html5_xml = str_replace('devices="!flash"', '', $pano_html5_xml);
+                $str_retour .= $pano_html5_xml;
+            } else {
                 $pano_html5_xml = str_replace('devices="!flash"', '', $pano_html5_xml);
                 $pano_html5_xml = str_replace('<image', '<image devices="!flash"', $pano_html5_xml);
                 $pano_html5_xml = str_replace('<preview', '<preview devices="!flash"', $pano_html5_xml);
                 $pano_html5_xml = str_replace('<view', '<view devices="!flash"', $pano_html5_xml);
                 $str_retour .= $pano_html5_xml;
-            } else {
-                $error = true;
-                $message = "no pano_html5.xml file in ".$panoFolder;
             }
         } else {
+            $error_html5 = true;
+            $message = "no pano_html5.xml file in ".$panoFolder;
+        }
+        
+        if($error_html5 && $error_xml) {
             $error = true;
-            $message = "no pano.xml file in ".$panoFolder;
+            $message = "no pano_html5.xml or pano.xml file in ".$panoFolder;
         }
 
     }

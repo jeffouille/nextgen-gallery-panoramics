@@ -228,11 +228,19 @@ function addFOVLimit() {
         }
         str_replace_view_html5_with += ' limitview="range" ';
         
-        var noeud_view_html5 = result.match(/<view(.*?)devices="!flash"(.*?)>/gi);
-        var noeud_view_html5_sans_limit = noeud_view_html5[0].replace(/limitview="(.*?)"/gi, '');
-        //var noeud_view_html5_sans_limit = '';
-        result = result.replace(noeud_view_html5, noeud_view_html5_sans_limit.substr(0,noeud_view_html5_sans_limit.length-2) + str_replace_view_html5_with + noeud_view_html5_sans_limit.substr(noeud_view_html5_sans_limit.length-2,2) );
-        
+        if(parseFloat(hfov)==360 && parseFloat(vfov)==180) {
+            var noeud_view_html5_360 = result.match(/<view(.*?)>/gi);
+            var noeud_view_html5_sans_limit_360 = noeud_view_html5_360[0].replace(/limitview="(.*?)"/gi, '');
+            //var noeud_view_html5_sans_limit = '';
+            result = result.replace(noeud_view_html5_360, noeud_view_html5_sans_limit_360.substr(0,noeud_view_html5_sans_limit_360.length-2) + str_replace_view_html5_with + noeud_view_html5_sans_limit_360.substr(noeud_view_html5_sans_limit_360.length-2,2) );
+ 
+        } else {
+
+            var noeud_view_html5 = result.match(/<view(.*?)devices="!flash"(.*?)>/gi);
+            var noeud_view_html5_sans_limit = noeud_view_html5[0].replace(/limitview="(.*?)"/gi, '');
+            //var noeud_view_html5_sans_limit = '';
+            result = result.replace(noeud_view_html5, noeud_view_html5_sans_limit.substr(0,noeud_view_html5_sans_limit.length-2) + str_replace_view_html5_with + noeud_view_html5_sans_limit.substr(noeud_view_html5_sans_limit.length-2,2) );
+        }
         //result = result.replace(noeud_view_html5, noeud_view_html5 + str_replace_view_html5_with);
         
         

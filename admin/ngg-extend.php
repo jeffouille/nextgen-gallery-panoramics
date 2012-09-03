@@ -87,6 +87,7 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                                 <select id="nggpano_bulkaction" name="nggpano_bulkaction">
                                     <option value="no_action" ><?php _e("--Select a Bulk actions--",'nggpano'); ?></option>
                                     <option value="extract_gps" ><?php _e("Extract GPS Data",'nggpano'); ?></option>
+                                    <option value="extract_xml_from_file" ><?php _e("Extract Pano Data",'nggpano'); ?></option>
                                 </select>
                                 <input type="hidden" id="nggpano_imagelist" name="nggpano_imagelist" value="" />
                         	<input type="hidden" id="nggpanobulk_bulkaction" name="TB_bulkaction" value="" />
@@ -134,6 +135,10 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                                     jQuery("#nggpano_imagelist").val(selectitems);
                                         //nggpano_showDialog('gps_dialog', '<?php echo esc_js(__('Extract GPS Data...','nggpano')); ?>');
                                         //return false;
+                                        break;
+                                case "extract_xml_from_file":
+                                    var selectitems = nggpano_get_picture_id_selected();
+                                    jQuery("#nggpano_imagelist").val(selectitems);
                                         break;
                                 case "no_action":
                                         return false;
@@ -400,14 +405,17 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
                 if (isset ($post['nggpano_bulkaction']) && isset ($post['nggpano_imagelist']))  {
 			switch ($post['nggpano_bulkaction']) {
                             case "extract_gps":
-
-                            $pic_ids  = explode(',', $post['nggpano_imagelist']);
-                            foreach ($pic_ids as $pic_id) {
-                                nggpanoAdmin::extract_gps($pic_id);
-                            }
-
-                            //nggpanoAdmin::do_ajax_operation( 'extract_gps' , $pic_ids, __('Extract GPS','nggpano') );
-                            break;
+                                    $pic_ids  = explode(',', $post['nggpano_imagelist']);
+                                    foreach ($pic_ids as $pic_id) {
+                                        nggpanoAdmin::extract_gps($pic_id);
+                                    }
+                                break;
+                            case "extract_xml_from_file":
+                                    $pic_ids  = explode(',', $post['nggpano_imagelist']);
+                                    foreach ($pic_ids as $pic_id) {
+                                        nggpanoAdmin::extract_xml_from_file($pic_id);
+                                    }
+                                break;
                         }
 		}
                 

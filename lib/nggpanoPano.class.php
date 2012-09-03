@@ -517,7 +517,7 @@ class nggpanoPano{
    */
     public function setVOffset($voffset)
     {
-        if($voffset)
+        //if(isset($voffset))
             $this->voffset = $voffset;
     }
     

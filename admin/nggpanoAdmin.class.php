@@ -66,6 +66,156 @@ class nggpanoAdmin{
 
 		//return '1';
 	}
+	/**
+	 * nggpanoAdmin::extract_xml_from_file() - extract pano data from pano.xml and pano_html5.xml
+	 * 
+	 * @class nggpanoAdmin
+	 * @param object | int $image contain all information about the image or the id
+	 * @return string result code
+	 */
+	function extract_xml_from_file($image) {
+		
+		global $ngg, $wpdb;
+		
+		if ( is_numeric($image) )
+			$image = nggdb::find_image( $image );
+		
+		if ( !is_object($image) ) 
+			return __('Object didn\'t contain correct data','nggallery');	
+                
+                $pid = $image->pid;
+                $gid = $image->galleryid;
+            //echo "pid=".$pid;
+                $result = array();
+                $message = '';
+                $error = true;
+                //Get pano info info from DB
+                $pano_infos = nggpano_getImagePanoramicOptions($pid);
+                
+                if($pano_infos) {
+                
+                        $hfov       = isset ($pano_infos->hfov) ? $pano_infos->hfov : '';
+                        $vfov       = isset ($pano_infos->vfov) ? $pano_infos->vfov : '';
+                        $voffset    = isset ($pano_infos->voffset) ? $pano_infos->voffset : '';
+                        $xml_configuration    = isset ($pano_infos->xml_configuration) ? $pano_infos->xml_configuration : '';
+                        $is_partial    = isset ($pano_infos->is_partial) ? $pano_infos->is_partial : '0';
+                        
+                        $panoFolder = isset ($pano_infos->pano_directory) ? $pano_infos->pano_directory : '';
+
+                        $pano_flash_xml = file_get_contents(NGGPANOWINABSPATH.$panoFolder."/pano.xml");                        
+                        $pano_html5_xml = file_get_contents(NGGPANOWINABSPATH.$panoFolder."/pano_html5.xml");
+
+                        if($pano_flash_xml) {
+                            $pano_flash_xml = str_replace('devices="flash"', '', $pano_flash_xml);
+                            $pano_flash_xml = str_replace('<view', '<view devices="flash"', $pano_flash_xml);
+                            $pano_flash_xml = str_replace('<image', '<image devices="flash"', $pano_flash_xml);
+                            $pano_flash_xml = str_replace('<preview', '<preview devices="flash"', $pano_flash_xml);
+                            $str_retour .= $pano_flash_xml;
+                        } else {
+                            $error_xml = true;
+                            $message = "no pano.xml file in ".$panoFolder;
+                        }
+
+                        if($pano_html5_xml) {
+                            if($hfov=="360.00" && $vfov=="180.00") {
+                                $pano_html5_xml = str_replace('devices="!flash"', '', $pano_html5_xml);
+                                $str_retour .= $pano_html5_xml;
+                            } else {
+                                $pano_html5_xml = str_replace('devices="!flash"', '', $pano_html5_xml);
+                                $pano_html5_xml = str_replace('<image', '<image devices="!flash"', $pano_html5_xml);
+                                $pano_html5_xml = str_replace('<preview', '<preview devices="!flash"', $pano_html5_xml);
+                                $pano_html5_xml = str_replace('<view', '<view devices="!flash"', $pano_html5_xml);
+                                $str_retour .= $pano_html5_xml;
+                            }
+                        } else {
+                            $error_html5 = true;
+                            $message = "no pano_html5.xml file in ".$panoFolder;
+                        }
+
+                        if($error_html5 && $error_xml) {
+                            $error = true;
+                            $message = "no pano_html5.xml or pano.xml file in ".$panoFolder;
+                        }
+                        
+                        //Add FOV LIMIT
+                        $str_retour = nggpanoAdmin::replace_fov_limit($str_retour,$hfov,$vfov,$voffset);
+                        
+                        if($wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET xml_configuration = '".$str_retour."' WHERE pid = '".$wpdb->escape($pid)."'") !== false) {
+                            return '1';
+                        } else {
+                            return ' <strong>' . $image->filename . ' (Error : Error with database)</strong>';
+                        };
+                        
+
+                } else {
+                    return ' <strong>' . $image->filename . ' (Error : No Pano XML files in directory)</strong>';
+                }
+
+		//return '1';
+	}
+
+        
+        function replace_fov_limit($xml_configuration,$hfov,$vfov,$voffset) {
+                $result = '';
+                
+                $result = preg_replace('/voffset="(.*?)"|vfov="(.*?)"|hfov="(.*?)"/i', '', $xml_configuration);
+
+
+                $result = preg_replace('/vlookatmin="(.*?)"|vlookatmax="(.*?)"|hlookatmin="(.*?)"|hlookatmax="(.*?)"/i', '', $result);
+
+
+                //add image limit
+                $str_replace_with = '';
+                if ($hfov <> "") {
+                    $str_replace_with .= ' hfov="'.$hfov.'"';
+                }
+                if ($vfov <> "") {
+                    $str_replace_with .= ' vfov="'.$vfov.'"';
+                }
+                if ($voffset <> "") {
+                    $str_replace_with .= ' voffset="'.$voffset.'"';
+                }
+
+                $result = preg_replace('/<image/i', '<image' .$str_replace_with, $result);
+
+                //add view limit
+                $str_replace_view_html5_with = '';
+                if ($hfov <> "") {
+                    $hlookatmin = ($hfov/2)*-1;
+                    $hlookatmax = ($hfov/2);
+                    $str_replace_view_html5_with .= ' hlookatmin="'.$hlookatmin.'" hlookatmax="+'.$hlookatmax.'"';
+                }
+                if ($vfov <> "" && $voffset <> "") {
+                    //=(I4/2)*-1+J4
+                    $vlookatmin = ($vfov/2)*-1+$voffset;
+                    $vlookatmax = ($vfov/2)+$voffset;
+                    $str_replace_view_html5_with .= ' vlookatmin="'.$vlookatmin.'" vlookatmax="'.$vlookatmax.'"';
+                }
+                $str_replace_view_html5_with .= ' limitview="range" ';
+
+                //echo htmlentities($str_replace_view_html5_with);
+
+                //echo '<hr/>';
+
+                //Add view limit
+                if($hfov==360 && $vfov==180) {
+                    //$noeud_view_html5_360 = result.match(/<view(.*?)>/gi);
+                    if (preg_match_all('/<view(.*?)>/i', $result, $matches)) {
+                        $noeud_view_html5_sans_limit_360 = preg_replace('/limitview="(.*?)"/i', '', $matches[1][0]);
+                        $result = str_replace($matches[1][0], substr($noeud_view_html5_sans_limit_360, 0,  strlen($noeud_view_html5_sans_limit_360)-2) . $str_replace_view_html5_with .substr($noeud_view_html5_sans_limit_360, strlen($noeud_view_html5_sans_limit_360)-2), $result );
+                    }
+                } else {
+                    if (preg_match_all('/<view(.*?)devices="!flash"(.*?)>/i', $result, $matches)) {
+                        $noeud_view_html5_sans_limit = preg_replace('/limitview="(.*?)"/i', '', $matches[2][0]);
+                        $result = str_replace($matches[2][0], substr($noeud_view_html5_sans_limit, 0,  strlen($noeud_view_html5_sans_limit)-2) . $str_replace_view_html5_with .substr($noeud_view_html5_sans_limit, strlen($noeud_view_html5_sans_limit)-2), $result );
+                    }
+
+                }
+                
+                return $result;
+            
+            
+        }
         
         function gps_image_form($pid) {
                 //Get GPS values for the current image
