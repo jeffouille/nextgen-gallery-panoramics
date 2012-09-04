@@ -130,7 +130,7 @@ class nggpanoKrpanoXML {
                     $pano = new nggpanoPano($list_id[$index], '');
                     $pano_list[] = $pano;
                     $xmlpanochoice .= '<item name="combobox-item-scene-'.$list_id[$index].'" caption="'.$pano->title.'" onClick="changescene(scene-'.$list_id[$index].');"/>';
-                    $xmlpano   .= $pano->getXML('', '%BASEDIR%/');
+                    $xmlpano   .= $pano->getXML('', '%BASEDIR%/'.$pano->panoFolder.'/', $debug);
                 }
                 
                 $xmlpanochoice .= '</plugin>';

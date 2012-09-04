@@ -27,6 +27,8 @@ class nggpanoPano{
         var $voffset            =   '';     // Vertical Offset  -  voffset - vertical shift away from the horizon (+/- degrees)
         var $is_partial         =   '0';     // Check pano is partial - force assuming that the input is a partial sphere   (hfov setting needed!)
         var $xml_configuration  =   '';     // XML Configuration for the pano viewer
+        var $gps_lat            =   '';
+        var $gps_lng            =   '';
         
 	// Directory and prefix for pano creation
 	var $panoPrefix	=	'pano_';	// FolderPrefix to the panos
@@ -484,6 +486,8 @@ class nggpanoPano{
             $this->vfov = $database_infos->vfov;
             $this->voffset = $database_infos->voffset;
             $this->gid = $database_infos->gid;
+            $this->gps_lat = $database_infos->gps_lat;
+            $this->gps_lng = $database_infos->gps_lng;
 
         }
     }
@@ -848,8 +852,9 @@ class nggpanoPano{
                 
 		
     //Add scene node
+    // title="Achilleion - Garden" onstart="" thumburl="panos/achilleion-hof-unten.tiles/thumb.jpg" lat="39.563340" lng="19.904324" heading="0.0"
     $xmlreturn  = '<!-- SCENE  -->';
-    $xmlreturn  .= '<scene name="scene-'.$this->pid.'" title="'.$this->title.'" defaultthumburl="'.$nextgen_thumb.'" squarethumburl="'.$square_thumb.'" customthumburl="'.$custom_thumb.'" >';
+    $xmlreturn  .= '<scene name="scene-'.$this->pid.'" title="'.$this->title.'" defaultthumburl="'.$nextgen_thumb.'" squarethumburl="'.$square_thumb.'" customthumburl="'.$custom_thumb.'" lat="'.$this->gps_lat.'" lng="'.$this->gps_lng.'" heading="0">';
     $xmlreturn  .= $xmlConfiguration;
     //$xmlreturn  .= '<progress showload="bar(midbottom, 100%, 2, 0, 55, shaded, 0x0a0a0a, 0x788794, 0x788794, 0x9f9f9f, 0, 0x9f9f9f, 0)" showreloads="true" showwait="true"/>';
 
@@ -872,13 +877,13 @@ class nggpanoPano{
   function getSkinXML()
   {
     $xml_skin = file_get_contents($this->viewerTemplatePath);
-    $xml_skin = str_replace('%PLUGINDIR%', $this->pluginFolderURL, $xml_skin);
-    $xml_skin = str_replace('%SKINDIR%', $this->skinFolderURL, $xml_skin);
+    $xml_skin = str_replace('%PLUGINDIR%/', $this->pluginFolderURL, $xml_skin);
+    $xml_skin = str_replace('%SKINDIR%/', $this->skinFolderURL, $xml_skin);
     //%PLUGINDIR% = directory with krpano plugin
     //%SKINDIR% = directory with krpano skin
     
     //$xmlreturn  = '<include url="'.$this->viewerTemplateURL.'" />';
-
+    //$xml_skin .= $this->skinFolderURL;
     return $xml_skin;
 
   }

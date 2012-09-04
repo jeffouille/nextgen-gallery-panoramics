@@ -87,8 +87,8 @@ if(preg_match("#".basename(__FILE__)."#", $_SERVER["PHP_SELF"])) {die("You are n
         $panoconfig = nggpano_getPanoConfig($gallery_id);
         
         $xml_skin = file_get_contents($panoconfig['viewerTemplatePath']);
-        $xml_skin = str_replace('%PLUGINDIR%', $panoconfig['pluginFolderURL'], $xml_skin);
-        $xml_skin = str_replace('%SKINDIR%',$panoconfig['skinFolderURL'], $xml_skin);
+        $xml_skin = str_replace('%PLUGINDIR%/', $panoconfig['pluginFolderURL'], $xml_skin);
+        $xml_skin = str_replace('%SKINDIR%/',$panoconfig['skinFolderURL'], $xml_skin);
 
         return $xml_skin;
 
