@@ -889,7 +889,7 @@ class nggpanoPano{
   }
   
 
-  public function show($divid, $width = '100%', $height = '100%', $no_output = false, $html5='auto') {
+  public function show($divid, $width = '100%', $height = '100%', $no_output = false, $html5='auto', $debug = false) {
         $str_return = '';
         //Check all files for generation
         if($this->error == false) {
@@ -913,6 +913,8 @@ class nggpanoPano{
         }
         
         if($this->error == false) {
+            
+            
 
             //load pano information from database
             $this->loadFromDB();

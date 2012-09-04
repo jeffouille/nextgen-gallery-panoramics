@@ -68,7 +68,7 @@ Modify it when your theme struggle with it, it's only a template design
 		<layer name="skin_btn_show"   url="%SKINDIR%/graphics/krpanovtour/vtourskin.png" crop="64|448|64|64" align="right"       x="5"    y="-36" scale="0.5" alpha="0" visible="false" onclick="skin_showskin()" ondown="skin_buttonglow(get(name));" onup="skin_buttonglow(null);" />
 	</layer>
 
-	<layer name="skin_loadingtext"  keep="true" url="%PLUGINDIR%/textfield.swf" align="center" x="5" y="-5" html="loading..." visible="false" autoheight="true" background="false" border="false" enabled="false" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:22px; font-style:italic;" textshadow="2" />
+	<layer name="skin_loadingtext"  keep="true" url="%PLUGINDIR%/textfield.swf" align="center" x="5" y="-5" html="chargement..." visible="false" autoheight="true" background="false" border="false" enabled="false" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:22px; font-style:italic;" textshadow="2" />
 	<layer name="skin_buttonglow"   keep="true" url="%SKINDIR%/graphics/krpanovtour/vtourskin.png" crop="64|384|64|64" align="center" x="0" y="1" alpha="0.0" visible="false" enabled="false" />
 	<layer name="skin_thumbborder"  keep="true" url="%SKINDIR%/graphics/krpanovtour/vtourskin_thumbborder.png" visible="false" enabled="false" align="lefttop" scale="0.5" ox="-2" oy="-2" />
 	<layer name="skin_logo"         keep="true" url="" align="righttop" x="5" y="5" capture="false" accuracy="1" state="small" onclick="if(state == 'small', skin_openlogo(); , skin_closelogo('now'); opened_onclick(); );" />

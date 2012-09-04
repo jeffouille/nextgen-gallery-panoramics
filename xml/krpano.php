@@ -32,7 +32,7 @@ class nggpanoKrpanoXML {
     
     var $pano           =   false;        //pano object
     
-    var $debug          = true;
+    var $debug          = false;
 
     var $panoconfig     = null;
     
@@ -75,15 +75,16 @@ class nggpanoKrpanoXML {
                 //$this->type	= isset($_GET['type'])   ? strtolower( $_GET['type'] ) : false; 
             }
         }
-
+        $this->debug = false; 
+        
         
         $this->result	= array();
 
-        $this->start_process(true);
+        $this->start_process();
         $this->render_output();
     }
 
-    function start_process($debug = false) {
+    function start_process() {
 
         global $ngg, $nggpano;
 
@@ -103,7 +104,7 @@ class nggpanoKrpanoXML {
                 
                 $this->firstpano_to_load = 'scene-'.$this->id;
                 //$xmlpano = '<scene'
-                $xmlpano = $this->pano->getXML('', '%BASEDIR%/'.$this->pano->panoFolder.'/', $debug);
+                $xmlpano = $this->pano->getXML('', '%BASEDIR%/'.$this->pano->panoFolder.'/', $this->debug);
 
                 $this->result['xmlpanonode']= $xmlpano;
                 $this->result['xmlpanochoice'] = '';
@@ -130,7 +131,7 @@ class nggpanoKrpanoXML {
                     $pano = new nggpanoPano($list_id[$index], '');
                     $pano_list[] = $pano;
                     $xmlpanochoice .= '<item name="combobox-item-scene-'.$list_id[$index].'" caption="'.$pano->title.'" onClick="changescene(scene-'.$list_id[$index].');"/>';
-                    $xmlpano   .= $pano->getXML('', '%BASEDIR%/'.$pano->panoFolder.'/', $debug);
+                    $xmlpano   .= $pano->getXML('', '%BASEDIR%/'.$pano->panoFolder.'/', $this->debug);
                 }
                 
                 $xmlpanochoice .= '</plugin>';

@@ -299,7 +299,7 @@ class nggpanoAdmin{
                 $url_quickpublish = NGGPANOGALLERY_URLPATH . 'admin/publish-pano-infocus.php?id=' . $pid . '&h=500';
                 
                 //URL to show Pano
-                $url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
+                $url_show = NGGPANOGALLERY_URLPATH . 'admin/show-pano.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800&debug';
                 //$url_show = NGGPANOGALLERY_URLPATH . 'nggpanoshow.php?gid=' . $gid . '&pid=' . $pid. '&h=500&w=800';
                 
                 //URL to show Pano HTML
