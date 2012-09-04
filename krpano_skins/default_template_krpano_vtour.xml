@@ -28,7 +28,7 @@ Modify it when your theme struggle with it, it's only a template design
         </action>
         
 	<!-- Global Skin settings (can be overridden in the 'outer' xml) -->
-	<skin_settings bingmaps="false" bingmaps_key="" gyro="true" thumbswidth="120" thumbsheight="80" thumbspadding="10" thumbscrop="0|40|240|160" />
+	<!-- <skin_settings bingmaps="false" bingmaps_key="" gyro="true" thumbswidth="120" thumbsheight="80" thumbspadding="10" thumbscrop="0|40|240|160" /> -->
 
         <progress showload="none" showwait="none" />
 

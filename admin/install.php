@@ -140,6 +140,12 @@ function nggpano_default_options() {
 	$nggpano_options['widthThumbVirtualTour']   =	'200';	// max width size for thumbnail
 	$nggpano_options['heightThumbVirtualTour']  =	'200';	// max height size for thumbnail
         
+        //Using BingMap Plugin
+        $nggpano_options['use_bing_map']    =	false;
+        $nggpano_options['bingmap_key']     =	'';
+        //Using Gyro Plugin
+        $nggpano_options['use_gyro']        = false;
+        
         
         // Directory and prefix for pano creation
 	$nggpano_options['panoPrefix']          =	'pano_';	// FolderPrefix to the panos

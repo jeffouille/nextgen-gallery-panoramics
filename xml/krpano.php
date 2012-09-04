@@ -109,6 +109,9 @@ class nggpanoKrpanoXML {
                 $this->result['xmlpanonode']= $xmlpano;
                 $this->result['xmlpanochoice'] = '';
                 
+                //SkinSetting NODE
+                $this->result['xmlskinsettings'] = $this->pano->getSkinSetting();
+                
                 //Skin file
                 $this->result['xmlskinnode']= nggpano_getSkinXML($this->pano->gid);
                 
@@ -142,6 +145,9 @@ class nggpanoKrpanoXML {
                 
                 //Skin file
                 $this->result['xmlskinnode']= nggpano_getSkinXML('several');
+                
+                //SkinSetting NODE
+                $this->result['xmlskinsettings'] = $pano->getSkinSetting();
                 //search for all pano of the gallery to make scene node TODO
                 //$this->result['images'] = ($this->id == 0) ? nggdb::find_last_images( 0 , 100 ) : nggdb::get_gallery( $this->id, $ngg->options['galSort'], $ngg->options['galSortDir'], true, 0, 0, true );
                 //$this->result = array ('stat' => 'fail', 'code' => '98', 'message' => 'Method multiple not ready yet.');
@@ -152,6 +158,9 @@ class nggpanoKrpanoXML {
                 return false;	
             break;		
         }
+        
+        
+                
         
 
         
@@ -225,6 +234,7 @@ class nggpanoKrpanoXML {
         
     
         $this->output .= '<krpano version="1.0.8.15" ' . $basedir . ' onstart="'.$on_start_action.'" >';
+        $this->output .= $this->result['xmlskinsettings'];
         $this->output .= $this->result['xmlpanonode'];
         $this->output .= $this->result['xmlpanochoice'];
         

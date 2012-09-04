@@ -81,7 +81,7 @@ function nggpano_admin_overview() {
         <div id="poststuff">
             <form id="" method="POST" action="<?php echo $filepath; ?>" accept-charset="utf-8" >
                 <?php wp_nonce_field('nggpano_settings') ?>
-                <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect,colorboxCSSfile,heightThumbVirtualTour,widthThumbVirtualTour" />	
+                <input type="hidden" name="page_options" value="toolConfigFile,krpanoToolsTempFolder,kmakemultiresFolder,kmakemultiresConfigFolder,defaultSkinFile,krpanoFolder,skinFolder,pluginFolder,widthPreview,heightPreview,lightboxEffect,colorboxCSSfile,heightThumbVirtualTour,widthThumbVirtualTour,bingmap_key,use_bingmap,use_gyro" />	
     <!--            <input type="hidden" name="force" value="1" />  this will just force _POST['nggpano'] even if all checkboxes are unchecked -->
                 <div class="postbox">
                     <h3><?php _e('Preview Options', 'nggpano'); ?></h3>
@@ -215,6 +215,26 @@ function nggpano_admin_overview() {
                             <td>
                                 <input type="checkbox" name="force_reset" />
                                 <span class="setting-description"><?php _e('Check this if you want set all galleries with this template file','nggpano') ?></span>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th align="left"><?php _e('Use BingMap plugin','nggpano'); ?></th>
+                            <td>
+                                <input type="checkbox" name="use_bingmap" value="1" <?php checked('1', $nggpano->options['use_bingmap']); ?> />
+                                <span class="setting-description"><?php _e('Check this if you want that Bing Map Plugin appear in all panoramics','nggpano') ?></span>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th align="left"><?php _e('Bing Map Key','nggpano'); ?></th>
+                            <td>
+                                <input type="text" size="80" name="bingmap_key" value="<?php echo $nggpano->options['bingmap_key']; ?>" />
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th align="left"><?php _e('Use Gyroscope plugin','nggpano'); ?></th>
+                            <td>
+                                <input type="checkbox" name="use_gyro" value="1" <?php checked('1', $nggpano->options['use_gyro']); ?> />
+                                <span class="setting-description"><?php _e('Check this if you want use gyroscope in mobile for all panoramics','nggpano') ?></span>
                             </td>
                         </tr>
                         <tr valign="top">

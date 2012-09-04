@@ -888,6 +888,17 @@ class nggpanoPano{
 
   }
   
+  function getSkinSetting()
+  {
+      global $nggpano_options;
+      
+      return '<skin_settings bingmaps="'.($nggpano_options['use_bingmap'] ? 'true' : 'false').'" bingmaps_key="'.$nggpano_options['bingmap_key'].'" gyro="'.($nggpano_options['use_gyro'] ? 'true' : 'false').'" thumbswidth="120" thumbsheight="80" thumbspadding="10" thumbscrop=""/>';
+      
+     // return '<skin_settings bingmaps="true" bingmaps_key="'.$nggpano_options['bingmap_key'].'" gyro="true" thumbswidth="120" thumbsheight="80" thumbspadding="10" thumbscrop=""/>';
+      
+      
+  }
+  
 
   public function show($divid, $width = '100%', $height = '100%', $no_output = false, $html5='auto', $debug = false) {
         $str_return = '';
