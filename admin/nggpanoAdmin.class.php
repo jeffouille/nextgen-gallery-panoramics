@@ -156,65 +156,72 @@ class nggpanoAdmin{
 
         
         function replace_fov_limit($xml_configuration,$hfov,$vfov,$voffset) {
-                $result = '';
-                
-                $result = preg_replace('/voffset="(.*?)"|vfov="(.*?)"|hfov="(.*?)"/i', '', $xml_configuration);
+                    $pano_xml = new SimpleXMLElement('<krpano>'.$xml_configuration.'</krpano>');
 
+                    //find image node and remove all hfov, vfov and voffset node
+                    foreach($pano_xml->xpath('//image') as $images){
+                        unset($images['hfov']);
+                        unset($images['vfov']);
+                        unset($images['voffset']);
 
-                $result = preg_replace('/vlookatmin="(.*?)"|vlookatmax="(.*?)"|hlookatmin="(.*?)"|hlookatmax="(.*?)"/i', '', $result);
+                        //add correct value for these attributes
+                        $images->addAttribute('hfov',$hfov);
+                        $images->addAttribute('vfov',$vfov);
+                        $images->addAttribute('voffset',$voffset);
 
+                        //remove multires if not 360x180
+                        if(!($hfov==360 && $vfov==180)) {
+                            // type="CUBE" multires="true" tilesize="670" progressive="true"
+                            if($images['type'] == 'CUBE' && $images['devices'] == '!flash') {
+                                unset($images['multires']);
+                                unset($images['tilesize']);
+                                unset($images['progressive']); 
+                                //remove level node
+                                unset($images->level);
+                                //add cube url for html5
+                                $html5_cube = $images->addChild('cube');
+                                $html5_cube->addAttribute('url', 'tiles/html5_%s.jpg');
+                                //<cube url="tiles/html5_%s.jpg"/>
+                            }
+                        }
 
-                //add image limit
-                $str_replace_with = '';
-                if ($hfov <> "") {
-                    $str_replace_with .= ' hfov="'.$hfov.'"';
-                }
-                if ($vfov <> "") {
-                    $str_replace_with .= ' vfov="'.$vfov.'"';
-                }
-                if ($voffset <> "") {
-                    $str_replace_with .= ' voffset="'.$voffset.'"';
-                }
-
-                $result = preg_replace('/<image/i', '<image' .$str_replace_with, $result);
-
-                //add view limit
-                $str_replace_view_html5_with = '';
-                if ($hfov <> "") {
-                    $hlookatmin = ($hfov/2)*-1;
-                    $hlookatmax = ($hfov/2);
-                    $str_replace_view_html5_with .= ' hlookatmin="'.$hlookatmin.'" hlookatmax="+'.$hlookatmax.'"';
-                }
-                if ($vfov <> "" && $voffset <> "") {
-                    //=(I4/2)*-1+J4
-                    $vlookatmin = ($vfov/2)*-1+$voffset;
-                    $vlookatmax = ($vfov/2)+$voffset;
-                    $str_replace_view_html5_with .= ' vlookatmin="'.$vlookatmin.'" vlookatmax="'.$vlookatmax.'"';
-                }
-                $str_replace_view_html5_with .= ' limitview="range" ';
-
-                //echo htmlentities($str_replace_view_html5_with);
-
-                //echo '<hr/>';
-
-                //Add view limit
-                if($hfov==360 && $vfov==180) {
-                    //$noeud_view_html5_360 = result.match(/<view(.*?)>/gi);
-                    if (preg_match_all('/<view(.*?)>/i', $result, $matches)) {
-                        $noeud_view_html5_sans_limit_360 = preg_replace('/limitview="(.*?)"/i', '', $matches[1][0]);
-                        $result = str_replace($matches[1][0], substr($noeud_view_html5_sans_limit_360, 0,  strlen($noeud_view_html5_sans_limit_360)-2) . $str_replace_view_html5_with .substr($noeud_view_html5_sans_limit_360, strlen($noeud_view_html5_sans_limit_360)-2), $result );
-                    }
-                } else {
-                    if (preg_match_all('/<view(.*?)devices="!flash"(.*?)>/i', $result, $matches)) {
-                        $noeud_view_html5_sans_limit = preg_replace('/limitview="(.*?)"/i', '', $matches[2][0]);
-                        $result = str_replace($matches[2][0], substr($noeud_view_html5_sans_limit, 0,  strlen($noeud_view_html5_sans_limit)-2) . $str_replace_view_html5_with .substr($noeud_view_html5_sans_limit, strlen($noeud_view_html5_sans_limit)-2), $result );
                     }
 
-                }
-                
-                return $result;
-            
-            
+                    //find view node and remove all vlookatmin, vlookatmax, hlookatmin, hlookatmax
+                    foreach($pano_xml->xpath('//view[@devices="!flash"]') as $views){
+                        unset($views['vlookatmin']);
+                        unset($views['vlookatmax']);
+                        unset($views['hlookatmin']);
+                        unset($views['hlookatmax']);
+                        unset($views['limitview']);
+                        //add correct value for these attributes
+                        if ($hfov <> "") {
+                            $hlookatmin = ($hfov/2)*-1;
+                            $hlookatmax = ($hfov/2);
+                            $views->addAttribute('hlookatmin',$hlookatmin);
+                            $views->addAttribute('hlookatmax',$hlookatmax);
+                        }
+                        if ($vfov <> "" && $voffset <> "") {
+                            //=(I4/2)*-1+J4
+                            $vlookatmin = ($vfov/2)*-1+$voffset;
+                            $vlookatmax = ($vfov/2)+$voffset;
+                            $views->addAttribute('vlookatmin',$vlookatmin);
+                            $views->addAttribute('vlookatmax',$vlookatmax);
+                        } 
+                        $views->addAttribute('limitview','range');
+
+                    }
+
+                    return nggpanoAdmin::SimpleXMLElement_innerXML($pano_xml);           
+        }
+        
+        function SimpleXMLElement_innerXML($xml) {
+            $innerXML= '';
+            foreach (dom_import_simplexml($xml)->childNodes as $child)
+            {
+                $innerXML .= $child->ownerDocument->saveXML( $child );
+            }
+            return $innerXML;
         }
         
         function gps_image_form($pid) {
