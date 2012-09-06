@@ -35,14 +35,3 @@ $krpano_xml     = NGGPANOGALLERY_URLPATH . 'xml/krpano.php?pano=single_'.$pano->
 <input type="hidden" id="krpano_path" value="<?php echo $krpano_path ?>" />
 <input type="hidden" id="krpano_xml" value="<?php echo $krpano_xml ?>" />
 <div id="panocontent" style="width:100%;height:500px;"></div>
-
-<script type="text/javascript">
-function initializePano() {
- var viewer = createPanoViewer({swf:"<?php echo $krpano_path ?>", wmode:"opaque"});
- viewer.addVariable("xml", "<?php echo $krpano_xml ?>");
- viewer.useHTML5("auto");
- viewer.embed("panocontent");
-}
-initializePano();
-
-</script>

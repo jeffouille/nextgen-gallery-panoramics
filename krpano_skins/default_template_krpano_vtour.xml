@@ -42,6 +42,8 @@ Modify it when your theme struggle with it, it's only a template design
 				<layer name="skin_thumbs" state="hidden" url="%PLUGINDIR%/scrollarea.swf" alturl="%PLUGINDIR%/scrollarea.js" direction="h" visible="false" align="top" width="100%" height="100" onloaded="skin_updatescroll();" />
 				<layer name="skin_map"    state="hidden" url="" flash_url="%PLUGINDIR%/bingmaps.swf" html5_url="%PLUGINDIR%/bingmaps.js" visible="false" align="lefttop" width="100%" height="50%" x="0" y="0" zorder="1" lat="0" lng="0" zoom="2" bgalpha="0" maptype="satellite" onmapready="skin_addmapspots();">
 					<maptypecontrol visible="true" align="righttop" x="5" y="5" buttonalign="v" />
+                                        <zoomcontrol visible="true" align="lefttop" x="26" y="70" hasscrolltrack="true" />
+                                        <positioncontrol visible="true" align="lefttop" x="5" y="5" />
 					<spotstyle name="DEFAULT" url="%SKINDIR%/graphics/krpanovtour/vtourskin_mapspot.png" activeurl="%SKINDIR%/graphics/krpanovtour/vtourskin_mapspotactive.png" edge="bottom" x="-5" y="-8" scale="0.5" />
 					<layer name="skin_map_androidzoom_in"  url="%SKINDIR%/graphics/krpanovtour/vtourskin.png" effect="glow(0,0.5);" crop="9|512|46|64"  align="right" x="0" y="-40" zorder="2" ondown="layer[skin_map].zoomin();  skin_buttonglow(get(name));" onup="skin_buttonglow(null);" devices="Android+Tablet+Flash" />
 					<layer name="skin_map_androidzoom_out" url="%SKINDIR%/graphics/krpanovtour/vtourskin.png" effect="glow(0,0.5);" crop="73|512|46|64" align="right" x="0" y="+40" zorder="2" ondown="layer[skin_map].zoomout(); skin_buttonglow(get(name));" onup="skin_buttonglow(null);" devices="Android+Tablet+Flash" />
@@ -106,7 +108,7 @@ Modify it when your theme struggle with it, it's only a template design
 				<layer name="skin_scroll_container">
 					<layer name="skin_thumbs" height="200" />
 					<layer name="skin_map">
-						<maptypecontrol scale="1.5" />
+						<maptypecontrol scale="1.5" buttontexts="Plan|Satellite|Hybride"/>
 					</layer>
 				</layer>
 			</layer>
