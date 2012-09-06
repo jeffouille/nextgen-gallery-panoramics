@@ -696,7 +696,7 @@ class nggpanoAdmin{
             $post['post_type']    = 'post';
             
             //content with shortcode for link
-            $post_content = '[singlepicwithlinks id=' . intval($_POST['pid']) .' float=center w=200 h=100 template=withoutthumb mapz=14 maptype=HYBRID links=all mainlink=picture caption=description /]';
+            $post_content = '[nextgen_portfolio_list pictures=' . intval($_POST['pid']) .' thumb="medium" offset="0" showposts="80" disable="map"]';
             $post['post_content'] = $post_content. "\r\n". $_POST['post_content'];
             $post['post_author']  = $user_ID;
             $post['post_status']  = isset ( $_POST['publish_state'] ) && $_POST['publish_state'] == 'true' ? 'publish' : 'draft';
