@@ -272,6 +272,7 @@ class nggpanoAdmin{
         }
 
         function krpano_image_form($pano, $message = '') {
+                global $post;
                 if(is_numeric($pano)) {
                     $pid = $pano;
                     //Get krpano values for the current image
@@ -316,24 +317,45 @@ class nggpanoAdmin{
                 
                 //URL to replace original image with a redim preview
                 $url_makepreview = NGGPANOGALLERY_URLPATH . 'admin/resize-preview-pano.php?id=' . $pid. '&h=200&w=800';
+                $article_linked_id = 0;
                 if(isset($image_values) && is_object($image_values)) {
-                $post_id = $image_values->post_id;
-                if($post_id <> 0) {
-                    $the_post = get_post($post_id);
-                    $post_title = $the_post->post_title;
-                    $url_edit_post = get_admin_url().'post.php?post='.$post_id.'&action=edit';
-                    
-                    $url_delete_post = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-post&post_id=' . $post_id . '&pid=' . $pid;
-                    
+                    $post_id = $image_values->post_id;
+                    if($post_id <> 0) {
+                        $the_post = get_post($post_id);
+                        if($the_post !== null) {
+                            $article_linked_id = $the_post->ID;
+                            $post_title = $the_post->post_title;
+                            $url_edit_post = get_admin_url().'post.php?post='.$post_id.'&action=edit';
+
+                            $url_delete_post = NGGPANOGALLERY_URLPATH . 'admin/ajax-actions.php?mode=delete-post&post_id=' . $post_id . '&pid=' . $pid;
+                        }
+                    }
                 }
-                } else {
-                    $post_id = 0;
-                }
+                //id="nggpano_picture_lat_<?php echo $pid " name="nggpano_picture[ echo $pid][lat]"
+                //Get the select for articles list
+                $select_posts_box = '<label for="nggpano_picture_postid_'.$pid.'">'.__('Linked post : ','nggpano').'</label>';
+                $select_posts_box .= '<select id="nggpano_picture_postid_'.$pid.'" name="nggpano_picture['.$pid.'][postid]">';
+                $select_posts_box .= '<option value="0" '.(($article_linked_id == 0) ? 'selected="selected"' : '').'>'.__('Choose one Post','nggpano').'</option>';
+                $args = array(
+                    'numberposts' => -1,
+                    'post_type' => 'post',
+                    'post_status' => array('publish', 'pending', 'draft', 'future', 'private', 'inherit', 'trash'),
+                    );
+                $articles = get_posts($args);
+                foreach( $articles as $article ) :
+                        $select_posts_box .='<option value="'.$article->ID.'" '.(($article_linked_id == $article->ID) ? 'selected="selected"' : '').'>'.$article->post_title.($article->post_status <> 'publish' ? ' - ' .$article->post_status : '').'</option>';
+                endforeach;
+                $select_posts_box .='</select>';
+
                 
-                //echo $post_id;
+                echo $select_posts_box .'<br/>';
+                //echo $article_linked_id;
                 ?>
-                <?php if($post_id <> 0) { ?>
-                    <a href="<?php echo $url_edit_post ?>" title="<?php echo esc_attr(sprintf(__('Edit post "%s" ?' , 'nggpano'), $post_title)) ?>"><?php _e('Edit Article', 'nggpano') ?></a>      
+                
+                <?php if($article_linked_id <> 0) {
+                ?>
+                    <a href="<?php echo $url_edit_post ?>" title="<?php echo esc_attr(sprintf(__('Edit post "%s" ?' , 'nggpano'), $post_title)) ?>"><?php _e('Edit Article', 'nggpano') ?></a>
+                    
                 <?php } ?>
                 
                 <div class="admin-pano-thumb">
@@ -357,7 +379,7 @@ class nggpanoAdmin{
                         $actions['show']        = '<a class="nggpano-dialog" href="' . $url_show .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show Flash', 'nggpano') . '</a>';
                         $actions['showhtml5']   = '<a class="nggpano-dialog" href="' . $url_show_html5 .'" title="' . esc_attr(sprintf(__('Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Show HTML5', 'nggpano') . '</a>';
                         
-                        if($post_id == 0) {
+                        if($article_linked_id == 0) {
                             if ( current_user_can( 'publish_posts' ) )
                                 $actions['publish']     = '<a class="nggpano-dialog" href="' . $url_publish .'" title="' . esc_attr(sprintf(__('Publish Panorama for "%s" ?' , 'nggpano'), $picture->filename)) . '">' . __('Publish', 'nggpano') . '</a>';
                             if( current_user_can('publish_posts') && get_current_theme() == 'inFocus')

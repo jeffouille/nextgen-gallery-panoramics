@@ -381,6 +381,8 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
                                 $lat = (strlen($val["lat"]) == 0) ? 'NULL' : $val["lat"];
                                 $lng = (strlen($val["lng"]) == 0) ? 'NULL' : $val["lng"];
                                 $alt = (strlen($val["alt"]) == 0) ? 'NULL' : round($val["alt"],0);
+                                $postid = (strlen($val["postid"]) == 0) ? '0' : $val["postid"];
+                                //nggpano_picture['.$pid.'][postid]"
                                // $pano_directory = $wpdb->escape($val["pano_directory"]);
                                // $xml_configuration = $wpdb->escape($val["xml_configuration"]);
                                // $is_partial = $wpdb->escape($val["is_partial"]) ? "1" : "0";
@@ -393,9 +395,9 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
     //                            }
 
                                 if(nggpano_getImagePanoramicOptions($pid)) {
-                                        $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET gps_lat = ".$lat.", gps_lng = ".$lng.", gps_alt = ".$alt." WHERE pid = '".$wpdb->escape($pid)."'");
+                                        $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_panoramic SET gps_lat = ".$lat.", gps_lng = ".$lng.", gps_alt = ".$alt.", post_id = ".$postid." WHERE pid = '".$wpdb->escape($pid)."'");
                                 }else{
-                                        $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_panoramic (id, pid, gid, gps_lat, gps_lng, gps_alt) VALUES (null, '".$wpdb->escape($pid)."', '".$wpdb->escape($gid)."', ".$lat.", ".$lng.", ".$alt.")");
+                                        $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_panoramic (id, pid, gid, gps_lat, gps_lng, gps_alt, post_id) VALUES (null, '".$wpdb->escape($pid)."', '".$wpdb->escape($gid)."', ".$lat.", ".$lng.", ".$alt.", ".$postid.")");
                                 }
                         }
                     }
@@ -551,6 +553,20 @@ function nggpano_delete_image($pid) {
     }
 
 
+}
+
+
+/*
+ * POST DELETED
+ */
+add_action('delete_post', 'nggpano_delete_post', 10);
+
+function nggpano_delete_post($pid) {
+  global $wpdb;
+  //if ($wpdb->get_var($wpdb->prepare('SELECT post_id FROM '.$wpdb->prefix.'nggpano_panoramic WHERE post_id = %d', $pid))) {
+    return $wpdb->query($wpdb->prepare('UPDATE '.$wpdb->prefix.'nggpano_panoramic SET post_id = 0 WHERE post_id = %d', $pid));
+  //}
+  //return true;
 }
 
 /*
