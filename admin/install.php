@@ -58,6 +58,8 @@ function nggpano_install () {
 		id BIGINT(19) NOT NULL AUTO_INCREMENT,
 		gid BIGINT NOT NULL DEFAULT 0,
 		skin VARCHAR(255) ,
+                order INT(2) NOT NULL DEFAULT 0,
+                exclude TINYINT NULL DEFAULT '0' ,
                 gps_region VARCHAR(255) ,
                 path MEDIUMTEXT NULL ,
 		PRIMARY KEY id (id)

@@ -224,6 +224,24 @@ class nggpanoAdmin{
             return $innerXML;
         }
         
+        function gallery_order_form($gid) {
+                $gallery_settings = nggpano_getGalleryOptions($gid);
+                $gallery_order = isset($gallery_settings->order) ? $gallery_settings->order : '';
+                echo $gallery_order;
+            
+        }
+        function gallery_exclude_form($gid) {
+                $gallery_settings = nggpano_getGalleryOptions($gid);
+                //$gallery_order = isset($gallery_settings->order) ? $gallery_settings->order : '';
+                $gallery_exclude   = ( $gallery_settings->exclude ) ? 'checked="checked"' : '';
+                
+                echo '<input disabled name="exclude['.$gid.']" type="checkbox" value="1" '.$gallery_exclude.' />';
+            
+        }
+        
+        
+        
+        
         function gps_image_form($pid) {
                 //Get GPS values for the current image
                 $image_values = nggpano_getImagePanoramicOptions($pid);

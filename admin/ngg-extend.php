@@ -27,6 +27,9 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                 $act_gallery_settings = nggpano_getGalleryOptions($act_gid);
                 $act_templatefile = isset($act_gallery_settings->skin) ? $act_gallery_settings->skin : '';
                 $act_gallery_region = isset($act_gallery_settings->gps_region) ? unserialize($act_gallery_settings->gps_region) : '';
+                $act_exclude = isset($act_gallery_settings->exclude) ? $act_gallery_settings->exclude : '';
+                $act_gallery_exclude   = ( $act_gallery_settings->exclude ) ? 'checked="checked"' : '';
+                $act_order = isset($act_gallery_settings->order) ? $act_gallery_settings->order : '';
                 
                 ?>
                 <tr>
@@ -37,6 +40,21 @@ Why are you even reading this? Maybe you should consider helping me stock that f
                     <!-- TODO -->
 <!--                    <input type="hidden" name="nggpano_gallery[gps_region]" value="" />-->
                     </td>
+                </tr>
+                <tr>
+                    <th align="left">
+                        <?php _e('Order','nggpano');?> : 
+                    </th>
+                    <th align="left">
+                    <input type="text" name="nggpano_gallery[order]" id="nggpano_gallery[order]" value="<?php echo $act_order ?>" />
+                    </th>
+                    <th align="left">
+                        <?php _e('Exclude','nggpano');?> : 
+                    </th>
+                    <th align="left">
+                    <input name="nggpano_gallery[exclude]" id="nggpano_gallery[exclude]" type="checkbox" value="1" <?php echo $act_gallery_exclude ?> />
+                    
+                    </th>
                 </tr>
                 <tr valign="top">
                     <th align="right">
@@ -347,6 +365,44 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
     }
 }
 
+
+//ngg_manage_gallery_columns
+
+add_action("ngg_manage_gallery_columns", "nggpano_add_gallery_pano_columns");
+//}
+/**
+ * Add a custom field to the galleries field list.  
+ * @param array $gallery_columns The array of current fields
+ * @author Shaun <shaun@worldwidecreative.co.za>
+ * @return array $gallery_columns with an added field
+ */
+function nggpano_add_gallery_pano_columns($gallery_columns) {
+
+        $gallery_columns["nggpano_gallery_order"] = __('Order','nggpano');
+        $gallery_columns["nggpano_gallery_exclude"] = __('Excl.', 'nggpano');
+        return $gallery_columns;
+} 
+
+//ngg_manage_gallery_custom_column
+add_action("ngg_manage_gallery_custom_column", "nggpano_add_gallery_pano_fields", 10 ,2);
+//}
+/**
+ * Add gps and panoramic option on each image
+ * @param string $gallery_column_key The key value of the 'custom' fields added by nggpano_add_image_pano_columns()
+ * @param string $pid image id
+ * @return void
+ */
+function nggpano_add_gallery_pano_fields($gallery_column_key, $gid) {
+    switch ($gallery_column_key) {
+        case "nggpano_gallery_order":
+            nggpanoAdmin::gallery_order_form($gid);
+            break;
+        case "nggpano_gallery_exclude":
+            nggpanoAdmin::gallery_exclude_form($gid);
+            break;
+    }
+}
+
 /*
  * SAVE GALLERY AND PICTURES
  */
@@ -364,12 +420,18 @@ function nggpano_add_image_pano_fields($gallery_column_key, $pid) {
 
 
                             $skinfile   = $wpdb->escape($post["nggpano_gallery"]["skin_file"]);
+                            $order   = $wpdb->escape($post["nggpano_gallery"]["order"]);
+                            //$exclude = $wpdb->escape($post["nggpano_gallery"]["exclude"]);
+                            $exclude = isset ( $post["nggpano_gallery"]["exclude"] ) ? $post["nggpano_gallery"]["exclude"] : '0';
+                            //nggpano_gallery[exclude]
+                            //echo $skinfile . '-' . $exclude . '<br/>';
+                            //echo "UPDATE ".$wpdb->prefix."nggpano_gallery SET `skin` = '".$skinfile."', `order` = '".$order."', `exclude` = '".$exclude."'  WHERE gid = '".$wpdb->escape($galleryId)."'";
                             //$gps_region = $wpdb->escape($post["nggpano_gallery"]["gps_region"]);
 
                             if(nggpano_getGalleryOptions($galleryId)) {
-                                    $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET skin = '".$skinfile."' WHERE gid = '".$wpdb->escape($galleryId)."'");
+                                    $wpdb->query("UPDATE ".$wpdb->prefix."nggpano_gallery SET `skin` = '".$skinfile."', `order` = '".$order."', `exclude` = '".$exclude."'  WHERE gid = '".$wpdb->escape($galleryId)."'");
                             }else{
-                                    $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, gid, skin) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."')");
+                                    $wpdb->query("INSERT INTO ".$wpdb->prefix."nggpano_gallery (id, `gid`, `skin`, `order`, `exclude`) VALUES (null, '".$wpdb->escape($galleryId)."', '".$skinfile."','".$order."','".$exclude."')");
                             }
                     }
                 }
