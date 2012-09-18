@@ -13,6 +13,68 @@ if(preg_match("#".basename(__FILE__)."#", $_SERVER["PHP_SELF"])) {die("You are n
             return $opts ? $opts : array();
     }
 
+    
+   /**
+     * Get all the galleries
+     * 
+     * @param string $order_by
+     * @param string $order_dir
+     * @param bool $counter (optional) Select true  when you need to count the images
+     * @param int $limit number of paged galleries, 0 shows all galleries
+     * @param int $start the start index for paged galleries
+     * @param bool $exclude
+     * @return array $galleries
+     */
+    function nggpano_find_all_galleries_with_order($order_dir = 'ASC', $counter = false, $exclude = true, $gallery_exclude = true) {      
+        global $wpdb; 
+        $return_galleries = array();
+        // Check for the exclude setting
+        $exclude_clause = ($exclude) ? ' AND exclude<>1 ' : '';
+        $order_by = 'NGPG.order, NGG.name';
+        $order_dir = ( $order_dir == 'DESC') ? 'DESC' : 'ASC';
+
+        //gallery exclude clause
+        $gallery_exclude_clause = ($gallery_exclude) ? ' AND NGPG.exclude<>1 ' : '';
+        
+        $query = "SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->nggallery NGG, ".$wpdb->prefix."nggpano_gallery NGPG WHERE NGG.gid = NGPG.gid".$gallery_exclude_clause." ORDER BY {$order_by} {$order_dir}";
+        
+        $return_galleries = $wpdb->get_results( $query , OBJECT_K );
+        
+        if ( !$return_galleries )
+            return array();
+        
+        // get the galleries information    
+        foreach ($return_galleries as $key => $value) {
+            $galleriesID[] = $key;
+            // init the counter values
+            $return_galleries[$key]->counter = 0;
+            $return_galleries[$key]->title = stripslashes($return_galleries[$key]->title);
+            $return_galleries[$key]->galdesc  = stripslashes($return_galleries[$key]->galdesc);
+            $return_galleries[$key]->abspath = WINABSPATH . $return_galleries[$key]->path;
+            wp_cache_add($key, $return_galleries[$key], 'ngg_gallery');      
+        }
+
+        // if we didn't need to count the images then stop here
+        if ( !$counter )
+            return $return_galleries;
+        
+        // get the counter values   
+        $picturesCounter = $wpdb->get_results('SELECT galleryid, COUNT(*) as counter FROM '.$wpdb->nggpictures.' WHERE galleryid IN (\''.implode('\',\'', $galleriesID).'\') ' . $exclude_clause . ' GROUP BY galleryid', OBJECT_K);
+
+        if ( !$picturesCounter )
+            return $return_galleries;
+        
+        // add the counter to the gallery objekt    
+        foreach ($picturesCounter as $key => $value) {
+            $return_galleries[$value->galleryid]->counter = $value->counter;
+            wp_cache_set($value->galleryid, $return_galleries[$value->galleryid], 'ngg_gallery');
+        }
+        
+        return $return_galleries;
+    }
+    
+    
+
     /**
      * Gets the panoramics options for a specific image
      * @param int $pid The image ID
