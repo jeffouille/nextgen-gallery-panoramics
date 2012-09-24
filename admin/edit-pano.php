@@ -222,8 +222,8 @@ function addFOVLimit() {
         }
         if (vfov != "" && voffset != "") {
             //=(I4/2)*-1+J4
-            var vlookatmin = (parseFloat(vfov)/2)*-1+parseFloat(voffset);
-            var vlookatmax = (parseFloat(vfov)/2)+parseFloat(voffset);
+            var vlookatmin = (parseFloat(vfov)/2)*-1-parseFloat(voffset);
+            var vlookatmax = (parseFloat(vfov)/2)-parseFloat(voffset);
             str_replace_view_html5_with += ' vlookatmin="'+vlookatmin+'" ' + ' vlookatmax="'+vlookatmax+'"';
         }
         str_replace_view_html5_with += ' limitview="range" ';

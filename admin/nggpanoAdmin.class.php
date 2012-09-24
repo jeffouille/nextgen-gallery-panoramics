@@ -96,7 +96,7 @@ class nggpanoAdmin{
                 
                         $hfov       = isset ($pano_infos->hfov) ? $pano_infos->hfov : '';
                         $vfov       = isset ($pano_infos->vfov) ? $pano_infos->vfov : '';
-                        $voffset    = isset ($pano_infos->voffset) ? $pano_infos->voffset : '';
+                        $voffset    = isset ($pano_infos->voffset) ? $pano_infos->voffset : '0';
                         $xml_configuration    = isset ($pano_infos->xml_configuration) ? $pano_infos->xml_configuration : '';
                         $is_partial    = isset ($pano_infos->is_partial) ? $pano_infos->is_partial : '0';
                         
@@ -203,8 +203,10 @@ class nggpanoAdmin{
                         }
                         if ($vfov <> "" && $voffset <> "") {
                             //=(I4/2)*-1+J4
-                            $vlookatmin = ($vfov/2)*-1+$voffset;
-                            $vlookatmax = ($vfov/2)+$voffset;
+//                            $vlookatmin = ($vfov/2)*-1+$voffset;
+//                            $vlookatmax = ($vfov/2)+$voffset;
+                            $vlookatmin = ($vfov/2)*-1-$voffset;
+                            $vlookatmax = ($vfov/2)-$voffset;
                             $views->addAttribute('vlookatmin',$vlookatmin);
                             $views->addAttribute('vlookatmax',$vlookatmax);
                         } 
