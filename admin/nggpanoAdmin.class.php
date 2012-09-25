@@ -205,8 +205,8 @@ class nggpanoAdmin{
                             //=(I4/2)*-1+J4
 //                            $vlookatmin = ($vfov/2)*-1+$voffset;
 //                            $vlookatmax = ($vfov/2)+$voffset;
-                            $vlookatmin = ($vfov/2)*-1-$voffset;
-                            $vlookatmax = ($vfov/2)-$voffset;
+                            $vlookatmin = ($vfov/2)*-1+$voffset;
+                            $vlookatmax = ($vfov/2)+$voffset;
                             $views->addAttribute('vlookatmin',$vlookatmin);
                             $views->addAttribute('vlookatmax',$vlookatmax);
                         } 
