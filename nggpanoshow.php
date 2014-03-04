@@ -45,4 +45,6 @@ function initializePano() {
 }
 initializePano();
 
+/*embedpano({swf:"<?php echo $krpano_path ?>", xml:"<?php echo $krpano_xml ?>", target:"panocontent", html5:"prefer",consolelog:true});*/
+
 </script>

@@ -74,11 +74,21 @@ Follow variables are useable :
         <?php if (!empty ($caption)) : ?><span class="nggpano-caption nggpano-<?php echo $float; ?>"><?php echo $caption ?></span><?php endif; ?>
 
         <script type="text/javascript">
-            var viewer = createPanoViewer({swf:"<?php echo $panodiv['krpano_path'] ?>", wmode:"opaque", id:"<?php echo $panodiv['swfid'] ?>"});
+            /*var viewer = createPanoViewer({swf:"<?php echo $panodiv['krpano_path'] ?>", wmode:"opaque", id:"<?php echo $panodiv['swfid'] ?>"});
             viewer.addVariable("xml", "<?php echo $panodiv['krpano_xml'] ?>");
             viewer.addParam("class", "swf-fullwidth");
             viewer.useHTML5("auto");
             viewer.embed("<?php echo $panodiv['contentdiv'] ?>");
+	    */
+	    embedpano({	swf:"<?php echo $panodiv['krpano_path'] ?>",
+			id:"<?php echo $panodiv['swfid'] ?>",
+			xml:"<?php echo $panodiv['krpano_xml'] ?>",
+			target:"<?php echo $panodiv['contentdiv'] ?>",
+			wmode:"opaque",
+			class:"swf-fullwidth",
+			html5:"auto",
+			mwheel:true,
+			consolelog:false});
         </script>
 
     <?php endif; ?>
