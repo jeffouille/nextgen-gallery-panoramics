@@ -305,9 +305,9 @@ class nggPanoLoader {
 	
 	function load_scripts() {
             global $nggpano;
-		// activate swfkrpano.js
-                wp_register_script( 'swfkrpano', NGGPANOGALLERY_URLPATH . 'krpano/swfkrpano.js',array(), '1' );
-                wp_enqueue_script( 'swfkrpano' );
+		// activate embedpano.js
+                wp_register_script( 'embedpano', NGGPANOGALLERY_URLPATH . 'krpano/embedpano.js',array(), '1' );
+                wp_enqueue_script( 'embedpano' );
 		// activate gmap3.min.js
                 wp_register_script( 'googlemap', 'http://maps.google.com/maps/api/js?sensor=false',array(), '1' );
                 wp_enqueue_script( 'googlemap' );     

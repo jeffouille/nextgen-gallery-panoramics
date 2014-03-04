@@ -5,6 +5,7 @@ editor.swf
 fireworks.swf
 fps.swf
 googlemaps.swf
+googlemaps.js
 gyro.js
 krpano_default_flares.jpg
 krpano_logo.png
@@ -14,6 +15,7 @@ options.swf
 radar.js
 radar.swf
 snow.swf
+snow.js
 soundinterface.js
 soundinterface.swf
 textfield.swf
